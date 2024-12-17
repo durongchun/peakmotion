@@ -710,3 +710,4 @@
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/peakmotion.pdb
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/peakmotion.genruntimeconfig.cache
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/ref/peakmotion.dll
+/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/peakmotion.sourcelink.json

@@ -12,7 +12,7 @@ using peakmotion.Data;
 namespace peakmotion.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241217044134_InitialCreate")]
+    [Migration("20241217213013_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
