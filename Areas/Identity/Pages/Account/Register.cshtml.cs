@@ -18,6 +18,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using peakmotion.Data.Services;
+using peakmotion.Models;
+using static peakmotion.Data.Services.ReCAPTCHA;
 
 namespace peakmotion.Areas.Identity.Pages.Account
 {
@@ -28,21 +31,28 @@ namespace peakmotion.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly IEmailSender _emailSender;
+        // private readonly IEmailSender _emailSender;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
+
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            // IEmailSender emailSender,
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            _emailSender = emailSender;
+            // _emailSender = emailSender;
+            _emailService = emailService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -102,6 +112,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
+            ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -110,6 +121,20 @@ namespace peakmotion.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
+            string captchaResponse = Request.Form["g-Recaptcha-Response"];
+            string secret = _configuration["Recaptcha:SecretKey"];
+            ReCaptchaValidationResult resultCaptcha =
+                ReCaptchaValidator.IsValid(secret, captchaResponse);
+
+            // Invalidate the form if the captcha is invalid.
+            if (!resultCaptcha.Success)
+            {
+                ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
+                ModelState.AddModelError(string.Empty,
+                    "The ReCaptcha is invalid.");
+            }
+
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
@@ -131,12 +156,28 @@ namespace peakmotion.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    // await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    var response = await _emailService.SendSingleEmail(new ComposeEmailModel
+                    {
+                        Subject = "Confirm your email",
+                        Email = Input.Email,
+                        Body = $"Please confirm your account by <a " +
+                                $"href='{HtmlEncoder.Default.Encode(callbackUrl)}'> " +
+                                $"clicking here</a>."
+                    });
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        // return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation",
+                                    new
+                                    {
+                                        email = Input.Email,
+                                        returnUrl = returnUrl,
+                                        DisplayConfirmAccountLink = false
+                                    });
                     }
                     else
                     {
