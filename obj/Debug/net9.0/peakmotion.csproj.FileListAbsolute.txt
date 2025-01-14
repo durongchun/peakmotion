@@ -711,3 +711,5 @@
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/peakmotion.genruntimeconfig.cache
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/ref/peakmotion.dll
 /Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/peakmotion.sourcelink.json
+/Users/lucydu/Projects/Crag project/peakmotion/bin/Debug/net9.0/SendGrid.dll
+/Users/lucydu/Projects/Crag project/peakmotion/bin/Debug/net9.0/StarkbankEcdsa.dll

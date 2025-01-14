@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("peakmotion")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c22074eab9a8de36eaf03efcdffc1ce5b44d592")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+29f0dcdf9c5d381b1ba600518df55dea5b4403dc")]
 [assembly: System.Reflection.AssemblyProductAttribute("peakmotion")]
 [assembly: System.Reflection.AssemblyTitleAttribute("peakmotion")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
