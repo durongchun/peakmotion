@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using peakmotion.Data;
 using peakmotion.Models;
+using peakmotion.Repositories;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 var app = builder.Build();
 
