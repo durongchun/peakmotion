@@ -27,7 +27,9 @@ public partial class User
 
     public string Usertype { get; set; } = null!;
 
-    public virtual ICollection<Member> Members { get; set; } = new List<Member>();
+    public DateOnly? Lastloggedin { get; set; }
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    public virtual ICollection<Wishlist> Wishlists { get; set; } = new List<Wishlist>();
 }
