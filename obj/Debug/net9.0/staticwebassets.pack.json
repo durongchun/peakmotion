@@ -2,7 +2,11 @@
   "Files": [
     {
       "Id": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/scopedcss/projectbundle/peakmotion.bundle.scp.css",
-      "PackagePath": "staticwebassets/peakmotion.r39ioenkr7.bundle.scp.css"
+      "PackagePath": "staticwebassets/peakmotion.do1ou0i8q8.bundle.scp.css"
+    },
+    {
+      "Id": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css",
+      "PackagePath": "staticwebassets/css/payment.css"
     },
     {
       "Id": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/site.css",
