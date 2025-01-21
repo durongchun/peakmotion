@@ -2,10 +2,12 @@
 @using peakmotion.ViewModels;
 
 <link rel="stylesheet" href="~/css/payment.css">
-<script src="https://www.paypal.com/sdk/js?client-id=AT2sUbDtIZArj6muaJWRM-rrwQrPgJomzrI-99S2vpOhY0NlF2m_VP_pbmGqC6c8RJxCZiiGkWg3MV_R&currency=CAD"></script>
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AT2sUbDtIZArj6muaJWRM-rrwQrPgJomzrI-99S2vpOhY0NlF2m_VP_pbmGqC6c8RJxCZiiGkWg3MV_R&currency=CAD"></script>
 
 
-@{  ViewData["Title"] = "Products";
+@{
+    ViewData["Title"] = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <partial name="_Shop" for="@Model" />
@@ -14,95 +16,93 @@
 {
     string currency = "CAD";
     ProductVM? firstRecord = Model.FirstOrDefault();
-    
+
     if (firstRecord != null)
     {
         currency = firstRecord.Currency;
     }
-    <div class="row" >
-        <div class="offset-9 col-sm-3 col-md-2">
-            <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
-        </div>
+    <div class="row">
+    <div class="offset-9 col-sm-3 col-md-2">
+        <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
     </div>
-    <div class="row" >
-        <div class="offset-9 col-sm-2">
-            <table class="table">
-                <thead>
-                    <tr><th><span style="color:darkred;">Items</span></th>
-                        <th><span style="color:darkred;">Amount</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span id="totalItems">0</span></td>
-                        <td>$<span id="totalAmount">0</span> <span id="currency">@currency</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+</div>
+    <div class="row">
+    <div class="offset-9 col-sm-2">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><span style="color:darkred;">Items</span></th>
+                    <th><span style="color:darkred;">Amount</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span id="totalItems">0</span></td>
+                    <td>$<span id="totalAmount">0</span> <span id="currency">@currency</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+</div>
     <script>
-        paypal.Buttons({
-            // Set up the transaction
-            createOrder: function (data, actions) {
-                const amount = document.getElementById('totalAmount').textContent.trim();
-                const currency = document.getElementById('currency').textContent.trim();
-                console.log("Amount:", amount, "Currency:", currency);
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: document.getElementById('totalAmount').textContent.trim(),
-                            currency_code: document.getElementById('currency').textContent.trim()
+    paypal.Buttons({
+        // Set up the transaction
+        createOrder: function (data, actions) {
+            const amount = document.getElementById('totalAmount').textContent.trim();
+            const currency = document.getElementById('currency').textContent.trim();
+            console.log("Amount:", amount, "Currency:", currency);
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: document.getElementById('totalAmount').textContent.trim(),
+                        currency_code: document.getElementById('currency').textContent.trim()
 
-                        }
-                    }]
-                });
-            },
+                    }
+                }]
+            });
+        },
 
-            // Finalize the transaction
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    console.log("Transaction details:", details);
-                    const transactionId = encodeURIComponent(details.id);
-                    const amount = encodeURIComponent(details.purchase_units[0].amount.value);
-                    const payerName = encodeURIComponent(details.payer.name.given_name);
-                    const email = encodeURIComponent(details.payer.email_address); // Extract email
+        // Finalize the transaction
+        onApprove: function (data, actions) {
+            return actions.order.capture().then(function (details) {
+                console.log("Transaction details:", details);
+                const transactionId = encodeURIComponent(details.id);
+                const amount = encodeURIComponent(details.purchase_units[0].amount.value);
+                const payerName = encodeURIComponent(details.payer.name.given_name);
+                const email = encodeURIComponent(details.payer.email_address); // Extract email
 
-                    window.location.href =
-                        `/Home/PayPalConfirmation?TransactionId=${transactionId}&Amount=${amount}&PayerName=${payerName}&Email=${email}`;
-                });
-            },
+                window.location.href =
+                    `/Home/PayPalConfirmation?TransactionId=${transactionId}&Amount=${amount}&PayerName=${payerName}&Email=${email}`;
+            });
+        },
 
 
-            onCancel: function (data) {
-                alert('Transaction was cancelled.');
-            },
-            onError: function (err) {
-                alert('An error occurred during the transaction.');
-            },
-            style: {
-                layout: 'vertical', // 'vertical', 'horizontal'
-                color: 'blue',      // 'gold', 'blue', 'silver', 'black'
-                shape: 'rect',      // 'rect', 'pill'
-                label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
-            }
-        }).render('#paypal-button-container'); // Ensure this matches the ID
-    </script>
+        onCancel: function (data) {
+            alert('Transaction was cancelled.');
+        },
+        onError: function (err) {
+            alert('An error occurred during the transaction.');
+        },
+        style: {
+            layout: 'vertical', // 'vertical', 'horizontal'
+            color: 'blue',      // 'gold', 'blue', 'silver', 'black'
+            shape: 'rect',      // 'rect', 'pill'
+            label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
+        }
+    }).render('#paypal-button-container'); // Ensure this matches the ID
+</script>
 }
 
 else
 {
     <div class="row" style="">
-        <div class="offset-2 col-sm-6">
-            <div class="form-group">
-                <button class="btn btn-primary" style="border-color:#6E0B14; background-color: #6E0B14;"
-                    onclick="location.href='@Url.Content("~/Identity/Account/Login")'">
-                    Login to Purchase
-                </button>
-            </div>
+    <div class="offset-2 col-sm-6">
+        <div class="form-group">
+            <button class="btn btn-primary" style="border-color:#6E0B14; background-color: #6E0B14;"
+                onclick="location.href='@Url.Content("~/Identity/Account/Login")'">
+                Login to Purchase
+            </button>
         </div>
     </div>
+</div>
 }
-
-
-
