@@ -23,6 +23,7 @@ namespace peakmotion.Controllers
         public IActionResult Index()
         {
             IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+            Console.WriteLine($"Number of products: {products.Count()}");
             return View("Index", products);
         }
 
