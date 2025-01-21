@@ -1,164 +1,97 @@
 ﻿@model IEnumerable<peakmotion.ViewModels.ProductVM>
 
-@foreach (var saleItem in Model)
-{
-    <div class="row">
-        <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
-            @* <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" /> *@
-             @foreach (var category in @saleItem.Categories) 
-            {
-                <div style="padding-top:0px;">@category.Categoryname</div>
-            }
-        </div>
-        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
-            <div style="padding-top:0px;">@saleItem.ProductName</div>
-            <div style="padding-bottom:20px;">@saleItem.Description</div>
-            @if (@saleItem.Discount != null) {
-                <div style="padding-top:0px;">Discount price: @(saleItem.Discount?.Amount/100 * saleItem.Price)</div>
-            }
-            <div class="" style="color:#CC0000; font-size: 1em;">
-                <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
-                <span id="@saleItem.ID-currency">@saleItem.Currency</span>
-            </div>
-        </div>
 
-        @* @if (User.Identity.IsAuthenticated)
-        {
-            <div class="col-sm-12 col-md-3  col-lg-3  col-xl-2">
-                <div class="form-group d-none d-lg-block" style="text-align:center;">
-                    <div class="row">
-                        <div class="col">
-                            <button id="@saleItem.ID-add-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="margin-top:20px; border-color:#6E0B14;
-                                           background-color: #6E0B14; width:152px;">
-                                Add To Cart
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button id="@saleItem.ID-subtract-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="margin-top:3px; border-color:#A1A1A1;
-                                           background-color: #A1A1A1; width:152px;">
-                                Remove from cart
-                            </button>
-                        </div>
-                        <div class="col">
-                            <table class="table">
-                                <thead>
-                                    <tr><th><span style="color:darkred;">Qty</span></th>
-                                        <th><span style="color:darkred;">Amount</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span id="@saleItem.ID-quantity-lg" class="quantity-lg">0</span></td>
-                                        <td>$<span id="@saleItem.ID-amount-lg" class="amount-lg">0</span> @saleItem.Currency</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+ 
+ <div class="shippingOrderSummary">
+    <section>
+        <form class="shipping-form" action="/shipping" method="POST">
+            <H3>Contact</H3>  
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address">
+            </div>
+            <div class="pt-2">
+                <h3>Shipping Address</h3>
+                <div id="name">
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="firstname">First Name</label>
+                        <input type="text" id="firstname" name="firstname" placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="lastname">Last Name</label>
+                        <input type="text" id="lastname" name="firstname" placeholder="Enter your last name">
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-lg-12 col-xl-12 col-xl-12">
-                <div class="d-sm-block d-md-block d-none d-lg-none d-xl-none" style="">
-                    <div class="row">
-                        <div class="col-sm-4" style="text-align:center;margin-top: 40px;">
-                            <button id="@saleItem.ID-add-sm" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="border-color:#6E0B14; background-color: #6E0B14; width:152px;">
-                                Add To Cart
-                            </button>
-                        </div>
-                        <div class="col-sm-4" style="text-align:center;margin-top: 40px;">
-                            <button id="@saleItem.ID-subtract-sm" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="border-color:#545454; background-color: #545454; width:152px;">
-                                Remove To Cart
-                            </button>
-                        </div>
-                        <div class="col-sm-4" style="text-align:center;">
-                            <table class="table">
-                                <thead>
-                                    <tr><th><span style="color:darkred;">Qty</span></th>
-                                        <th><span style="color:darkred;">Amount</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span id="@saleItem.ID-quantity-sm">0</span></td>
-                                        <td>$<span id="@saleItem.ID-amount-sm">0</span> @saleItem.Currency</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+            
+                <div class="form-group d-flex flex-column mb-3">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" name="phone" placeholder="">
+                </div>
+                <div class="form-group d-flex flex-column mb-3">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" placeholder="">
+                </div>
+                <div id="addressDetail">
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="apptunit">Appt/Unit</label>
+                        <input type="text" id="apptunit" name="apptunit" placeholder="">
+                    </div>
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="">
                     </div>
                 </div>
+                <div id="provincePoscode">
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="province">Province</label>
+                        <input type="text" id="province" name="province" placeholder="">
+                    </div>
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="postalcode">Postal Code</label>
+                        <input type="text" id="postalcode" name="postalcode" placeholder="">
+                    </div>
+                </div>
+                
+            
             </div>
-        } *@
-    </div>
-    <hr />
-}
 
-<script>
-    function updateShoppingCart(event) {
-        var clickedId = event.target.id;
-        var elementIdSplit = clickedId.split('-');
-        var id = elementIdSplit[0];
-        var action = elementIdSplit[1];
-        var buttonType = elementIdSplit[2];
+        </form>
+        <div class="mb-3 mt-3">
+            <h3>PAYMENT</h3>
+            <h6>How to Pay</h6>
+            <ol>
+                <li>Click the 'PAYMENT With PayPal' button below</li>
+                <li>You will be redirected to the PayPal website. </li>
+                <li>Log in to your PayPal account (or create one if you don’t have one yet).</li>
+                <li>Choose your preferred payment method (PayPal balance, linked bank account, or credit card).</li>
+                <li>Complete the payment and return to our website to finalize your order.</li>
+            </ol>
+            <p>
+                Your payment is secure with PayPal’s trusted encryption methods.
+                <br>We never store your payment information.
+            </p>
+            <p>If you have any issues or questions, feel free to contact us at [support email].</p>
+        </div>  
+    </section>
+    
 
-        ChangeCart(id, action, buttonType);
-    }
-
-    function ChangeCart(clickedId, action, buttonType)
-    {
-        var itemPriceId = "#" + clickedId + "-itemPrice";
-        var cartQtyLgId = "#" + clickedId + "-quantity-lg";
-        var cartQtySmId = "#" + clickedId + "-quantity-sm";
-        var cartAmtLgId = "#" + clickedId + "-amount-lg";
-        var cartAmtSmId = "#" + clickedId + "-amount-sm";
-
-        var quantity = $(cartQtyLgId).html();
-
-        if (action=="add") {
-            quantity++;
-        } else {
-            quantity--;
-            if (quantity < 0) {
-                quantity = 0;
-            }
-        }
-
-        $(cartQtyLgId).text(quantity);
-        $(cartQtySmId).text(quantity);
-
-        //Calculate new amount
-        var amount = $(itemPriceId).html();
-
-        var newAmount = (amount * quantity).toFixed(2);
-        
-        $(cartAmtLgId).text(newAmount);
-        $(cartAmtSmId).text(newAmount);
-
-        var totalItemsId = "#totalItems";
-        var totalAmountId = "#totalAmount";
-
-        //Calculate totals
-        var totalQuantity = 0;
-        $('.quantity-lg').each(function () {
-            var thisQuantity = $(this).html();
-            totalQuantity += parseInt(thisQuantity);
-        });
-        var totalAmount = 0.00;
-        $('.amount-lg').each(function () {
-            var thisAmount = $(this).html();
-            totalAmount += parseFloat(thisAmount);
-        });
-
-        $("#totalItems").text(totalQuantity);
-        $("#totalAmount").text(totalAmount.toFixed(2));
-    }
-</script>
-
-
-
-
-
+    <section>
+        <h4>ORDER SUMMARY</h4>
+        <div>product </div>
+        <div id="giftApply">
+            <div class="d-flex flex-column mb-3">
+                <label for="code">Gift Card/Discount Code</label>
+                <input type="text" id="code" name="code" placeholder="Code">
+            </div>
+            <button id="apply">APPLY</button>
+        </div>
+        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+        <div class="d-flex flex-column mb-3">
+            <p>Subtotal</p>
+            <p>Shipping</p>
+            <p>Tax</p>
+        </div>
+        <hr style="border: 1px solid #ccc; margin: 20px 0;">
+        <div><h1>Total</h1></div>
+    </section>
+ </div>

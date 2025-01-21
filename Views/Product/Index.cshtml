@@ -1,63 +1,62 @@
-﻿@model IEnumerable<peakmotion.ViewModels.ProductVM>
-
-@{
-    ViewData["Title"] = "Products";
-}
-
-<div class="container mt-5">
-    <h2 class="mb-4">Products</h2>
-
-    <div class="row">
-        @foreach (var product in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm rounded">
-                    @* <img src="@Url.Action("GetProductImage", "Product", new { productId = product.ID })"
-                         class="card-img-top"
-                         alt="@product.Description"
-                         style="object-fit: contain; width: 100%; height: 250px; background-color: #f8f9fa;" /> *@
-                    <div class="card-body d-flex flex-column">
-                        <p class="card-text text-muted">@product.Description</p>
-                        <p class="card-text fw-bold">$@product.Price.ToString("N2")</p>
-
-                        @* <a href="@Url.Action("Details", "Product", 
-                        new { productId = product.ID })"
-                            class="btn btn-outline-info me-2">
-                            <i class="bi bi-info-circle"></i> Details
-                        </a><br /> *@
-
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-</div>
-
-@{
-    var messageText = string.Empty;
-    var alertClass = string.Empty;
-
-    if (!string.IsNullOrEmpty(ViewBag.Message))
-    {
-        string message = ViewBag.Message.ToString();
-        string[] messageParts = message.Split(',');
-
-        var messageType = messageParts[0];
-        messageText = messageParts.Length > 1 ? messageParts[1] : string.Empty;
-
-        switch (messageType)
-        {
-            case "success": alertClass = "alert alert-success"; break;
-            case "warning": alertClass = "alert alert-warning"; break;
-            case "error": alertClass = "alert alert-danger"; break;
-        }
-    }
-}
-
-@if (!string.IsNullOrEmpty(messageText))
+﻿@foreach (var saleItem in Model)
 {
-    <div class="@alertClass alert-dismissible fade show mt-3" role="alert">
-        @messageText
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="row">
+        <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
+            @* <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" /> *@
+             @foreach (var category in @saleItem.Categories) 
+            {
+                <div style="padding-top:0px;">@category.Categoryname</div>
+            }
+        </div>
+        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
+            <div style="padding-top:0px;">@saleItem.ProductName</div>
+            <div style="padding-bottom:20px;">@saleItem.Description</div>
+            @if (@saleItem.Discount != null) {
+                <div style="padding-top:0px;">Discount price: @(saleItem.Discount?.Amount/100 * saleItem.Price)</div>
+            }
+            <div class="" style="color:#CC0000; font-size: 1em;">
+                <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
+                <span id="@saleItem.ID-currency">@saleItem.Currency</span>
+            </div>
+        </div>
+
+        @* @if (User.Identity.IsAuthenticated)
+        {
+            <div class="col-sm-12 col-md-3  col-lg-3  col-xl-2">
+                <div class="form-group d-none d-lg-block" style="text-align:center;">
+                    <div class="row">
+                        <div class="col">
+                            <button id="@saleItem.ID-add-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="margin-top:20px; border-color:#6E0B14;
+                                           background-color: #6E0B14; width:152px;">
+                                Add To Cart
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button id="@saleItem.ID-subtract-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="margin-top:3px; border-color:#A1A1A1;
+                                           background-color: #A1A1A1; width:152px;">
+                                Remove from cart
+                            </button>
+                        </div>
+                        <div class="col">
+                            <table class="table">
+                                <thead>
+                                    <tr><th><span style="color:darkred;">Qty</span></th>
+                                        <th><span style="color:darkred;">Amount</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span id="@saleItem.ID-quantity-lg" class="quantity-lg">0</span></td>
+                                        <td>$<span id="@saleItem.ID-amount-lg" class="amount-lg">0</span> @saleItem.Currency</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                         } *@
     </div>
+    <hr />
 }
+
+
