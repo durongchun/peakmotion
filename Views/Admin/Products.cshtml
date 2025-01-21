@@ -1,0 +1,114 @@
+@model IEnumerable<peakmotion.ViewModels.ProductVM>
+
+@{
+    ViewData["Title"] = "Products";
+}
+
+<h1>Index</h1>
+
+<p>
+    @* <a asp-action="Create">Create New</a> *@
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DiscountLabel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsFeatured)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsMembershipProduct)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </th>
+                <th>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </th>
+                @if (item.DiscountLabel != null) {
+                    <th>
+                        <p class="list-item-tag">
+                        @Html.DisplayFor(modelItem => item.DiscountLabel)
+                        </p>
+                    </th>
+                } else { <th></th>}
+                @{
+                    var featuredLabel = item.IsFeatured ? "Featured" : "No";
+                    var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
+                }
+                <th>
+                    <p class="list-item-tag">@featuredLabel</p>
+                </th>
+                <th>
+                    <p class="list-item-tag">@memberLabel</p>
+                </th>
+                <th>
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </th>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@{ var messageText = string.Empty;
+    var alertClass = string.Empty;
+
+    if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        string message = ViewBag.Message.ToString();
+        string[] messageParts = message.Split(',');
+
+        var messageType = messageParts[0];
+        messageText = messageParts.Length > 1 ? messageParts[1] : string.Empty;
+
+        switch (messageType)
+        {
+            case "success": alertClass = "alert alert-success"; break;
+            case "warning": alertClass = "alert alert-warning"; break;
+            case "error": alertClass = "alert alert-danger"; break;
+        }
+    }
+}
+<br /><div class="@alertClass">@messageText</div>
+
+<style>
+.list-item-tag { 
+    border: 1px solid black;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background-color: #FFF4F2;
+    margin-bottom: 0;
+    font-size: 0.7rem;
+    font-weight: 500;
+    width: min-content;
+}
+</style>
