@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "hMLgio87wlys3z8IPccY3w8A/hkIUaaPj6bAagDtYYs=",
+  "Hash": "2mNSALlNeo47GpBqgdN6J0J7mP2wuzhSblR63dAqa4E=",
   "Source": "peakmotion",
   "BasePath": "_content/peakmotion",
   "Mode": "Default",
@@ -1718,12 +1718,12 @@
       "OriginalItemSpec": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
     },
     {
-      "Identity": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-3u3qag2pjs.gz",
+      "Identity": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-dke1rz5v34.gz",
       "SourceId": "peakmotion",
       "SourceType": "Discovered",
       "ContentRoot": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/",
       "BasePath": "_content/peakmotion",
-      "RelativePath": "css/site#[.{fingerprint=3u3qag2pjs}]?.css.gz",
+      "RelativePath": "css/site#[.{fingerprint=dke1rz5v34}]?.css.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -1732,19 +1732,19 @@
       "RelatedAsset": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/site.css",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "lvgt5126ig",
-      "Integrity": "T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM=",
+      "Fingerprint": "jze1ckptf0",
+      "Integrity": "4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/site.css"
     },
     {
-      "Identity": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-x9dd6lazjk.gz",
+      "Identity": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-3b3rjzt9ou.gz",
       "SourceId": "peakmotion",
       "SourceType": "Discovered",
       "ContentRoot": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/",
       "BasePath": "_content/peakmotion",
-      "RelativePath": "css/payment#[.{fingerprint=x9dd6lazjk}]?.css.gz",
+      "RelativePath": "css/payment#[.{fingerprint=3b3rjzt9ou}]?.css.gz",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Alternative",
@@ -1753,8 +1753,8 @@
       "RelatedAsset": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css",
       "AssetTraitName": "Content-Encoding",
       "AssetTraitValue": "gzip",
-      "Fingerprint": "xcfassm6ro",
-      "Integrity": "QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM=",
+      "Fingerprint": "crbhj5lg0n",
+      "Integrity": "yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css"
@@ -4063,8 +4063,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "x9dd6lazjk",
-      "Integrity": "dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs=",
+      "Fingerprint": "3b3rjzt9ou",
+      "Integrity": "f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/css/payment.css"
@@ -4084,8 +4084,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "3u3qag2pjs",
-      "Integrity": "FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg=",
+      "Fingerprint": "dke1rz5v34",
+      "Integrity": "A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot/css/site.css"
@@ -5395,13 +5395,13 @@
   ],
   "Endpoints": [
     {
-      "Route": "css/payment.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-x9dd6lazjk.gz",
+      "Route": "css/payment.3b3rjzt9ou.css",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-3b3rjzt9ou.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.006024096386"
+          "Quality": "0.005847953216"
         }
       ],
       "ResponseHeaders": [
@@ -5411,19 +5411,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "165"
+          "Value": "170"
         },
         {
           "Name": "ETag",
-          "Value": "\"QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM=\""
+          "Value": "\"yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "no-cache"
+          "Value": "max-age=31536000, immutable"
         },
         {
           "Name": "Content-Encoding",
@@ -5439,18 +5439,26 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs=\""
+          "Value": "W/\"f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk=\""
         }
       ],
       "EndpointProperties": [
         {
+          "Name": "fingerprint",
+          "Value": "3b3rjzt9ou"
+        },
+        {
+          "Name": "label",
+          "Value": "css/payment.css"
+        },
+        {
           "Name": "integrity",
-          "Value": "sha256-dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs="
+          "Value": "sha256-f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk="
         }
       ]
     },
     {
-      "Route": "css/payment.css",
+      "Route": "css/payment.3b3rjzt9ou.css",
       "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -5460,7 +5468,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "182"
+          "Value": "257"
         },
         {
           "Name": "Content-Type",
@@ -5468,121 +5476,21 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs=\""
+          "Value": "\"f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs="
-        }
-      ]
-    },
-    {
-      "Route": "css/payment.css.gz",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-x9dd6lazjk.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "165"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "no-cache"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "integrity",
-          "Value": "sha256-QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM="
-        }
-      ]
-    },
-    {
-      "Route": "css/payment.x9dd6lazjk.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-x9dd6lazjk.gz",
-      "Selectors": [
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip",
-          "Quality": "0.006024096386"
-        }
-      ],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "165"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
           "Value": "max-age=31536000, immutable"
-        },
-        {
-          "Name": "Content-Encoding",
-          "Value": "gzip"
-        },
-        {
-          "Name": "Vary",
-          "Value": "Content-Encoding"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "W/\"dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "x9dd6lazjk"
+          "Value": "3b3rjzt9ou"
         },
         {
           "Name": "label",
@@ -5590,13 +5498,13 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs="
+          "Value": "sha256-f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk="
         }
       ]
     },
     {
-      "Route": "css/payment.x9dd6lazjk.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css",
+      "Route": "css/payment.3b3rjzt9ou.css.gz",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-3b3rjzt9ou.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -5605,7 +5513,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "182"
+          "Value": "170"
         },
         {
           "Name": "Content-Type",
@@ -5613,56 +5521,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs=\""
+          "Value": "\"yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "x9dd6lazjk"
-        },
-        {
-          "Name": "label",
-          "Value": "css/payment.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-dR7fm4wmqSx3Y2v4k2OTL+fH0zCwBJ1xjIwG4TD+ccs="
-        }
-      ]
-    },
-    {
-      "Route": "css/payment.x9dd6lazjk.css.gz",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-x9dd6lazjk.gz",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "165"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:10:03 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -5680,7 +5543,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "x9dd6lazjk"
+          "Value": "3b3rjzt9ou"
         },
         {
           "Name": "label",
@@ -5688,18 +5551,18 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-QdjKw1WJvFJaUPAnKDacCAUqxFK6LIcasIGmMi9h3OM="
+          "Value": "sha256-yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg="
         }
       ]
     },
     {
-      "Route": "css/site.3u3qag2pjs.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-3u3qag2pjs.gz",
+      "Route": "css/payment.css",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-3b3rjzt9ou.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.002100840336"
+          "Quality": "0.005847953216"
         }
       ],
       "ResponseHeaders": [
@@ -5709,19 +5572,19 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "475"
+          "Value": "170"
         },
         {
           "Name": "ETag",
-          "Value": "\"T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM=\""
+          "Value": "\"yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         },
         {
           "Name": "Content-Encoding",
@@ -5737,27 +5600,19 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg=\""
+          "Value": "W/\"f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk=\""
         }
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "3u3qag2pjs"
-        },
-        {
-          "Name": "label",
-          "Value": "css/site.css"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg="
+          "Value": "sha256-f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk="
         }
       ]
     },
     {
-      "Route": "css/site.3u3qag2pjs.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/site.css",
+      "Route": "css/payment.css",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/payment.css",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -5766,7 +5621,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1124"
+          "Value": "257"
         },
         {
           "Name": "Content-Type",
@@ -5774,35 +5629,27 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg=\""
+          "Value": "\"f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         }
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "3u3qag2pjs"
-        },
-        {
-          "Name": "label",
-          "Value": "css/site.css"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg="
+          "Value": "sha256-f7hD8Sez2dMomIH53CF0pGAGswpYNQJaR/+LVj/EAtk="
         }
       ]
     },
     {
-      "Route": "css/site.3u3qag2pjs.css.gz",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-3u3qag2pjs.gz",
+      "Route": "css/payment.css.gz",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6pxdbyju4r-3b3rjzt9ou.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -5811,7 +5658,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "475"
+          "Value": "170"
         },
         {
           "Name": "Content-Type",
@@ -5819,15 +5666,15 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM=\""
+          "Value": "\"yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:06:17 GMT"
         },
         {
           "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
+          "Value": "no-cache"
         },
         {
           "Name": "Content-Encoding",
@@ -5840,16 +5687,8 @@
       ],
       "EndpointProperties": [
         {
-          "Name": "fingerprint",
-          "Value": "3u3qag2pjs"
-        },
-        {
-          "Name": "label",
-          "Value": "css/site.css.gz"
-        },
-        {
           "Name": "integrity",
-          "Value": "sha256-T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM="
+          "Value": "sha256-yMxUY0O0ZqcTVCsKTx9eyo4DT1ziLr7quGbyiM/bnpg="
         }
       ]
     },
@@ -5892,12 +5731,12 @@
     },
     {
       "Route": "css/site.css",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-3u3qag2pjs.gz",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-dke1rz5v34.gz",
       "Selectors": [
         {
           "Name": "Content-Encoding",
           "Value": "gzip",
-          "Quality": "0.002100840336"
+          "Quality": "0.002173913043"
         }
       ],
       "ResponseHeaders": [
@@ -5907,15 +5746,15 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "475"
+          "Value": "459"
         },
         {
           "Name": "ETag",
-          "Value": "\"T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM=\""
+          "Value": "\"4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -5935,13 +5774,13 @@
         },
         {
           "Name": "ETag",
-          "Value": "W/\"FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg=\""
+          "Value": "W/\"A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno=\""
         }
       ],
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg="
+          "Value": "sha256-A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno="
         }
       ]
     },
@@ -5956,7 +5795,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1124"
+          "Value": "1077"
         },
         {
           "Name": "Content-Type",
@@ -5964,11 +5803,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg=\""
+          "Value": "\"A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -5978,13 +5817,13 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-FYCNhXFai+SmoeiegMY5ctcLNPHRllUysVcsd5bQeyg="
+          "Value": "sha256-A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno="
         }
       ]
     },
     {
       "Route": "css/site.css.gz",
-      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-3u3qag2pjs.gz",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-dke1rz5v34.gz",
       "Selectors": [],
       "ResponseHeaders": [
         {
@@ -5993,7 +5832,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "475"
+          "Value": "459"
         },
         {
           "Name": "Content-Type",
@@ -6001,11 +5840,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM=\""
+          "Value": "\"4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 21 Jan 2025 03:02:52 GMT"
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -6023,7 +5862,168 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-T5zabUNlRlaNtdIPM6hfZ/EPEq9Z5pSdG0UVNDzOfDM="
+          "Value": "sha256-4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o="
+        }
+      ]
+    },
+    {
+      "Route": "css/site.dke1rz5v34.css",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-dke1rz5v34.gz",
+      "Selectors": [
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip",
+          "Quality": "0.002173913043"
+        }
+      ],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "459"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "W/\"A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno=\""
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "dke1rz5v34"
+        },
+        {
+          "Name": "label",
+          "Value": "css/site.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno="
+        }
+      ]
+    },
+    {
+      "Route": "css/site.dke1rz5v34.css",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/wwwroot/css/site.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1077"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "dke1rz5v34"
+        },
+        {
+          "Name": "label",
+          "Value": "css/site.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-A4ne1W6TOsnKf34YtR/cTi2LTShIgt+Hrbr1UDuTqno="
+        }
+      ]
+    },
+    {
+      "Route": "css/site.dke1rz5v34.css.gz",
+      "AssetFile": "/Users/lucydu/Projects/Crag project/peakmotion/obj/Debug/net9.0/compressed/6ih1oiim70-dke1rz5v34.gz",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "459"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 21 Jan 2025 04:14:10 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        },
+        {
+          "Name": "Content-Encoding",
+          "Value": "gzip"
+        },
+        {
+          "Name": "Vary",
+          "Value": "Content-Encoding"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "dke1rz5v34"
+        },
+        {
+          "Name": "label",
+          "Value": "css/site.css.gz"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-4dFhtj1vEVyGzg/RxuWmqIU8mOOQG/nhrVNGsN0Rf3o="
         }
       ]
     },

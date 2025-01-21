@@ -45,7 +45,6 @@ input {
 }
 
 button {
-  padding: 10px 20px;
   font-size: 16px;
   color: #fff;
   background-color: black;
@@ -53,9 +52,8 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 200px;
+  width: 184px;
   height: 38px;
-  align-items: center;
 }
 
 button:hover {

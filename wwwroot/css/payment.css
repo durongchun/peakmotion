@@ -1,11 +1,16 @@
-.shippingOrderSummary,
+.shippingOrderSummary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5rem;
+}
+
 #name,
 #addressDetail,
 #provincePoscode,
 #giftApply {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4rem;
+  gap: 1rem;
 }
 
 #apply {
