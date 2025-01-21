@@ -3,20 +3,26 @@
 @foreach (var saleItem in Model)
 {
     <div class="row">
-        <div class="col-sm-1  col-lg-1  col-xl-1  col-xl-1"></div>
         <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
             @* <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" /> *@
-
-            <div class="" style="color:#CC0000; font-size: 1.5em;text-align: center;">
+             @foreach (var category in @saleItem.Categories) 
+            {
+                <div style="padding-top:0px;">@category.Categoryname</div>
+            }
+        </div>
+        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
+            <div style="padding-top:0px;">@saleItem.ProductName</div>
+            <div style="padding-bottom:20px;">@saleItem.Description</div>
+            @if (@saleItem.Discount != null) {
+                <div style="padding-top:0px;">Discount price: @(saleItem.Discount?.Amount/100 * saleItem.Price)</div>
+            }
+            <div class="" style="color:#CC0000; font-size: 1em;">
                 <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
                 <span id="@saleItem.ID-currency">@saleItem.Currency</span>
             </div>
         </div>
-        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
-            <div style="padding-top:20px;">@saleItem.Description</div>
-        </div>
 
-        @if (User.Identity.IsAuthenticated)
+        @* @if (User.Identity.IsAuthenticated)
         {
             <div class="col-sm-12 col-md-3  col-lg-3  col-xl-2">
                 <div class="form-group d-none d-lg-block" style="text-align:center;">
@@ -86,7 +92,7 @@
                     </div>
                 </div>
             </div>
-        }
+        } *@
     </div>
     <hr />
 }
