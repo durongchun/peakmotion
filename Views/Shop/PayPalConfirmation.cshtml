@@ -1,0 +1,13 @@
+@model peakmotion.ViewModels.PayPalConfirmationVM
+@{
+    ViewData["Title"] = "Payment Confirmation";
+}
+
+<h2>Payment Confirmation</h2>
+<div>
+    <p>Thank you for your payment!</p>
+    <p>Transaction ID: @Model.TransactionId</p>
+    <p>Amount Paid: $@Model.Amount.ToString("F2") @Model.Currency</p>
+    <p>Payer Name: @Model.PayerName</p>
+    <p>Email: @Model.Email</p>
+</div>

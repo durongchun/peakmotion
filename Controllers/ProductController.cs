@@ -8,9 +8,9 @@ namespace peakmotion.Controllers;
 
 public class ProductController : Controller
 {
-    private readonly ProductRepository _productRepo;
+    private readonly ProductRepo _productRepo;
 
-    public ProductController(ProductRepository productRepo)
+    public ProductController(ProductRepo productRepo)
     {
         _productRepo = productRepo;
     }

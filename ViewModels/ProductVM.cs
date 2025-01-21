@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 using peakmotion.Models;
 
@@ -7,16 +8,23 @@ namespace peakmotion.ViewModels
     {
         public int ID { get; set; }
 
-        [Display(Name = "Name")]
-        public string Name { get; set; }
+        [Display(Name = "Product Name")]
+        public string ProductName { get; set; }
 
         [Display(Name = "Description")]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
         [Display(Name = "Price")]
         [DisplayFormat(DataFormatString = "${0:C} CAD")]
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
+
+        [Display(Name = "Currency")]
+        public string Currency { get; set; }
+
+        [Display(Name = "Image")]
+        public string Image { get; set; }
+
 
         [Display(Name = "Quantity")]
         public int Quantity { get; set; }
@@ -27,8 +35,8 @@ namespace peakmotion.ViewModels
         [Display(Name = "Is Membership Product")]
         public bool IsMembershipProduct { get; set; }
 
-        [Display(Name = "Image")]
-        public ICollection<ProductImage>? ProductImages { get; set; }
+        // [Display(Name = "Image")]
+        // public ICollection<ProductImage>? ProductImages { get; set; }
 
         public decimal? Discount { get; set; }
 
@@ -36,3 +44,4 @@ namespace peakmotion.ViewModels
 
     }
 }
+

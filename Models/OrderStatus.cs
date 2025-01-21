@@ -9,7 +9,7 @@ public partial class OrderStatus
 
     public string Orderstate { get; set; } = null!;
 
-    public int? Fkoderid { get; set; }
+    public int? Fkorderid { get; set; }
 
-    public virtual Order? Fkoder { get; set; }
+    public virtual Order? Fkorder { get; set; }
 }

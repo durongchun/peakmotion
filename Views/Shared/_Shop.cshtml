@@ -1,0 +1,158 @@
+﻿@model IEnumerable<peakmotion.ViewModels.ProductVM>
+
+@foreach (var saleItem in Model)
+{
+    <div class="row">
+        <div class="col-sm-1  col-lg-1  col-xl-1  col-xl-1"></div>
+        <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
+            <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" />
+
+            <div class="" style="color:#CC0000; font-size: 1.5em;text-align: center;">
+                <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
+                <span id="@saleItem.ID-currency">@saleItem.Currency</span>
+            </div>
+        </div>
+        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
+            <div style="padding-top:20px;">@saleItem.Description</div>
+        </div>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="col-sm-12 col-md-3  col-lg-3  col-xl-2">
+                <div class="form-group d-none d-lg-block" style="text-align:center;">
+                    <div class="row">
+                        <div class="col">
+                            <button id="@saleItem.ID-add-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="margin-top:20px; border-color:#6E0B14;
+                                           background-color: #6E0B14; width:152px;">
+                                Add To Cart
+                            </button>
+                        </div>
+                        <div class="col">
+                            <button id="@saleItem.ID-subtract-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="margin-top:3px; border-color:#A1A1A1;
+                                           background-color: #A1A1A1; width:152px;">
+                                Remove from cart
+                            </button>
+                        </div>
+                        <div class="col">
+                            <table class="table">
+                                <thead>
+                                    <tr><th><span style="color:darkred;">Qty</span></th>
+                                        <th><span style="color:darkred;">Amount</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span id="@saleItem.ID-quantity-lg" class="quantity-lg">0</span></td>
+                                        <td>$<span id="@saleItem.ID-amount-lg" class="amount-lg">0</span> @saleItem.Currency</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-lg-12 col-xl-12 col-xl-12">
+                <div class="d-sm-block d-md-block d-none d-lg-none d-xl-none" style="">
+                    <div class="row">
+                        <div class="col-sm-4" style="text-align:center;margin-top: 40px;">
+                            <button id="@saleItem.ID-add-sm" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="border-color:#6E0B14; background-color: #6E0B14; width:152px;">
+                                Add To Cart
+                            </button>
+                        </div>
+                        <div class="col-sm-4" style="text-align:center;margin-top: 40px;">
+                            <button id="@saleItem.ID-subtract-sm" class="btn btn-primary" onclick="updateShoppingCart(event)"
+                                    style="border-color:#545454; background-color: #545454; width:152px;">
+                                Remove To Cart
+                            </button>
+                        </div>
+                        <div class="col-sm-4" style="text-align:center;">
+                            <table class="table">
+                                <thead>
+                                    <tr><th><span style="color:darkred;">Qty</span></th>
+                                        <th><span style="color:darkred;">Amount</span></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span id="@saleItem.ID-quantity-sm">0</span></td>
+                                        <td>$<span id="@saleItem.ID-amount-sm">0</span> @saleItem.Currency</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <hr />
+}
+
+<script>
+    function updateShoppingCart(event) {
+        var clickedId = event.target.id;
+        var elementIdSplit = clickedId.split('-');
+        var id = elementIdSplit[0];
+        var action = elementIdSplit[1];
+        var buttonType = elementIdSplit[2];
+
+        ChangeCart(id, action, buttonType);
+    }
+
+    function ChangeCart(clickedId, action, buttonType)
+    {
+        var itemPriceId = "#" + clickedId + "-itemPrice";
+        var cartQtyLgId = "#" + clickedId + "-quantity-lg";
+        var cartQtySmId = "#" + clickedId + "-quantity-sm";
+        var cartAmtLgId = "#" + clickedId + "-amount-lg";
+        var cartAmtSmId = "#" + clickedId + "-amount-sm";
+
+        var quantity = $(cartQtyLgId).html();
+
+        if (action=="add") {
+            quantity++;
+        } else {
+            quantity--;
+            if (quantity < 0) {
+                quantity = 0;
+            }
+        }
+
+        $(cartQtyLgId).text(quantity);
+        $(cartQtySmId).text(quantity);
+
+        //Calculate new amount
+        var amount = $(itemPriceId).html();
+
+        var newAmount = (amount * quantity).toFixed(2);
+        
+        $(cartAmtLgId).text(newAmount);
+        $(cartAmtSmId).text(newAmount);
+
+        var totalItemsId = "#totalItems";
+        var totalAmountId = "#totalAmount";
+
+        //Calculate totals
+        var totalQuantity = 0;
+        $('.quantity-lg').each(function () {
+            var thisQuantity = $(this).html();
+            totalQuantity += parseInt(thisQuantity);
+        });
+        var totalAmount = 0.00;
+        $('.amount-lg').each(function () {
+            var thisAmount = $(this).html();
+            totalAmount += parseFloat(thisAmount);
+        });
+
+        $("#totalItems").text(totalQuantity);
+        $("#totalAmount").text(totalAmount.toFixed(2));
+    }
+</script>
+
+
+
+
+
