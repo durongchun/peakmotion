@@ -8,30 +8,38 @@ namespace peakmotion.ViewModels
     {
         public int ID { get; set; }
 
-        [Display(Name = "Product Name")]
+        [Display(Name = "Name")]
         public string ProductName { get; set; }
 
         [Display(Name = "Description")]
         public string Description { get; set; } = String.Empty;
 
         [Display(Name = "Price")]
-        [DisplayFormat(DataFormatString = "${0:C} CAD")]
+        [DisplayFormat(DataFormatString = "{0:C} CAD")]
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; } = 0;
 
         [Display(Name = "Currency")]
         public string Currency { get; set; } = "CAD";
 
-        [Display(Name = "Quantity")]
+        [Display(Name = "Qty")]
         public int Quantity { get; set; } = 0;
 
         [Display(Name = "Is Featured")]
         public bool IsFeatured { get; set; } = false;
 
-        [Display(Name = "Is Membership Product")]
+        [Display(Name = "Membership Product")]
         public bool IsMembershipProduct { get; set; } = false;
 
         public Discount? Discount { get; set; }
+
+        [Display(Name = "Discount")]
+        public string? DiscountLabel =>
+         Discount != null && Discount.Description == "discount"
+             ? $"${Discount.Amount} OFF"
+             : Discount != null && Discount.Description == "free shipping"
+             ? "Free shipping"
+             : null;
 
         public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
 
