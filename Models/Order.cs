@@ -9,9 +9,9 @@ public partial class Order
 
     public DateOnly Orderdate { get; set; }
 
-    public DateOnly Shippeddate { get; set; }
+    public DateOnly? Shippeddate { get; set; }
 
-    public DateOnly Deliverydate { get; set; }
+    public DateOnly? Deliverydate { get; set; }
 
     public long Pptransactionid { get; set; }
 

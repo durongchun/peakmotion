@@ -15,15 +15,9 @@ public partial class PeakmotionContext : DbContext
     {
     }
 
-    public virtual DbSet<Cart> Carts { get; set; }
-
-    public virtual DbSet<CartProduct> CartProducts { get; set; }
-
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Discount> Discounts { get; set; }
-
-    public virtual DbSet<Member> Members { get; set; }
 
     public virtual DbSet<Order> Orders { get; set; }
 
@@ -37,55 +31,16 @@ public partial class PeakmotionContext : DbContext
 
     public virtual DbSet<ProductImage> ProductImages { get; set; }
 
-    public virtual DbSet<Review> Reviews { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<Wishlist> Wishlists { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=127.0.0.1;Port=5432;Database=peakmotion;Username=postgres;Password=P@ssw0rd!;TrustServerCertificate=True;");
+        => optionsBuilder.UseNpgsql("Host=127.0.0.1;Port=5432;Database=peakmotion;Username=postgres;Password=P@ssw0rd!");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Cart>(entity =>
-        {
-            entity.HasKey(e => e.Pkcartid).HasName("Cart_pkey");
-
-            entity.ToTable("Cart");
-
-            entity.Property(e => e.Pkcartid).HasColumnName("pkcartid");
-            entity.Property(e => e.Fkemailid).HasColumnName("fkemailid");
-            entity.Property(e => e.Qty).HasColumnName("qty");
-
-            entity.HasOne(d => d.Fkemail).WithMany(p => p.Carts)
-                .HasForeignKey(d => d.Fkemailid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Cart_fkemailid_fkey");
-        });
-
-        modelBuilder.Entity<CartProduct>(entity =>
-        {
-            entity.HasKey(e => e.Pkcartproductcid).HasName("Cart_Product_pkey");
-
-            entity.ToTable("Cart_Product");
-
-            entity.Property(e => e.Pkcartproductcid).HasColumnName("pkcartproductcid");
-            entity.Property(e => e.Fkcartid).HasColumnName("fkcartid");
-            entity.Property(e => e.Fkproductid).HasColumnName("fkproductid");
-
-            entity.HasOne(d => d.Fkcart).WithMany(p => p.CartProducts)
-                .HasForeignKey(d => d.Fkcartid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Cart_Product_fkcartid_fkey");
-
-            entity.HasOne(d => d.Fkproduct).WithMany(p => p.CartProducts)
-                .HasForeignKey(d => d.Fkproductid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Cart_Product_fkproductid_fkey");
-        });
-
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Pkcategoryid).HasName("Category_pkey");
@@ -115,21 +70,6 @@ public partial class PeakmotionContext : DbContext
                 .HasMaxLength(255)
                 .HasColumnName("description");
             entity.Property(e => e.Expirydate).HasColumnName("expirydate");
-        });
-
-        modelBuilder.Entity<Member>(entity =>
-        {
-            entity.HasKey(e => e.Pkemailid).HasName("Member_pkey");
-
-            entity.ToTable("Member");
-
-            entity.Property(e => e.Pkemailid).HasColumnName("pkemailid");
-            entity.Property(e => e.Fkuserid).HasColumnName("fkuserid");
-            entity.Property(e => e.Lastloggedin).HasColumnName("lastloggedin");
-
-            entity.HasOne(d => d.Fkuser).WithMany(p => p.Members)
-                .HasForeignKey(d => d.Fkuserid)
-                .HasConstraintName("Member_fkuserid_fkey");
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -182,14 +122,14 @@ public partial class PeakmotionContext : DbContext
             entity.ToTable("OrderStatus");
 
             entity.Property(e => e.Pkorderstatusid).HasColumnName("pkorderstatusid");
-            entity.Property(e => e.Fkoderid).HasColumnName("fkoderid");
+            entity.Property(e => e.Fkorderid).HasColumnName("fkorderid");
             entity.Property(e => e.Orderstate)
                 .HasMaxLength(50)
                 .HasColumnName("orderstate");
 
-            entity.HasOne(d => d.Fkoder).WithMany(p => p.OrderStatuses)
-                .HasForeignKey(d => d.Fkoderid)
-                .HasConstraintName("OrderStatus_fkoderid_fkey");
+            entity.HasOne(d => d.Fkorder).WithMany(p => p.OrderStatuses)
+                .HasForeignKey(d => d.Fkorderid)
+                .HasConstraintName("OrderStatus_fkorderid_fkey");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -215,7 +155,6 @@ public partial class PeakmotionContext : DbContext
 
             entity.HasOne(d => d.Fkdiscount).WithMany(p => p.Products)
                 .HasForeignKey(d => d.Fkdiscountid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Product_fkdiscountid_fkey");
         });
 
@@ -262,25 +201,6 @@ public partial class PeakmotionContext : DbContext
                 .HasConstraintName("ProductImage_fkproductid_fkey");
         });
 
-        modelBuilder.Entity<Review>(entity =>
-        {
-            entity.HasKey(e => e.Pkreviewid).HasName("Review_pkey");
-
-            entity.ToTable("Review");
-
-            entity.Property(e => e.Pkreviewid).HasColumnName("pkreviewid");
-            entity.Property(e => e.Comment)
-                .HasMaxLength(255)
-                .HasColumnName("comment");
-            entity.Property(e => e.Fkproductid).HasColumnName("fkproductid");
-            entity.Property(e => e.Rating).HasColumnName("rating");
-
-            entity.HasOne(d => d.Fkproduct).WithMany(p => p.Reviews)
-                .HasForeignKey(d => d.Fkproductid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Review_fkproductid_fkey");
-        });
-
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Pkuserid).HasName("User_pkey");
@@ -305,6 +225,7 @@ public partial class PeakmotionContext : DbContext
             entity.Property(e => e.Firstname)
                 .HasMaxLength(30)
                 .HasColumnName("firstname");
+            entity.Property(e => e.Lastloggedin).HasColumnName("lastloggedin");
             entity.Property(e => e.Lastname)
                 .HasMaxLength(30)
                 .HasColumnName("lastname");
@@ -329,18 +250,18 @@ public partial class PeakmotionContext : DbContext
             entity.ToTable("Wishlist");
 
             entity.Property(e => e.Pkwishlistid).HasColumnName("pkwishlistid");
-            entity.Property(e => e.Fkemailid).HasColumnName("fkemailid");
             entity.Property(e => e.Fkproductid).HasColumnName("fkproductid");
-
-            entity.HasOne(d => d.Fkemail).WithMany(p => p.Wishlists)
-                .HasForeignKey(d => d.Fkemailid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Wishlist_fkemailid_fkey");
+            entity.Property(e => e.Fkuserid).HasColumnName("fkuserid");
 
             entity.HasOne(d => d.Fkproduct).WithMany(p => p.Wishlists)
                 .HasForeignKey(d => d.Fkproductid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Wishlist_fkproductid_fkey");
+
+            entity.HasOne(d => d.Fkuser).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.Fkuserid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Wishlist_fkuserid_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);
