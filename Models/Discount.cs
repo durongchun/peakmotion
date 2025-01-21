@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace peakmotion.Models;
 
@@ -12,8 +11,7 @@ public partial class Discount
 
     public decimal Amount { get; set; }
 
-    [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy, HH:mm}")]
-    public DateTime Expirydate { get; set; } = new DateTime();
+    public DateOnly Expirydate { get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

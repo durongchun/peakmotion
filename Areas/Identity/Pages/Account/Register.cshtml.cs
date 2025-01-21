@@ -199,7 +199,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                  var customUser = new User
+                  var customUser = new Pmuser
                     {
                         Firstname = Input.FirstName,
                         Lastname = Input.LastName,
@@ -210,10 +210,9 @@ namespace peakmotion.Areas.Identity.Pages.Account
                         Postalcode = Input.PostalCode,
                         Country = Input.Country,
                         Email = Input.Email,
-                        Usertype = "Customer",
                         Lastloggedin = DateOnly.FromDateTime(DateTime.Now)
                     };
-                    _context.Users.Add(customUser);
+                     _context.Pmusers.Add(customUser);
                     await _context.SaveChangesAsync();
 
                 if (result.Succeeded)

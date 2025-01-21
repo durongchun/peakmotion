@@ -15,9 +15,9 @@ public partial class Order
 
     public long Pptransactionid { get; set; }
 
-    public int? Fkuserid { get; set; }
+    public int? Fkpmuserid { get; set; }
 
-    public virtual User? Fkuser { get; set; }
+    public virtual Pmuser? Fkpmuser { get; set; }
 
     public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 

@@ -7,11 +7,11 @@ public partial class Wishlist
 {
     public int Pkwishlistid { get; set; }
 
-    public int Fkuserid { get; set; }
+    public int Fkpmuserid { get; set; }
 
     public int Fkproductid { get; set; }
 
-    public virtual Product Fkproduct { get; set; } = null!;
+    public virtual Pmuser Fkpmuser { get; set; } = null!;
 
-    public virtual User Fkuser { get; set; } = null!;
+    public virtual Product Fkproduct { get; set; } = null!;
 }
