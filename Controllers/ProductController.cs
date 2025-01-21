@@ -12,9 +12,9 @@ namespace peakmotion.Controllers;
 public class ProductController : Controller
 {
     private readonly ProductRepo _productRepo;
-    private readonly ApplicationDbContext _context;
+    private readonly PeakmotionContext _context;
 
-    public ProductController(ProductRepo productRepo, ApplicationDbContext context)
+    public ProductController(ProductRepo productRepo, PeakmotionContext context)
     {
         _productRepo = productRepo;
         _context = context;
