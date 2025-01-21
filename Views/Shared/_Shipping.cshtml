@@ -5,7 +5,9 @@
     <div class="row">
         <div class="col-sm-1  col-lg-1  col-xl-1  col-xl-1"></div>
         <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
-            <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" />
+            @if (saleItem.Images.Count() > 0){
+             <img src="~/images/@saleItem.Images.First()" alt="Pack of cards" style="max-width: 100%;" />
+            }
 
             <div class="" style="color:#CC0000; font-size: 1.5em;text-align: center;">
                 <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
