@@ -1,62 +1,16 @@
-﻿@foreach (var saleItem in Model)
-{
-    <div class="row">
-        <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
-            @* <img src="~/images/@saleItem.Image" alt="Pack of cards" style="max-width: 100%;" /> *@
-             @foreach (var category in @saleItem.Categories) 
-            {
-                <div style="padding-top:0px;">@category.Categoryname</div>
-            }
-        </div>
-        <div class="col-sm-8  col-lg-5  col-xl-5  col-xl-6">
-            <div style="padding-top:0px;">@saleItem.ProductName</div>
-            <div style="padding-bottom:20px;">@saleItem.Description</div>
-            @if (@saleItem.Discount != null) {
-                <div style="padding-top:0px;">Discount price: @(saleItem.Discount?.Amount/100 * saleItem.Price)</div>
-            }
-            <div class="" style="color:#CC0000; font-size: 1em;">
-                <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
-                <span id="@saleItem.ID-currency">@saleItem.Currency</span>
-            </div>
-        </div>
+﻿
+<div class="product-grid">
+    @foreach (var saleItem in Model)
+    {
+        <partial name="_ProductImage" for="@saleItem" />
+    }
+</div>
 
-        @* @if (User.Identity.IsAuthenticated)
-        {
-            <div class="col-sm-12 col-md-3  col-lg-3  col-xl-2">
-                <div class="form-group d-none d-lg-block" style="text-align:center;">
-                    <div class="row">
-                        <div class="col">
-                            <button id="@saleItem.ID-add-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="margin-top:20px; border-color:#6E0B14;
-                                           background-color: #6E0B14; width:152px;">
-                                Add To Cart
-                            </button>
-                        </div>
-                        <div class="col">
-                            <button id="@saleItem.ID-subtract-lg" class="btn btn-primary" onclick="updateShoppingCart(event)"
-                                    style="margin-top:3px; border-color:#A1A1A1;
-                                           background-color: #A1A1A1; width:152px;">
-                                Remove from cart
-                            </button>
-                        </div>
-                        <div class="col">
-                            <table class="table">
-                                <thead>
-                                    <tr><th><span style="color:darkred;">Qty</span></th>
-                                        <th><span style="color:darkred;">Amount</span></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span id="@saleItem.ID-quantity-lg" class="quantity-lg">0</span></td>
-                                        <td>$<span id="@saleItem.ID-amount-lg" class="amount-lg">0</span> @saleItem.Currency</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                         } *@
-    </div>
-    <hr />
-}
-
-
+<style>
+    .product-grid {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        row-gap: 1rem;
+    }
+</styles>
