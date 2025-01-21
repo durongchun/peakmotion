@@ -17,8 +17,8 @@ public partial class ProductDetailViewModel
 
     public int Fkcategoryid { get; set; }
 
-    public virtual Category Fkcategory { get; set; } = null!;
+    // public Category Fkcategory { get; set; } = null!;
 
-    public virtual ICollection<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+    public IEnumerable<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 
 }

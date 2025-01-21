@@ -8,3 +8,4 @@ obj/peakmotion.csproj.nuget.dgspec.json
 obj/peakmotion.csproj.nuget.g.props
 obj/project.assets.json
 obj/project.nuget.cache
+.vscode/

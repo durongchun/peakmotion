@@ -33,7 +33,7 @@ namespace peakmotion.ViewModels
 
         public Discount? Discount { get; set; }
 
-        public virtual ICollection<Category> Categories { get; set; } = new List<Category>();
+        public ICollection<Category> Categories { get; set; } = new List<Category>();
 
         [Display(Name = "Images")]
         public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
