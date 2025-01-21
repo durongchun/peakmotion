@@ -1,16 +1,118 @@
-﻿
-<div class="product-grid">
-    @foreach (var saleItem in Model)
-    {
-        <partial name="_ProductImage" for="@saleItem" />
-    }
+﻿<div class="product-list-header">   
+    <div class="product-list-header-overlay">
+        <p>Home / Womens</p>
+        <h2>Women's Apparel</h2>
+    </div>
 </div>
-
+<div class="product-list-summary">
+    <div>
+        <p>112 results</p>
+        <p>Sorted by Price </p>
+    </div>
+    <div>
+        @{
+            var filter = new List<string> {"Women", "Tops"};
+        }
+        @foreach (var item in filter)
+        {
+            <partial name="Filter/_FilteredButton" for="@item" />
+        }
+        <button class="filter-clear">Clear All</button>
+    </div>
+</div>
+<section class="product-container">
+    <aside class="product-filters">
+        <div class="product-filter-group">
+            <h5>Category</h5>
+            <div>
+                <input type="checkbox" id="top" name="top" />
+                <label for="top">Tops</label>
+            </div>
+            <div>
+                <input type="checkbox" id="bottom" name="bottom" />
+                <label for="bottom">Bottoms</label>
+            </div>
+        </div>
+    </aside>
+    <section class="product-grid">
+        @foreach (var saleItem in Model)
+        {
+            <partial name="Product/_ProductCard" for="@saleItem" />
+        }
+    </section>
+</section>
 <style>
+    p {
+        margin: 0;
+    }
+    .product-list-header {
+        width: 100%;
+        height: 300px;
+        background-image: url("images/pexels-taryn-elliott-4840243.jpg");
+        background-size: 100% auto;
+        background-position: 0% 50%;
+        overflow: hidden;
+        div {
+            padding: 1rem;
+        }
+        p, h2 {
+            color: white;
+        }
+    }
+    .product-list-header-overlay {
+        background-color: rgba(0, 0, 0, 0.3);
+        width: 100%;
+        height: 100%;
+        padding-right: 3rem;
+    }
+    .product-list-summary {        
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem;
+        div:first-child {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            border-bottom: 1px solid black;
+        }
+        div:nth-child(2) {
+            display: flex;
+            gap: 1rem;
+        }
+    }
+    .product-container {
+        padding: 1rem;
+        display: flex;
+    }
+    .product-filters {
+        width: 200px;
+    }
+    .product-filter-group {
+        display: flex;
+        flex-direction: column;
+    }
     .product-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         row-gap: 1rem;
+    }
+    .filter-clear:hover {
+        opacity: 0.5;
+    }
+    .filter-clear {
+        padding: 0.25rem;
+        margin-bottom: 0;
+        font-size: 0.7rem;
+        font-weight: 500;
+        line-clamp: 1;
+        text-overflow: ellipsis; 
+        overflow: hidden; 
+        white-space: nowrap;
+        text-decoration: underline;
+        text-transform: uppercase;
+        border: none; 
+        background-color: transparent;
     }
 </styles>
