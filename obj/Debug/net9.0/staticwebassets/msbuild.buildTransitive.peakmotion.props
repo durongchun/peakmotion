@@ -1,3 +1,3 @@
 ﻿<Project>
-  <Import Project="../buildMultiTargeting/peakmotion.props" />
+  <Import Project="..\buildMultiTargeting\peakmotion.props" />
 </Project>

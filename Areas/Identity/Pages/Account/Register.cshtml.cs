@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using peakmotion.Data;
 using peakmotion.Data.Services;
 using peakmotion.Models;
 using static peakmotion.Data.Services.ReCAPTCHA;
@@ -31,9 +32,10 @@ namespace peakmotion.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        // private readonly IEmailSender _emailSender;
+        private readonly IEmailSender _emailSender;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
+        private readonly PeakmotionContext _context;
 
 
         public RegisterModel(
@@ -41,18 +43,20 @@ namespace peakmotion.Areas.Identity.Pages.Account
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            // IEmailSender emailSender,
+            IEmailSender emailSender,
             IEmailService emailService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            PeakmotionContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
             _logger = logger;
-            // _emailSender = emailSender;
+            _emailSender = emailSender;
             _emailService = emailService;
             _configuration = configuration;
+            _context = context;
         }
 
         /// <summary>
@@ -80,6 +84,48 @@ namespace peakmotion.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+            //first name of the user
+            [Required]
+            [Display(Name ="First Name")]
+            public string FirstName{get; set;}
+
+
+            //last name of the user
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName{get;set;}
+
+            //phone number of user
+            [Required]
+            [Display(Name ="Phone")]
+            public string Phone{get; set;}
+
+            //address of the user
+            [Required]
+            [Display(Name ="Address")]
+            public string Address{get; set;}
+
+            //city
+            [Required]
+            [Display(Name ="City")]
+            public string City{get; set;}
+
+            //provience
+            [Required]
+            [Display(Name ="Province")]
+            public string Province{get; set;}
+            
+             //postal code
+            [Required]
+            [Display(Name ="Postal Code")]
+            public string PostalCode{get; set;}
+
+             //country
+            [Required]
+            [Display(Name ="Country")]
+            public string Country{get; set;}
+
+            
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -107,6 +153,16 @@ namespace peakmotion.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            
+
+             //user type
+            public string UserType{get; set;}
+
+            
+
+             //Last LoggedIn
+            public string LastLoggedIn{get; set;}
         }
 
 
@@ -119,7 +175,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+                returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             string captchaResponse = Request.Form["g-Recaptcha-Response"];
@@ -127,7 +183,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
             ReCaptchaValidationResult resultCaptcha =
                 ReCaptchaValidator.IsValid(secret, captchaResponse);
 
-            // Invalidate the form if the captcha is invalid.
+            //Invalidate the form if the captcha is invalid.
             if (!resultCaptcha.Success)
             {
                 ViewData["SiteKey"] = _configuration["Recaptcha:SiteKey"];
@@ -138,14 +194,34 @@ namespace peakmotion.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+               
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                  var customUser = new User
+                    {
+                        Firstname = Input.FirstName,
+                        Lastname = Input.LastName,
+                        Phone = Input.Phone,
+                        Address = Input.Address,
+                        City = Input.City,
+                        Province = Input.Province,
+                        Postalcode = Input.PostalCode,
+                        Country = Input.Country,
+                        Email = Input.Email,
+                        Usertype = "Customer",
+                        Lastloggedin = DateOnly.FromDateTime(DateTime.Now)
+                    };
+                    _context.Users.Add(customUser);
+                    await _context.SaveChangesAsync();
 
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User created a new account with password.");
+
+                   
+
+                    _logger.LogInformation("User created a new account with password.");                  
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -156,8 +232,8 @@ namespace peakmotion.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    // await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                    //     $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
                     var response = await _emailService.SendSingleEmail(new ComposeEmailModel
                     {
@@ -170,7 +246,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
-                        // return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
+                        return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
                         return RedirectToPage("RegisterConfirmation",
                                     new
                                     {
