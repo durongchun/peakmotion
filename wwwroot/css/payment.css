@@ -1,0 +1,42 @@
+.shippingOrderSummary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5rem;
+}
+
+#name,
+#addressDetail,
+#provincePoscode,
+#giftApply {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+#apply {
+  margin-top: 25px;
+}
+
+input {
+  height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 250px;
+}
+
+button {
+  font-size: 16px;
+  color: #fff;
+  background-color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 184px;
+  height: 38px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
