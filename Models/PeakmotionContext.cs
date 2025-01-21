@@ -15,6 +15,18 @@ public partial class PeakmotionContext : DbContext
     {
     }
 
+    public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+
+    public virtual DbSet<AspNetRoleClaim> AspNetRoleClaims { get; set; }
+
+    public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
+
+    public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+
+    public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+
+    public virtual DbSet<AspNetUserToken> AspNetUserTokens { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Discount> Discounts { get; set; }
@@ -25,13 +37,13 @@ public partial class PeakmotionContext : DbContext
 
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
 
+    public virtual DbSet<Pmuser> Pmusers { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductCategory> ProductCategories { get; set; }
 
     public virtual DbSet<ProductImage> ProductImages { get; set; }
-
-    public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<Wishlist> Wishlists { get; set; }
 
@@ -41,6 +53,74 @@ public partial class PeakmotionContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AspNetRole>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedName, "RoleNameIndex").IsUnique();
+
+            entity.Property(e => e.Name).HasMaxLength(256);
+            entity.Property(e => e.NormalizedName).HasMaxLength(256);
+        });
+
+        modelBuilder.Entity<AspNetRoleClaim>(entity =>
+        {
+            entity.HasIndex(e => e.RoleId, "IX_AspNetRoleClaims_RoleId");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.AspNetRoleClaims).HasForeignKey(d => d.RoleId);
+        });
+
+        modelBuilder.Entity<AspNetUser>(entity =>
+        {
+            entity.HasIndex(e => e.NormalizedEmail, "EmailIndex");
+
+            entity.HasIndex(e => e.NormalizedUserName, "UserNameIndex").IsUnique();
+
+            entity.Property(e => e.Email).HasMaxLength(256);
+            entity.Property(e => e.NormalizedEmail).HasMaxLength(256);
+            entity.Property(e => e.NormalizedUserName).HasMaxLength(256);
+            entity.Property(e => e.UserName).HasMaxLength(256);
+
+            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+                .UsingEntity<Dictionary<string, object>>(
+                    "AspNetUserRole",
+                    r => r.HasOne<AspNetRole>().WithMany().HasForeignKey("RoleId"),
+                    l => l.HasOne<AspNetUser>().WithMany().HasForeignKey("UserId"),
+                    j =>
+                    {
+                        j.HasKey("UserId", "RoleId");
+                        j.ToTable("AspNetUserRoles");
+                        j.HasIndex(new[] { "RoleId" }, "IX_AspNetUserRoles_RoleId");
+                    });
+        });
+
+        modelBuilder.Entity<AspNetUserClaim>(entity =>
+        {
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserClaims_UserId");
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserClaims).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserLogin>(entity =>
+        {
+            entity.HasKey(e => new { e.LoginProvider, e.ProviderKey });
+
+            entity.HasIndex(e => e.UserId, "IX_AspNetUserLogins_UserId");
+
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.ProviderKey).HasMaxLength(128);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserLogins).HasForeignKey(d => d.UserId);
+        });
+
+        modelBuilder.Entity<AspNetUserToken>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.LoginProvider, e.Name });
+
+            entity.Property(e => e.LoginProvider).HasMaxLength(128);
+            entity.Property(e => e.Name).HasMaxLength(128);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AspNetUserTokens).HasForeignKey(d => d.UserId);
+        });
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Pkcategoryid).HasName("Category_pkey");
@@ -80,14 +160,14 @@ public partial class PeakmotionContext : DbContext
 
             entity.Property(e => e.Pkorderid).HasColumnName("pkorderid");
             entity.Property(e => e.Deliverydate).HasColumnName("deliverydate");
-            entity.Property(e => e.Fkuserid).HasColumnName("fkuserid");
+            entity.Property(e => e.Fkpmuserid).HasColumnName("fkpmuserid");
             entity.Property(e => e.Orderdate).HasColumnName("orderdate");
             entity.Property(e => e.Pptransactionid).HasColumnName("pptransactionid");
             entity.Property(e => e.Shippeddate).HasColumnName("shippeddate");
 
-            entity.HasOne(d => d.Fkuser).WithMany(p => p.Orders)
-                .HasForeignKey(d => d.Fkuserid)
-                .HasConstraintName("Order_fkuserid_fkey");
+            entity.HasOne(d => d.Fkpmuser).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.Fkpmuserid)
+                .HasConstraintName("Order_fkpmuserid_fkey");
         });
 
         modelBuilder.Entity<OrderProduct>(entity =>
@@ -130,6 +210,45 @@ public partial class PeakmotionContext : DbContext
             entity.HasOne(d => d.Fkorder).WithMany(p => p.OrderStatuses)
                 .HasForeignKey(d => d.Fkorderid)
                 .HasConstraintName("OrderStatus_fkorderid_fkey");
+        });
+
+        modelBuilder.Entity<Pmuser>(entity =>
+        {
+            entity.HasKey(e => e.Pkpmuserid).HasName("PMUser_pkey");
+
+            entity.ToTable("PMUser");
+
+            entity.HasIndex(e => e.Email, "PMUser_email_key").IsUnique();
+
+            entity.Property(e => e.Pkpmuserid).HasColumnName("pkpmuserid");
+            entity.Property(e => e.Address)
+                .HasMaxLength(50)
+                .HasColumnName("address");
+            entity.Property(e => e.City)
+                .HasMaxLength(50)
+                .HasColumnName("city");
+            entity.Property(e => e.Country)
+                .HasMaxLength(30)
+                .HasColumnName("country");
+            entity.Property(e => e.Email)
+                .HasMaxLength(50)
+                .HasColumnName("email");
+            entity.Property(e => e.Firstname)
+                .HasMaxLength(30)
+                .HasColumnName("firstname");
+            entity.Property(e => e.Lastloggedin).HasColumnName("lastloggedin");
+            entity.Property(e => e.Lastname)
+                .HasMaxLength(30)
+                .HasColumnName("lastname");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(15)
+                .HasColumnName("phone");
+            entity.Property(e => e.Postalcode)
+                .HasMaxLength(15)
+                .HasColumnName("postalcode");
+            entity.Property(e => e.Province)
+                .HasMaxLength(30)
+                .HasColumnName("province");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -201,48 +320,6 @@ public partial class PeakmotionContext : DbContext
                 .HasConstraintName("ProductImage_fkproductid_fkey");
         });
 
-        modelBuilder.Entity<User>(entity =>
-        {
-            entity.HasKey(e => e.Pkuserid).HasName("User_pkey");
-
-            entity.ToTable("User");
-
-            entity.HasIndex(e => e.Email, "User_email_key").IsUnique();
-
-            entity.Property(e => e.Pkuserid).HasColumnName("pkuserid");
-            entity.Property(e => e.Address)
-                .HasMaxLength(50)
-                .HasColumnName("address");
-            entity.Property(e => e.City)
-                .HasMaxLength(50)
-                .HasColumnName("city");
-            entity.Property(e => e.Country)
-                .HasMaxLength(30)
-                .HasColumnName("country");
-            entity.Property(e => e.Email)
-                .HasMaxLength(50)
-                .HasColumnName("email");
-            entity.Property(e => e.Firstname)
-                .HasMaxLength(30)
-                .HasColumnName("firstname");
-            entity.Property(e => e.Lastloggedin).HasColumnName("lastloggedin");
-            entity.Property(e => e.Lastname)
-                .HasMaxLength(30)
-                .HasColumnName("lastname");
-            entity.Property(e => e.Phone)
-                .HasMaxLength(15)
-                .HasColumnName("phone");
-            entity.Property(e => e.Postalcode)
-                .HasMaxLength(15)
-                .HasColumnName("postalcode");
-            entity.Property(e => e.Province)
-                .HasMaxLength(30)
-                .HasColumnName("province");
-            entity.Property(e => e.Usertype)
-                .HasMaxLength(20)
-                .HasColumnName("usertype");
-        });
-
         modelBuilder.Entity<Wishlist>(entity =>
         {
             entity.HasKey(e => e.Pkwishlistid).HasName("Wishlist_pkey");
@@ -250,18 +327,18 @@ public partial class PeakmotionContext : DbContext
             entity.ToTable("Wishlist");
 
             entity.Property(e => e.Pkwishlistid).HasColumnName("pkwishlistid");
+            entity.Property(e => e.Fkpmuserid).HasColumnName("fkpmuserid");
             entity.Property(e => e.Fkproductid).HasColumnName("fkproductid");
-            entity.Property(e => e.Fkuserid).HasColumnName("fkuserid");
+
+            entity.HasOne(d => d.Fkpmuser).WithMany(p => p.Wishlists)
+                .HasForeignKey(d => d.Fkpmuserid)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Wishlist_fkpmuserid_fkey");
 
             entity.HasOne(d => d.Fkproduct).WithMany(p => p.Wishlists)
                 .HasForeignKey(d => d.Fkproductid)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Wishlist_fkproductid_fkey");
-
-            entity.HasOne(d => d.Fkuser).WithMany(p => p.Wishlists)
-                .HasForeignKey(d => d.Fkuserid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Wishlist_fkuserid_fkey");
         });
 
         OnModelCreatingPartial(modelBuilder);

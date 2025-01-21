@@ -5,11 +5,21 @@
     <div class="row">
     <div class="col-sm-1  col-lg-1  col-xl-1  col-xl-1"></div>
     <div class="col-sm-2  col-lg-2  col-xl-2  col-xl-2">
-        @if (saleItem.Images.Count() > 0)
-            {
-                <img src="~/images/@saleItem.Images.First()" alt="Pack of cards" style="max-width: 100%;" />
+        @{
+                var i = @saleItem;
+                var image = i.PrimaryImage != null ? i.PrimaryImage : i.Images.FirstOrDefault();
             }
-
+            @if (saleItem.PrimaryImage != null)
+            {
+                @if (image != null)
+                {
+                    <img src="~/images/@image" alt="Pack of cards" style="max-width: 100%;" />
+                }
+                else
+                {
+                    <div>add placeholder image</div>
+                }
+            }
             <div class="" style="color:#CC0000; font-size: 1.5em;text-align: center;">
                 <span>$</span><span id="@saleItem.ID-itemPrice">@saleItem.Price</span>
                 <span id="@saleItem.ID-currency">@saleItem.Currency</span>
