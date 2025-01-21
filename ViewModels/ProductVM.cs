@@ -38,6 +38,9 @@ namespace peakmotion.ViewModels
         [Display(Name = "Images")]
         public ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
 
+        [Display(Name = "Main Image")]
+        public ProductImage? PrimaryImage { get; set; }
+
     }
 }
 
