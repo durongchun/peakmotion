@@ -10,21 +10,64 @@ namespace peakmotion.Controllers
 {
     public class ShopController : Controller
     {
-        private readonly ProductRepo _productRepo;
+        private readonly ShopRepo _shopRepo;
         private readonly PeakmotionContext _context;
 
-        public ShopController(PeakmotionContext context, ProductRepo productRepo)
+        public ShopController(PeakmotionContext context, ShopRepo shopRepo)
         {
-            _productRepo = productRepo;
+            _shopRepo = shopRepo;
             _context = context;
         }
 
         // Action for displaying products
         public IActionResult Index()
         {
-            IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
-            return View("Index", products);
+            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
+            var shippingInfo = shippings.FirstOrDefault();
+            return View("Index", shippingInfo);
         }
+
+        //  public IActionResult Edit(int id)
+        // {
+        //     Sh? invoice = _context.Invoices
+        //                            .FirstOrDefault(e => e.Pkinvoicenum == id);
+
+        //     if (invoice == null)
+        //     {
+        //         return RedirectToAction("Index"
+        //                                 , new
+        //                                 {
+        //                                     message = "warning,Store not found " +
+        //                                                   $"(ID {invoice.Pkinvoicenum})"
+        //                                 });
+        //     }
+
+        //     return View(invoice);
+        // }
+        [HttpPost]
+        public IActionResult Edit(string firstname, string lastname, string phone, string address, string city,
+                                    string province, string postalcode, string country, string email)
+        {
+            string returnMessage = string.Empty;
+
+            try
+            {
+                // Save shipping information using the repository
+                _shopRepo.SaveShippingInfo(firstname, lastname, phone, address, city, province, postalcode, country, email);
+
+                // Success message
+                returnMessage = "Shipping information updated successfully!";
+            }
+            catch (Exception ex)
+            {
+                // Handle any errors during saving
+                returnMessage = "An error occurred while updating the shipping information: " + ex.Message;
+            }
+
+            // Redirect to the Index action with the return message as a query parameter
+            return RedirectToAction("Index", new { message = returnMessage });
+        }
+
 
 
         [HttpGet("Shop/PayPalConfirmation")]
@@ -73,4 +116,6 @@ namespace peakmotion.Controllers
             return View(modelVM);
         }
     }
+
+
 }

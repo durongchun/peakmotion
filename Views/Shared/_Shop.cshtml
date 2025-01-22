@@ -1,4 +1,4 @@
-﻿@model IEnumerable<peakmotion.ViewModels.ProductVM>
+﻿@model peakmotion.ViewModels.ShippingVM
 
 
  
@@ -8,47 +8,56 @@
             <H3>Contact</H3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email address">
+                @* <input type="email" id="email" name="email" placeholder="Enter your email address"> *@
+                @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
             </div>
             <div class="pt-2">
                 <h3>Shipping Address</h3>
                 <div id="name">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="firstname">First Name</label>
-                        <input type="text" id="firstname" name="firstname" placeholder="Enter your first name">
+                        @* <input type="text" id="firstname" name="firstname" placeholder="Enter your first name"> *@
+                         @Html.TextBoxFor(m => m.FirstName, new { @id = "firstname", @placeholder = "Enter your first name", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="lastname">Last Name</label>
-                        <input type="text" id="lastname" name="firstname" placeholder="Enter your last name">
+                        @* <input type="text" id="lastname" name="firstname" placeholder="Enter your last name"> *@
+                        @Html.TextBoxFor(m => m.LastName, new {@id = "lastname", @placeholder = "Enter your last name", @class = "form-control"} )
                     </div>
                 </div>
             
                 <div class="form-group d-flex flex-column mb-3">
                     <label for="phone">Phone Number</label>
-                    <input type="text" id="phone" name="phone" placeholder="">
+                    @* <input type="text" id="phone" name="phone" placeholder=""> *@
+                     @Html.TextBoxFor(m => m.PhoneNumber, new { @id = "phone", @placeholder = "", @class = "form-control" })
                 </div>
                 <div class="form-group d-flex flex-column mb-3">
                     <label for="address">Address</label>
-                    <input type="text" id="address" name="address" placeholder="">
+                    @* <input type="text" id="address" name="address" placeholder=""> *@
+                     @Html.TextBoxFor(m => m.Address, new { @id = "address", @placeholder = "", @class = "form-control" })
                 </div>
                 <div id="addressDetail">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="apptunit">Appt/Unit</label>
-                        <input type="text" id="apptunit" name="apptunit" placeholder="">
+                        @* <input type="text" id="apptunit" name="apptunit" placeholder=""> *@
+                         @Html.TextBoxFor(m => m.ApptUnit, new { @id = "apptunit", @placeholder = "", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="city">City</label>
-                        <input type="text" id="city" name="city" placeholder="">
+                        @* <input type="text" id="city" name="city" placeholder=""> *@
+                         @Html.TextBoxFor(m => m.City, new { @id = "city", @placeholder = "", @class = "form-control" })
                     </div>
                 </div>
                 <div id="provincePoscode">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="province">Province</label>
-                        <input type="text" id="province" name="province" placeholder="">
+                        @* <input type="text" id="province" name="province" placeholder=""> *@
+                         @Html.TextBoxFor(m => m.Province, new { @id = "province", @placeholder = "", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="postalcode">Postal Code</label>
-                        <input type="text" id="postalcode" name="postalcode" placeholder="">
+                        @* <input type="text" id="postalcode" name="postalcode" placeholder=""> *@
+                         @Html.TextBoxFor(m => m.PostalCode, new { @id = "postalcode", @placeholder = "", @class = "form-control" })
                     </div>
                 </div>
                 

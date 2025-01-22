@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ProductVM>
+﻿@model ShippingVM
 @using peakmotion.ViewModels;
 
 <link rel="stylesheet" href="~/css/payment.css">
@@ -15,12 +15,12 @@
 @if (User.Identity.IsAuthenticated)
 {
     string currency = "CAD";
-    ProductVM? firstRecord = Model.FirstOrDefault();
+    @* ProductVM? firstRecord = Model.FirstOrDefault();
 
     if (firstRecord != null)
     {
         currency = firstRecord.Currency;
-    }
+    } *@
     <div class="row">
     <div class="offset-9 col-sm-3 col-md-2">
         <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
