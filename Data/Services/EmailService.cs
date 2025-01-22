@@ -17,8 +17,8 @@ namespace peakmotion.Data.Services
         {
             var apiKey = _configuration["SendGrid:ApiKey"];
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("durongchun@hotmail.com",
-                                        "Lucy Du");
+            var from = new EmailAddress("osk.watson@gmail.com",
+                                        "Craig Watson");
             var to = new EmailAddress(payload.Email);
 
             var msg = MailHelper.CreateSingleEmail(from, to, payload.Subject,
