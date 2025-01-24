@@ -1,32 +1,47 @@
-using peakmotion.Data;
-using peakmotion.ViewModels;
-using peakmotion.Models;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace peakmotion.Repositories
 {
-  public class SessionRepo
-  {
-    private readonly HttpContext _context;
-
-    public SessionRepo(HttpContext context)
+    public class CookieRepo
     {
-      _context = context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public CookieRepo(IHttpContextAccessor httpContextAccessor, HttpContext context)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _context = context;
+        }
+
+        public void AddCookie(string key, string value, int expireDays = 7)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return;
+
+            var options = new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(expireDays), 
+                HttpOnly = true,  // avoid JS access for security
+                Secure = true,    // only HTTPS is allowed for security
+            };
+
+            context.Response.Cookies.Append(key, value, options);
+        }
+
+        public string GetCookie(string key)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return null;
+
+            return context.Request.Cookies[key];
+        }
+
+        public void RemoveCookie(string key)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return;
+
+            context.Response.Cookies.Delete(key);
+        }
     }
-
-    public void AddSession(){
-      //var session = HttpContext.Session.SessionID;
-      var sessionID = _context.Session;
-    }
-
-    // public void UpdateSession(_sessionID){
-    //   // Update session
-    // }
-
-    // public void DeleteSession(_sessionID){
-    //   // Delete session 
-    //   //HTTPContext.Session.Clear(_sessionID);
-    // }
-
-  }
 }
