@@ -2,15 +2,46 @@
 
 @{
     var products = (List<string>)ViewData["ProductData"]; 
+    decimal subtotal = 0;
+    decimal gstRate = 0.05m;  // 5% GST
+    decimal pstRate = 0.07m;  // 7% PST
+    decimal totalAmount = 0;
+
+    // Loop through products and calculate the subtotal
+    foreach (var product in products)
+    {
+        // Extract the price part assuming it is in the format "Price: $75.00"
+        var priceText = product.Contains("Price: ") ? product.Split("Price: ")[1] : product;
+        
+        // If price is formatted as "$75.00", remove "$" and parse it to decimal
+        if (priceText.StartsWith("$"))
+        {
+            priceText = priceText.Substring(1);  // Remove the "$"
+            if (decimal.TryParse(priceText, out decimal price))
+            {
+                subtotal += price;
+            }
+            else
+            {
+                // Handle the case when the price format is invalid
+                // Log or throw an exception
+            }
+        }
+    }
+
+    // Calculate GST and PST
+    decimal gstAmount = subtotal * gstRate;
+    decimal pstAmount = subtotal * pstRate;
+    decimal totalTax = gstAmount + pstAmount;
+    decimal totalPrice = subtotal + totalTax;
 }
- 
- <div class="shippingOrderSummary">
+
+<div class="shippingOrderSummary">
     <section>
         <form class="shipping-form" action="/shipping" method="POST">
-            <H3>Contact</H3>  
+            <h3>Contact</h3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
-                @* <input type="email" id="email" name="email" placeholder="Enter your email address"> *@
                 @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
             </div>
             <div class="pt-2">
@@ -18,55 +49,45 @@
                 <div id="name">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="firstname">First Name</label>
-                        @* <input type="text" id="firstname" name="firstname" placeholder="Enter your first name"> *@
-                         @Html.TextBoxFor(m => m.FirstName, new { @id = "firstname", @placeholder = "Enter your first name", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.FirstName, new { @id = "firstname", @placeholder = "Enter your first name", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="lastname">Last Name</label>
-                        @* <input type="text" id="lastname" name="firstname" placeholder="Enter your last name"> *@
-                        @Html.TextBoxFor(m => m.LastName, new {@id = "lastname", @placeholder = "Enter your last name", @class = "form-control"} )
+                        @Html.TextBoxFor(m => m.LastName, new { @id = "lastname", @placeholder = "Enter your last name", @class = "form-control" })
                     </div>
                 </div>
-            
+
                 <div class="form-group d-flex flex-column mb-3">
                     <label for="phone">Phone Number</label>
-                    @* <input type="text" id="phone" name="phone" placeholder=""> *@
-                     @Html.TextBoxFor(m => m.PhoneNumber, new { @id = "phone", @placeholder = "", @class = "form-control" })
+                    @Html.TextBoxFor(m => m.PhoneNumber, new { @id = "phone", @placeholder = "", @class = "form-control" })
                 </div>
                 <div class="form-group d-flex flex-column mb-3">
                     <label for="address">Address</label>
-                    @* <input type="text" id="address" name="address" placeholder=""> *@
-                     @Html.TextBoxFor(m => m.Address, new { @id = "address", @placeholder = "", @class = "form-control" })
+                    @Html.TextBoxFor(m => m.Address, new { @id = "address", @placeholder = "", @class = "form-control" })
                 </div>
                 <div id="addressDetail">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="apptunit">Appt/Unit</label>
-                        @* <input type="text" id="apptunit" name="apptunit" placeholder=""> *@
-                         @Html.TextBoxFor(m => m.ApptUnit, new { @id = "apptunit", @placeholder = "", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.ApptUnit, new { @id = "apptunit", @placeholder = "", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="city">City</label>
-                        @* <input type="text" id="city" name="city" placeholder=""> *@
-                         @Html.TextBoxFor(m => m.City, new { @id = "city", @placeholder = "", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.City, new { @id = "city", @placeholder = "", @class = "form-control" })
                     </div>
                 </div>
                 <div id="provincePoscode">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="province">Province</label>
-                        @* <input type="text" id="province" name="province" placeholder=""> *@
-                         @Html.TextBoxFor(m => m.Province, new { @id = "province", @placeholder = "", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Province, new { @id = "province", @placeholder = "", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="postalcode">Postal Code</label>
-                        @* <input type="text" id="postalcode" name="postalcode" placeholder=""> *@
-                         @Html.TextBoxFor(m => m.PostalCode, new { @id = "postalcode", @placeholder = "", @class = "form-control" })
+                        @Html.TextBoxFor(m => m.PostalCode, new { @id = "postalcode", @placeholder = "", @class = "form-control" })
                     </div>
                 </div>
-                
-            
             </div>
-
         </form>
+
         <div class="mb-3 mt-3">
             <h3>PAYMENT</h3>
             <h6>How to Pay</h6>
@@ -83,13 +104,12 @@
             </p>
             <p>If you have any issues or questions, feel free to contact us at [support email].</p>
         </div>  
-    </section>
-    
 
+    </section>
     <section>
         <h4>ORDER SUMMARY</h4>
-        @foreach (var product in products){
-            
+        @foreach (var product in products)
+        {
             <div>@product</div>
         }
         <br>
@@ -100,13 +120,15 @@
             </div>
             <button id="apply">APPLY</button>
         </div>
-        <hr style="border: 1px solid #ccc; margin: 20px 0;">
-        <div class="d-flex flex-column mb-3">
-            <p>Subtotal</p>
-            <p>Shipping</p>
-            <p>Tax</p>
-        </div>
-        <hr style="border: 1px solid #ccc; margin: 20px 0;">
-        <div><h1>Total</h1></div>
+         <hr style="border: 1px solid #ccc; margin: 20px 0;">
+            <div class="d-flex flex-column mb-3">
+                <p>Subtotal: $@Math.Round(subtotal, 2)</p>
+                <p>GST (5%): $@Math.Round(gstAmount, 2)</p>
+                <p>PST (7%): $@Math.Round(pstAmount, 2)</p>
+                <p>Shipping: Free</p>
+                <p>Tax: $@Math.Round(totalTax, 2)</p>
+            </div>
+         <hr style="border: 1px solid #ccc; margin: 20px 0;">
+         <div><h1>Total: $@Math.Round(totalPrice, 2)</h1></div>
     </section>
- </div>
+</div>
