@@ -15,7 +15,6 @@ namespace peakmotion.Controllers
 
         public IActionResult Index()
         {
-            // Replace with logic for retrieving the current user's ID.
             int userId = 1;
 
             IEnumerable<WishlistVM> wishlistItems = _wishlistRepo.GetWishlistByUserId(userId);
