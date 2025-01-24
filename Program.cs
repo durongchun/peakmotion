@@ -21,8 +21,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ProductRepo>();
+builder.Services.AddScoped<SessionRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddSession(options =>
+{
+options.IdleTimeout = TimeSpan.FromSeconds(10);
+});
+
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
