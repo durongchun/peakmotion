@@ -6,6 +6,7 @@ namespace peakmotion.Repositories
     public class CookieRepo
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpContext _context;
 
         public CookieRepo(IHttpContextAccessor httpContextAccessor, HttpContext context)
         {
