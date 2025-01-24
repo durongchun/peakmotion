@@ -1,6 +1,8 @@
 ﻿@model peakmotion.ViewModels.ShippingVM
 
-
+@{
+    var products = (List<string>)ViewData["ProductData"]; 
+}
  
  <div class="shippingOrderSummary">
     <section>
@@ -86,7 +88,11 @@
 
     <section>
         <h4>ORDER SUMMARY</h4>
-        <div>product </div>
+        @foreach (var product in products){
+            
+            <div>@product</div>
+        }
+        <br>
         <div id="giftApply">
             <div class="d-flex flex-column mb-3">
                 <label for="code">Gift Card/Discount Code</label>

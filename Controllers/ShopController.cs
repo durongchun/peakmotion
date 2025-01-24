@@ -12,10 +12,12 @@ namespace peakmotion.Controllers
     {
         private readonly ShopRepo _shopRepo;
         private readonly PeakmotionContext _context;
+        private readonly SessionRepo _sessionRepo;
 
-        public ShopController(PeakmotionContext context, ShopRepo shopRepo)
+        public ShopController(PeakmotionContext context, ShopRepo shopRepo, SessionRepo sessionRepo)
         {
             _shopRepo = shopRepo;
+            _sessionRepo = sessionRepo;
             _context = context;
         }
 
@@ -24,26 +26,13 @@ namespace peakmotion.Controllers
         {
             IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
             var shippingInfo = shippings.FirstOrDefault();
+
+            var productData = _sessionRepo.GetUserChosenProductInfo();
+            ViewData["ProductData"] = productData;
+
             return View("Index", shippingInfo);
         }
 
-        //  public IActionResult Edit(int id)
-        // {
-        //     Sh? invoice = _context.Invoices
-        //                            .FirstOrDefault(e => e.Pkinvoicenum == id);
-
-        //     if (invoice == null)
-        //     {
-        //         return RedirectToAction("Index"
-        //                                 , new
-        //                                 {
-        //                                     message = "warning,Store not found " +
-        //                                                   $"(ID {invoice.Pkinvoicenum})"
-        //                                 });
-        //     }
-
-        //     return View(invoice);
-        // }
         [HttpPost]
         public IActionResult Edit(string firstname, string lastname, string phone, string address, string city,
                                     string province, string postalcode, string country, string email)
