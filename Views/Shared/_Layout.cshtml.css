@@ -1,5 +1,63 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
+/* 
+  *************************************************  
+  Override Defaults 
+  *************************************************
+*/
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+html,
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+input,
+select,
+button {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+  ====================================================================================================
+  NAV (new)
+  ====================================================================================================
+ */
+nav {
+  padding: 1.5rem 5rem; /* top+bottom left+right */
+}
+
+.navbar-brand {
+  font-family: 'Bebas Neue', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3rem;
+}
+
+nav h2 {
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  color: white;
+  font-weight: 100;
+}
+
+/*
+  ====================================================================================================
+  Others
+  ====================================================================================================
+ */
 
 a.navbar-brand {
   white-space: normal;
