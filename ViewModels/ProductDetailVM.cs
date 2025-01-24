@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using peakmotion.Models;
 
-namespace peakmotion.Models;
+namespace peakmotion.ViewModels;
 
 public partial class ProductDetailViewModel
 {
