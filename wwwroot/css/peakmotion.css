@@ -1,0 +1,13 @@
+body {
+  font-family: 'Montserrat', serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.navbar-brand {
+  font-family: 'Bebas Neue', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 3rem;
+}
