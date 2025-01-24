@@ -25,6 +25,9 @@
                 @Html.DisplayNameFor(model => model.DiscountLabel)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.Categories)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.IsFeatured)
             </th>
             <th>
@@ -40,35 +43,43 @@
         @foreach (var item in Model)
         {
             <tr>
-                <th>
+                <td>
                     @Html.DisplayFor(modelItem => item.ID)
-                </th>
-                <th>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.ProductName)
-                </th>
-                <th>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Price)
-                </th>
+                </td>
                 @if (item.DiscountLabel != null) {
-                    <th>
+                    <td>
                         <p class="list-item-tag">
                         @Html.DisplayFor(modelItem => item.DiscountLabel)
                         </p>
-                    </th>
-                } else { <th></th>}
+                    </td>
+                } else { <td></td>}
                 @{
                     var featuredLabel = item.IsFeatured ? "Featured" : "No";
                     var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
                 }
-                <th>
+                <td>
+                    <div class="category-col">
+                    @foreach (var cat in item.Categories)
+                    {
+                        <p class="list-item-tag">@cat.Categoryname</p>
+                    }
+                    </div>
+                </td>
+                <td>
                     <p class="list-item-tag">@featuredLabel</p>
-                </th>
-                <th>
+                </td>
+                <td>
                     <p class="list-item-tag">@memberLabel</p>
-                </th>
-                <th>
+                </td>
+                <td>
                     @Html.DisplayFor(modelItem => item.Quantity)
-                </th>
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
@@ -101,14 +112,23 @@
 <br /><div class="@alertClass">@messageText</div>
 
 <style>
-.list-item-tag { 
-    border: 1px solid black;
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.75rem;
-    background-color: #FFF4F2;
-    margin-bottom: 0;
-    font-size: 0.7rem;
-    font-weight: 500;
-    width: min-content;
-}
+    .category-col {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+    .list-item-tag { 
+        border: 1px solid black;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        background-color: #FFF4F2;
+        margin-bottom: 0;
+        font-size: 0.7rem;
+        font-weight: 500;
+        width: min-content;
+        line-clamp: 1;
+        text-overflow: ellipsis; 
+        overflow: hidden; 
+        white-space: nowrap;
+    }
 </style>

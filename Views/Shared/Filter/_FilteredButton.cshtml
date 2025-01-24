@@ -1,0 +1,24 @@
+﻿@model string
+
+
+<button class="filter-tag">@Model<span>x</span></button>
+
+
+ <style>
+    .filter-tag:hover {
+        opacity: 0.5;
+    }
+    .filter-tag {
+        border: 1px solid black;
+        border-radius: 0.25rem;
+        padding: 0.25rem 0.75rem;
+        margin-bottom: 0;
+        font-size: 0.7rem;
+        font-weight: 500;
+        width: min-content;
+        text-transform: uppercase;
+    }
+    span {
+        padding-left: 0.5rem;
+    }
+ </style>
