@@ -1,0 +1,12 @@
+.sidebar-profile p:nth-of-type(1) {
+  text-transform: uppercase;
+  font-size: 1.25rem;
+}
+
+/* Adjust bootstrap styles for these */
+.btn-outline-dark {
+  border-color: rgb(33, 37, 41);
+}
+.btn-link {
+  color: rgb(33, 37, 41);
+}
