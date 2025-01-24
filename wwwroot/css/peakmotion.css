@@ -27,3 +27,34 @@ button {
   border-radius: 2px;
   height: 50px;
 }
+
+.show-on-sm,
+.show-on-lg,
+.show-on-xlg,
+.show-on-md {
+  display: none;
+}
+
+@media (min-width: 676px) {
+  .show-on-sm {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 768px) {
+  .show-on-md {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 992px) {
+  .show-on-lg {
+    display: table-cell;
+  }
+}
+
+@media (min-width: 1100px) {
+  .show-on-xlg {
+    display: table-cell;
+  }
+}
