@@ -63,10 +63,12 @@ namespace peakmotion.Repositories
                     var product = JsonConvert.DeserializeObject<dynamic>(productDataCookie);
 
                     // Add data to the list
-                    productData.Add("Product ID: " + (product.ProductId ?? "No ID"));
-                    productData.Add("Product Name: " + (product.ProductName ?? "No Name"));
-                    productData.Add("Regular Price: " + (product.ProductPrice ?? "No Price"));
-                    productData.Add("Qty: " + (product.Quantity ?? "No Quantity"));
+                    productData.Add("Product ID: " + ((product.ProductId?.ToString() ?? "No ID").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
+                    productData.Add("Product Name: " + ((product.ProductName?.ToString() ?? "No Name").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
+                    productData.Add("Regular Price: " + ((product.ProductPrice?.ToString() ?? "No Price").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
+                    productData.Add("Qty: " + ((product.Quantity?.ToString() ?? "No Quantity").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
+
+
                 }
             }
 
