@@ -2,4 +2,3 @@ Migrations/
 obj/*
 bin/*
 .vscode/
-*.vs

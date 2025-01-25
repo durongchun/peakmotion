@@ -6,12 +6,10 @@ namespace peakmotion.Repositories
     public class CookieRepo
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpContext _context;
 
-        public CookieRepo(IHttpContextAccessor httpContextAccessor, HttpContext context)
+        public CookieRepo(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-            _context = context;
         }
 
         public void AddCookie(string key, string value, int expireDays = 7)
@@ -21,11 +19,10 @@ namespace peakmotion.Repositories
 
             var options = new CookieOptions
             {
-                Expires = DateTimeOffset.UtcNow.AddDays(expireDays), 
-                HttpOnly = true,  // avoid JS access for security
-                Secure = true,    // only HTTPS is allowed for security
+                Expires = DateTimeOffset.UtcNow.AddDays(expireDays),
+                HttpOnly = true, // JS can't access the cookie
+                Secure = true // only send cookie over HTTPS
             };
-
             context.Response.Cookies.Append(key, value, options);
         }
 
@@ -33,7 +30,6 @@ namespace peakmotion.Repositories
         {
             var context = _httpContextAccessor.HttpContext;
             if (context == null) return null;
-
             return context.Request.Cookies[key];
         }
 
@@ -41,7 +37,6 @@ namespace peakmotion.Repositories
         {
             var context = _httpContextAccessor.HttpContext;
             if (context == null) return;
-
             context.Response.Cookies.Delete(key);
         }
     }
