@@ -21,6 +21,7 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ProductRepo>();
+builder.Services.AddScoped<OrderRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 var app = builder.Build();
 
