@@ -4,16 +4,18 @@
 }
 
 <link rel="stylesheet" href="~/css/orderConfirmation.css">
-
 <section id="orderConfirmation">
     <h5>ORDER CONFIRMATION</h5>
-    <div>
-        <img src="" alt="">
+    <div class="orderInfo">
+        <div>
+        <img src="https://picsum.photos/500/700?random=1" alt="PeakMotion">
+        </div>
+        <div>
+            <h3>THANK YOU FOR SHOPPING!</h3><br>
+            <p>Your ORDER number is: @Model.TransactionId</p><br>
+            <p>Thank you for choosing PeakMotion! We truly appreciate your business and are excited to have you as a valued customer. Your support means the world to us.</p><br>
+            <button>TRACK YOUR ORDER</button>
+        </div>
     </div>
-    <div>
-        <h3>THANK YOU FOR SHOPPING!</h3>
-        <p>Your ORDER number is: @Model.TransactionId</p>
-        <p></p>
-        <button>TRACK YOUR ORDER</button>
-    </div>
+    
 </section>
