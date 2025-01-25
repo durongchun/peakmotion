@@ -26,8 +26,8 @@ namespace peakmotion.Repositories
                 var productPrice = _httpContext.Request.Form["ProductPrice"];
                 var quantity = _httpContext.Request.Form["Quantity"];
 
-                // Create an object to store product data
-                var productData = new
+                // Create a new product object
+                var newProduct = new
                 {
                     ProductId = productId,
                     ProductName = productName,
@@ -35,10 +35,31 @@ namespace peakmotion.Repositories
                     Quantity = quantity
                 };
 
-                // Serialize product data to a JSON string
-                var serializedData = JsonConvert.SerializeObject(productData);
+                // Retrieve existing product data from cookies
+                var existingData = _httpContext.Request.Cookies["ProductData"];
+                var productList = new List<dynamic>();
 
-                // Save serialized data to a cookie
+                if (!string.IsNullOrEmpty(existingData))
+                {
+                    try
+                    {
+                        // Deserialize existing data into a list
+                        productList = JsonConvert.DeserializeObject<List<dynamic>>(existingData);
+                    }
+                    catch (JsonSerializationException ex)
+                    {
+                        // Handle invalid JSON format (e.g., if a single object was mistakenly saved)
+                        _httpContext.Response.Cookies.Delete("ProductData"); // Clear the corrupted data
+                    }
+                }
+
+                // Add the new product to the list
+                productList.Add(newProduct);
+
+                // Serialize the updated product list back to JSON
+                var serializedData = JsonConvert.SerializeObject(productList);
+
+                // Save the updated product list to the cookie
                 _httpContext.Response.Cookies.Append("ProductData", serializedData, new CookieOptions
                 {
                     Expires = DateTimeOffset.Now.AddHours(1), // Set expiration as needed
@@ -59,16 +80,29 @@ namespace peakmotion.Repositories
 
                 if (!string.IsNullOrEmpty(productDataCookie))
                 {
-                    // Deserialize the cookie data
-                    var product = JsonConvert.DeserializeObject<dynamic>(productDataCookie);
+                    try
+                    {
+                        // Deserialize the cookie data into a list of objects
+                        var products = JsonConvert.DeserializeObject<List<dynamic>>(productDataCookie);
 
-                    // Add data to the list
-                    productData.Add("Product ID: " + ((product.ProductId?.ToString() ?? "No ID").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
-                    productData.Add("Product Name: " + ((product.ProductName?.ToString() ?? "No Name").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
-                    productData.Add("Regular Price: " + ((product.ProductPrice?.ToString() ?? "No Price").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
-                    productData.Add("Qty: " + ((product.Quantity?.ToString() ?? "No Quantity").Replace("[", "").Replace("]", "").Replace("\"", "").Trim()));
+                        // Iterate through each product in the list
+                        foreach (var product in products)
+                        {
+                            var productId = product.ProductId?.ToString().Replace("[", "").Replace("]", "").Replace("\"", "").Trim() ?? "No ID";
+                            var productName = product.ProductName?.ToString().Replace("[", "").Replace("]", "").Replace("\"", "").Trim() ?? "No Name";
+                            var productPrice = product.ProductPrice?.ToString().Replace("[", "").Replace("]", "").Replace("\"", "").Trim() ?? "No Price";
+                            var quantity = product.Quantity?.ToString().Replace("[", "").Replace("]", "").Replace("\"", "").Trim() ?? "No Quantity";
 
-
+                            // Format the product data and add it to the list
+                            productData.Add($"Product ID: {productId}, Product Name: {productName}, Regular Price: {productPrice}, Qty: {quantity}");
+                        }
+                    }
+                    catch (JsonSerializationException ex)
+                    {
+                        // Handle invalid JSON
+                        _httpContext.Response.Cookies.Delete("ProductData");
+                        throw new Exception("Failed to parse product data from cookies.", ex);
+                    }
                 }
             }
 
