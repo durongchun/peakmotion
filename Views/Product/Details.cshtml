@@ -45,14 +45,23 @@
                     </select>
                 </div>
 
-                <!-- Quantity Selection -->
-                <div class="quantity-selection">
-                    <p>Select Quantity:</p>
-                    <input type="number" id="quantityInput" value="1" min="1" />
-                </div>
+                
+                <form method="post" asp-controller="Product" asp-action="Details">
+                    <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
+                    <input type="hidden" name="ProductName" value="@Model.Productname" />
+                    <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
+                    <!-- Quantity Selection -->
+                    <div class="quantity-selection">
+                        <label for="Quantity">Select Quantity:</label>
+                        <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
+                    </div>
 
-                <!-- Add to Cart Button -->
-                <button class="add-to-cart">Add to Cart</button>
+                     
+
+
+                    <!-- Add to Cart Button -->
+                    <button type="submit" class="add-to-cart">Add to Cart</button>
+                 </form>
             </div>
         </div>
     </div>

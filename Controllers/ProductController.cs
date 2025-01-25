@@ -8,16 +8,19 @@ using peakmotion.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace peakmotion.Controllers;
-
 public class ProductController : Controller
 {
     private readonly ProductRepo _productRepo;
     private readonly PeakmotionContext _context;
+    private readonly CookieRepo _cookieRepo;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ProductController(ProductRepo productRepo, PeakmotionContext context)
+    public ProductController(ProductRepo productRepo, PeakmotionContext context, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor)
     {
         _productRepo = productRepo;
         _context = context;
+        _cookieRepo = cookieRepo;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     public IActionResult Index()
@@ -51,6 +54,8 @@ public class ProductController : Controller
             Fkcategoryid = 0,
             // Fkcategory = null
         };
+
+        _cookieRepo.SetProductDataToSession();
 
         // Return the view with the view model
         return View(productDetailViewModel);
