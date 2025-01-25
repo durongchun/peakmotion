@@ -5,12 +5,12 @@ using Newtonsoft.Json;
 
 namespace peakmotion.Repositories
 {
-    public class SessionRepo
+    public class CookieRepo
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
 
-        public SessionRepo(IHttpContextAccessor httpContextAccessor)
+        public CookieRepo(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;  // Store the HttpContext once
@@ -107,6 +107,16 @@ namespace peakmotion.Repositories
             }
 
             return productData;
+        }
+
+        public void RemoveCookie(string key)
+        {
+            var existingData = _httpContext.Request.Cookies[key];
+            if (!string.IsNullOrEmpty(existingData))
+            {
+                // Delete the cookie with the specified key
+                _httpContext.Response.Cookies.Delete(key);
+            }
         }
 
     }

@@ -30,7 +30,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<ShopRepo>();
-builder.Services.AddScoped<SessionRepo>();
+builder.Services.AddScoped<CookieRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 var app = builder.Build();
 

@@ -12,12 +12,12 @@ namespace peakmotion.Controllers
     {
         private readonly ShopRepo _shopRepo;
         private readonly PeakmotionContext _context;
-        private readonly SessionRepo _sessionRepo;
+        private readonly CookieRepo _cookieRepo;
 
-        public ShopController(PeakmotionContext context, ShopRepo shopRepo, SessionRepo sessionRepo)
+        public ShopController(PeakmotionContext context, ShopRepo shopRepo, CookieRepo cookieRepo)
         {
             _shopRepo = shopRepo;
-            _sessionRepo = sessionRepo;
+            _cookieRepo = cookieRepo;
             _context = context;
         }
 
@@ -27,7 +27,7 @@ namespace peakmotion.Controllers
             IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
             var shippingInfo = shippings.FirstOrDefault();
 
-            var productData = _sessionRepo.GetUserChosenProductInfoFromCookies();
+            var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
             ViewData["ProductData"] = productData;
 
             return View("Index", shippingInfo);
@@ -101,6 +101,8 @@ namespace peakmotion.Controllers
                 Email = email,
                 Currency = currency
             };
+
+            _cookieRepo.RemoveCookie("ProductData");
 
             return View(modelVM);
         }

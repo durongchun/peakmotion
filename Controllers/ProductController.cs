@@ -15,14 +15,14 @@ public class ProductController : Controller
 {
     private readonly ProductRepo _productRepo;
     private readonly PeakmotionContext _context;
-    private readonly SessionRepo _sessionRepo;
+    private readonly CookieRepo _cookieRepo;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ProductController(ProductRepo productRepo, PeakmotionContext context, SessionRepo sessionRepo, IHttpContextAccessor httpContextAccessor)
+    public ProductController(ProductRepo productRepo, PeakmotionContext context, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor)
     {
         _productRepo = productRepo;
         _context = context;
-        _sessionRepo = sessionRepo;
+        _cookieRepo = cookieRepo;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -81,7 +81,7 @@ public class ProductController : Controller
             // Fkcategory = null
         };
 
-        _sessionRepo.SetProductDataToSession();
+        _cookieRepo.SetProductDataToSession();
 
 
 
