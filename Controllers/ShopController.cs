@@ -59,7 +59,7 @@ namespace peakmotion.Controllers
 
 
 
-        [HttpGet("Shop/PayPalConfirmation")]
+        [HttpGet("Home/PayPalConfirmation")]
         public IActionResult PayPalConfirmation(
             string transactionId,
             string amount,
@@ -80,17 +80,17 @@ namespace peakmotion.Controllers
             }
 
             // Save confirmation to the database
-            var newPayPalConfirmation = new Order
-            {
-                Pptransactionid = parsedTransactionId,
-                // Amount = parsedAmount,
-                // PayerName = payerName,
-                // Email = email,
-                Orderdate = DateOnly.FromDateTime(DateTime.UtcNow)
-            };
+            // var newPayPalConfirmation = new Order
+            // {
+            //     Pptransactionid = parsedTransactionId,
+            //     // Amount = parsedAmount,
+            //     // PayerName = payerName,
+            //     // Email = email,
+            //     Orderdate = DateOnly.FromDateTime(DateTime.UtcNow)
+            // };
 
-            _context.Orders.Add(newPayPalConfirmation);
-            _context.SaveChanges();
+            // _context.Orders.Add(newPayPalConfirmation);
+            // _context.SaveChanges();
 
             // Prepare ViewModel for the view
             var modelVM = new PayPalConfirmationVM
