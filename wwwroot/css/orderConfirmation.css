@@ -1,12 +1,18 @@
 #orderConfirmation {
   display: grid;
-  grid-template-rows: 1fr 8fr;
+  grid-template-rows: 1fr 6fr;
+  margin-left: 6rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .orderInfo {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   align-items: center;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
 }
 
 button {
