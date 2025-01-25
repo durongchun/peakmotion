@@ -26,38 +26,53 @@ namespace peakmotion.Repositories
                 var productPrice = _httpContext.Request.Form["ProductPrice"];
                 var quantity = _httpContext.Request.Form["Quantity"];
 
-                // Save values to session
-                _httpContext.Session.SetString("ProductId", productId);
-                _httpContext.Session.SetString("ProductName", productName);
-                _httpContext.Session.SetString("ProductPrice", productPrice);
-                _httpContext.Session.SetString("Quantity", quantity);
+                // Create an object to store product data
+                var productData = new
+                {
+                    ProductId = productId,
+                    ProductName = productName,
+                    ProductPrice = productPrice,
+                    Quantity = quantity
+                };
+
+                // Serialize product data to a JSON string
+                var serializedData = JsonConvert.SerializeObject(productData);
+
+                // Save serialized data to a cookie
+                _httpContext.Response.Cookies.Append("ProductData", serializedData, new CookieOptions
+                {
+                    Expires = DateTimeOffset.Now.AddHours(1), // Set expiration as needed
+                    HttpOnly = true, // Secure flag for better security
+                    Secure = _httpContext.Request.IsHttps // Set Secure flag for HTTPS requests
+                });
             }
         }
 
-        public List<string> GetUserChosenProductInfo()
+        public List<string> GetUserChosenProductInfoFromCookies()
         {
             var productData = new List<string>();
 
             if (_httpContext != null)
             {
-                // Retrieve product data from session
-                var productId = _httpContext.Session.GetString("ProductId");
-                var productName = _httpContext.Session.GetString("ProductName");
-                var productPrice = _httpContext.Session.GetString("ProductPrice");
-                var quantity = _httpContext.Session.GetString("Quantity");
+                // Retrieve product data from cookies
+                var productDataCookie = _httpContext.Request.Cookies["ProductData"];
 
-                if (!string.IsNullOrEmpty(productName))
+                if (!string.IsNullOrEmpty(productDataCookie))
                 {
+                    // Deserialize the cookie data
+                    var product = JsonConvert.DeserializeObject<dynamic>(productDataCookie);
+
                     // Add data to the list
-                    productData.Add("Product ID: " + productId ?? "No ID");
-                    productData.Add("Product Name: " + productName ?? "No Name");
-                    productData.Add("Regular Price: " + productPrice ?? "No Price");
-                    productData.Add("Qty: " + quantity ?? "No Quantity");
+                    productData.Add("Product ID: " + (product.ProductId ?? "No ID"));
+                    productData.Add("Product Name: " + (product.ProductName ?? "No Name"));
+                    productData.Add("Regular Price: " + (product.ProductPrice ?? "No Price"));
+                    productData.Add("Qty: " + (product.Quantity ?? "No Quantity"));
                 }
             }
 
             return productData;
         }
+
     }
 
 }
