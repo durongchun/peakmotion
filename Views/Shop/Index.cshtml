@@ -9,18 +9,69 @@
 @{
     ViewData["Title"] = "Products";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    
+    var products = (List<string>)ViewData["ProductData"]; 
+    decimal subtotal = 0;
+    decimal gstRate = 0.05m;  // 5% GST
+    decimal pstRate = 0.07m;  // 7% PST
+    decimal totalAmount = 0;
+    int qty = 1;
+
+    // Loop through products and calculate the subtotal
+    foreach (var product in products)
+    {
+       
+        var quantityText = product.Contains("Qty: ") ? product.Split("Qty: ")[1].Trim() : "1"; // Default to "1" if "Qty: " not found
+        if (int.TryParse(quantityText, out int quantity))
+        {
+            qty = quantity; // Multiply subtotal by the parsed quantity
+            
+        }
+        else
+        {
+            // Handle invalid quantity (log or use a default value)
+            System.Diagnostics.Debug.WriteLine($"Invalid quantity in: {qty}");
+        }
+
+        // Extract the price part assuming it is in the format "Price: $75.00"
+        var priceText = product.Contains("Price: ") ? product.Split("Price: ")[1] : product;
+        
+        // If price is formatted as "$75.00", remove "$" and parse it to decimal
+        if (priceText.StartsWith("$"))
+        {
+            priceText = priceText.Substring(1);  // Remove the "$"
+            if (decimal.TryParse(priceText, out decimal price))
+            {
+                subtotal += price;
+            }
+            else
+            {
+                // Handle the case when the price format is invalid
+                // Log or throw an exception
+            }
+        }
+    }
+
+   System.Diagnostics.Debug.WriteLine($"qty =: {qty}"); 
+
+    // Calculate GST and PST
+    subtotal = qty * subtotal;
+    System.Diagnostics.Debug.WriteLine($"subtotal =: {subtotal}"); 
+    decimal gstAmount = subtotal * gstRate;
+    decimal pstAmount = subtotal * pstRate;
+    decimal totalTax = gstAmount + pstAmount;
+    decimal totalPrice = subtotal + totalTax;
+
+    ViewData["TotalPrice"] = totalPrice;
 }
+
+
 <partial name="_Shop" for="@Model" />
 
 @if (User.Identity.IsAuthenticated)
 {
     string currency = "CAD";
-    @* ProductVM? firstRecord = Model.FirstOrDefault();
-
-    if (firstRecord != null)
-    {
-        currency = firstRecord.Currency;
-    } *@
     <div class="row">
     <div class="offset-9 col-sm-3 col-md-2">
         <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
@@ -29,20 +80,18 @@
     <div class="row">
     <div class="offset-9 col-sm-2">
         <table class="table">
-            <thead>
-                <tr>
-                    <th><span style="color:darkred;">Items</span></th>
-                    <th><span style="color:darkred;">Amount</span></th>
-                </tr>
-            </thead>
             <tbody>
                 <tr>
-                    <td><span id="totalItems">0</span></td>
-                    <td>$<span id="totalAmount">0</span> <span id="currency">@currency</span></td>
+                    <td>
+                        <span style="color:darkred;">Amount:</span> 
+                        $<span id="totalAmount">@totalPrice.ToString("F2")</span> 
+                        <span id="currency">@currency</span>
+                    </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
 </div>
     <script>
     paypal.Buttons({

@@ -1,15 +1,30 @@
 ﻿@model peakmotion.ViewModels.ShippingVM
 
 @{
-    var products = (List<string>)ViewData["ProductData"]; 
+   
+   var products = (List<string>)ViewData["ProductData"]; 
     decimal subtotal = 0;
     decimal gstRate = 0.05m;  // 5% GST
     decimal pstRate = 0.07m;  // 7% PST
     decimal totalAmount = 0;
+    int qty = 1;
 
     // Loop through products and calculate the subtotal
     foreach (var product in products)
     {
+       
+        var quantityText = product.Contains("Qty: ") ? product.Split("Qty: ")[1].Trim() : "1"; // Default to "1" if "Qty: " not found
+        if (int.TryParse(quantityText, out int quantity))
+        {
+            qty = quantity; // Multiply subtotal by the parsed quantity
+            
+        }
+        else
+        {
+            // Handle invalid quantity (log or use a default value)
+            System.Diagnostics.Debug.WriteLine($"Invalid quantity in: {qty}");
+        }
+
         // Extract the price part assuming it is in the format "Price: $75.00"
         var priceText = product.Contains("Price: ") ? product.Split("Price: ")[1] : product;
         
@@ -29,7 +44,11 @@
         }
     }
 
+   System.Diagnostics.Debug.WriteLine($"qty =: {qty}"); 
+
     // Calculate GST and PST
+    subtotal = qty * subtotal;
+    System.Diagnostics.Debug.WriteLine($"subtotal =: {subtotal}"); 
     decimal gstAmount = subtotal * gstRate;
     decimal pstAmount = subtotal * pstRate;
     decimal totalTax = gstAmount + pstAmount;
