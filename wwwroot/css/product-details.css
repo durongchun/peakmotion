@@ -1,4 +1,4 @@
-.product-page-container {
+/* .product-page-container {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
@@ -14,8 +14,6 @@
 }
 
 .product-image-carousel {
-  /* flex: 1 1 50%; */
-  /* position: relative; */
   display: flex;
   justify-content: left;
   align-items: center;
@@ -109,4 +107,14 @@
   margin-top: 5px;
   margin-bottom: 15px;
   font-weight: bold;
+} */
+
+.slick-prev::before,
+.slick-next::before {
+}
+
+.slick-prev,
+.slick-next {
+  font-size: 25px !important;
+  color: red !important;
 }

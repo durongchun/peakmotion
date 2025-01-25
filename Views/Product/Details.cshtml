@@ -3,7 +3,11 @@
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
     <script src="~/js/details.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/slick.css" />
 </head>
+
+
 
 <div class="product-container">
     <!-- Product Image Carousel -->
@@ -11,12 +15,20 @@
         <div class="col-md-6">
             <div class="product-image-carousel">
                 <div class="carousel">
-                    <button class="carousel-arrow left-arrow" onclick="slide(-1)">&#10094;</button>
-                    <img id="currentImage" src="https://picsum.photos/500/700?random=1" alt="Product Image 1" />
-                    @* <img id="currentImage" src="https://picsum.photos/500/700?random=2" alt="Product Image 2" />
-            <img id="currentImage" src="https://picsum.photos/500/700?random=3" alt="Product Image 3" />
-            <img id="currentImage" src="https://picsum.photos/500/700?random=4" alt="Product Image 4" /> *@
-                    <button class="carousel-arrow right-arrow" onclick="slide(1)">&#10095;</button>
+                    @* <button class="carousel-arrow left-arrow" onclick="slide(-1)">&#10094;</button> *@
+                    <div>
+                        <img id="currentImage" src="https://picsum.photos/500/700?random=1" alt="Product Image 1" />
+                    </div>
+                    <div>
+                        <img id="currentImage" src="https://picsum.photos/500/700?random=2" alt="Product Image 2" />
+                    </div>
+                    <div>
+                        <img id="currentImage" src="https://picsum.photos/500/700?random=3" alt="Product Image 3" />
+                    </div>
+                    <div>
+                        <img id="currentImage" src="https://picsum.photos/500/700?random=4" alt="Product Image 4" />
+                    </div>
+                    @* <button class="carousel-arrow right-arrow" onclick="slide(1)">&#10095;</button> *@
                 </div>
             </div>
         </div>
@@ -66,3 +78,9 @@
             aliquet nulla placerat.</p>
     </div>
 </div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/slick/slick.min.js"></script>
+<script type="text/javascript">
+    var $jq = jQuery.noConflict(); $jq(document).ready(function () { $jq('.carousel').slick({ dots: false, infinite: true, speed: 300, slidesToShow: 1, adaptiveHeight: true }); });
+
+</script>
