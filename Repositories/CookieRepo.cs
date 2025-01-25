@@ -109,6 +109,28 @@ namespace peakmotion.Repositories
             return productData;
         }
 
+        public void AddCookie(string key, string value, int expireDays = 7)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return;
+
+            var options = new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(expireDays),
+                Path = "/"
+                //HttpOnly = true, // JS can't access the cookie
+                //Secure = true // only send cookie over HTTPS
+            };
+            context.Response.Cookies.Append(key, value, options);
+        }
+
+        public string GetCookie(string key)
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return null;
+            return context.Request.Cookies[key];
+        }
+
         public void RemoveCookie(string key)
         {
             var existingData = _httpContext.Request.Cookies[key];

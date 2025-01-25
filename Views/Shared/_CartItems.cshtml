@@ -1,0 +1,44 @@
+@model IEnumerable<peakmotion.ViewModels.CartItemVM>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="cart-item">
+            <div class="cart-item-image">
+                @if (item.PrimaryImage != null)
+                {
+                    <img src="~/images/@item.PrimaryImage.Url" alt="Product" />
+                }
+                else
+                {
+                    <img src="~/images/placeholder.png" alt="Product" />
+                }
+            </div>
+            <div class="cart-item-info">
+                <h4>@item.ProductName</h4>
+                <p>Blue Linen/White</p>
+                <p>Size: M</p>
+                <p>Item Price: @string.Format("{0:C}", item.Price)</p>
+                <p>
+                    Quantity:
+                    <select>
+                        <option selected>@item.CartQuantity</option>
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                </p>
+                <p>Total Price: @string.Format("{0:C}", item.Price * item.CartQuantity)</p>
+                <div class="cart-item-actions">
+                    <a>Edit</a>
+                    <a>Save for Later</a>
+                    <a asp-action="DeleteCartItem" asp-route-productId="@item.ProductID">Remove</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>Your cart is empty.</p>
+}
