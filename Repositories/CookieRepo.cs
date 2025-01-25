@@ -20,8 +20,9 @@ namespace peakmotion.Repositories
             var options = new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(expireDays),
-                HttpOnly = true, // JS can't access the cookie
-                Secure = true // only send cookie over HTTPS
+                Path = "/"
+                //HttpOnly = true, // JS can't access the cookie
+                //Secure = true // only send cookie over HTTPS
             };
             context.Response.Cookies.Append(key, value, options);
         }

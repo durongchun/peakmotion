@@ -2,6 +2,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
+using System.Collections.Generic;
+using System.Net; // For WebUtility (UrlEncode/UrlDecode)
 
 namespace peakmotion.Controllers
 {
@@ -16,34 +18,37 @@ namespace peakmotion.Controllers
             _productRepo = productRepo;
         }
 
+        // Displays the cart contents
         public IActionResult Index()
         {
-            var cartString = _cookieRepo.GetCookie("cart");
+            var encodedCartString = _cookieRepo.GetCookie("cart");
             var cartItems = new List<CartItemVM>();
 
-            if (!string.IsNullOrEmpty(cartString))
+            if (!string.IsNullOrEmpty(encodedCartString))
             {
-                var productIds = cartString.Split(',')
-                    .Select(x => int.Parse(x))
-                    .Distinct()
-                    .ToList();
+                var cartString = WebUtility.UrlDecode(encodedCartString);
 
-                foreach (var id in productIds)
+                foreach (var productIDAndQty in cartString.Split(","))
                 {
-                    var product = _productRepo.GetProduct(id);
-                    if (product != null)
+                    string[] arrIDAndQty = productIDAndQty.Split(":");
+                    if (arrIDAndQty.Length == 2)
                     {
-                        cartItems.Add(new CartItemVM
+                        int productID = int.Parse(arrIDAndQty[0]);
+                        int qty = int.Parse(arrIDAndQty[1]);
+
+                        var product = _productRepo.GetProduct(productID);
+                        if (product != null)
                         {
-                            ProductID = product.ID,
-                            ProductName = product.ProductName,
-                            Price = product.Price,
-                            CartQuantity = 1,
-                            Discount = product.Discount,
-                            Categories = product.Categories,
-                            Images = product.Images,
-                            PrimaryImage = product.PrimaryImage
-                        });
+                            var cartItem = new CartItemVM
+                            {
+                                ProductID = product.ID,
+                                ProductName = product.ProductName,
+                                Price = product.Price,
+                                CartQuantity = qty
+                            };
+
+                            cartItems.Add(cartItem);
+                        }
                     }
                 }
             }
@@ -51,48 +56,225 @@ namespace peakmotion.Controllers
             return View(cartItems);
         }
 
-        public IActionResult AddCartItem(int productId)
+        // Adds a new product to the cart if it does not exist.
+        // If the product exists, redirects to UpdateCartItem instead.
+        public IActionResult AddCartItem(int productID, int qty = 1)
         {
-            var cartString = _cookieRepo.GetCookie("cart");
-            if (string.IsNullOrEmpty(cartString))
+            var product = _productRepo.GetProduct(productID);
+            if (product == null)
             {
-                _cookieRepo.AddCookie("cart", productId.ToString());
+                TempData["Message"] = "Product not found.";
+                return RedirectToAction("Index");
+            }
+
+            if (product.Quantity < qty)
+            {
+                TempData["Message"] = "Not enough inventory.";
+                return RedirectToAction("Index");
+            }
+
+            var encodedCartString = _cookieRepo.GetCookie("cart");
+            var cartItems = new List<CartItemVM>();
+            bool productFoundInCart = false;
+            int existingQty = 0;
+
+            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
+
+            if (!string.IsNullOrEmpty(cartString))
+            {
+                foreach (var productIDAndQty in cartString.Split(","))
+                {
+                    string[] arrIDAndQty = productIDAndQty.Split(":");
+                    if (arrIDAndQty.Length == 2)
+                    {
+                        int currentProductID = int.Parse(arrIDAndQty[0]);
+                        int currentQty = int.Parse(arrIDAndQty[1]);
+
+                        if (currentProductID == productID)
+                        {
+                            productFoundInCart = true;
+                            existingQty = currentQty;
+                        }
+                        else
+                        {
+                            var existingProduct = _productRepo.GetProduct(currentProductID);
+                            if (existingProduct != null)
+                            {
+                                var cartItem = new CartItemVM
+                                {
+                                    ProductID = existingProduct.ID,
+                                    ProductName = existingProduct.ProductName,
+                                    Price = existingProduct.Price,
+                                    CartQuantity = currentQty
+                                };
+                                cartItems.Add(cartItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (productFoundInCart)
+            {
+                int newQty = existingQty + qty;
+                return RedirectToAction("UpdateCartItem", new { productID, newQty });
             }
             else
             {
-                var productIds = cartString.Split(',')
-                    .Select(x => int.Parse(x))
-                    .ToList();
-
-                if (!productIds.Contains(productId))
+                var newProductItem = new CartItemVM
                 {
-                    productIds.Add(productId);
-                }
-
-                var updatedString = string.Join(",", productIds);
-                _cookieRepo.AddCookie("cart", updatedString);
+                    ProductID = product.ID,
+                    ProductName = product.ProductName,
+                    Price = product.Price,
+                    CartQuantity = qty
+                };
+                cartItems.Add(newProductItem);
             }
+
+            var updatedCartList = new List<string>();
+            foreach (var item in cartItems)
+            {
+                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
+            }
+            var updatedCartString = string.Join(",", updatedCartList);
+
+            // Encode and save to cookie
+            var encodedValue = WebUtility.UrlEncode(updatedCartString);
+            _cookieRepo.AddCookie("cart", encodedValue);
 
             return RedirectToAction("Index");
         }
 
-        public IActionResult DeleteCartItem(int productId)
+        // Updates the quantity of an existing product in the cart
+        public IActionResult UpdateCartItem(int productID, int newQty)
         {
-            var cartString = _cookieRepo.GetCookie("cart");
+            var product = _productRepo.GetProduct(productID);
+            if (product == null)
+            {
+                TempData["Message"] = "Product not found.";
+                return RedirectToAction("Index");
+            }
+
+            if (newQty < 1)
+            {
+                return RedirectToAction("DeleteCartItem", new { productID });
+            }
+
+            if (newQty > product.Quantity)
+            {
+                TempData["Message"] = "Not enough inventory.";
+                newQty = product.Quantity;
+            }
+
+            var encodedCartString = _cookieRepo.GetCookie("cart");
+            var cartItems = new List<CartItemVM>();
+            bool updated = false;
+
+            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
+
             if (!string.IsNullOrEmpty(cartString))
             {
-                var productIds = cartString.Split(',')
-                    .Select(x => int.Parse(x))
-                    .ToList();
-
-                if (productIds.Contains(productId))
+                foreach (var productIDAndQty in cartString.Split(","))
                 {
-                    productIds.Remove(productId);
-                }
+                    string[] arrIDAndQty = productIDAndQty.Split(":");
+                    if (arrIDAndQty.Length == 2)
+                    {
+                        int currentProductID = int.Parse(arrIDAndQty[0]);
+                        int currentQty = int.Parse(arrIDAndQty[1]);
 
-                var updatedString = string.Join(",", productIds);
-                _cookieRepo.AddCookie("cart", updatedString);
+                        var existingProduct = _productRepo.GetProduct(currentProductID);
+                        if (existingProduct != null)
+                        {
+                            if (currentProductID == productID)
+                            {
+                                cartItems.Add(new CartItemVM
+                                {
+                                    ProductID = existingProduct.ID,
+                                    ProductName = existingProduct.ProductName,
+                                    Price = existingProduct.Price,
+                                    CartQuantity = newQty
+                                });
+                                updated = true;
+                            }
+                            else
+                            {
+                                cartItems.Add(new CartItemVM
+                                {
+                                    ProductID = existingProduct.ID,
+                                    ProductName = existingProduct.ProductName,
+                                    Price = existingProduct.Price,
+                                    CartQuantity = currentQty
+                                });
+                            }
+                        }
+                    }
+                }
             }
+
+            if (!updated)
+            {
+                TempData["Message"] = "Product was not in the cart to update.";
+                return RedirectToAction("Index");
+            }
+
+            var updatedCartList = new List<string>();
+            foreach (var item in cartItems)
+            {
+                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
+            }
+            var updatedCartString = string.Join(",", updatedCartList);
+
+            var encodedValue = WebUtility.UrlEncode(updatedCartString);
+            _cookieRepo.AddCookie("cart", encodedValue);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteCartItem(int productID)
+        {
+            var encodedCartString = _cookieRepo.GetCookie("cart");
+            var cartItems = new List<CartItemVM>();
+
+            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
+
+            if (!string.IsNullOrEmpty(cartString))
+            {
+                foreach (var productIDAndQty in cartString.Split(","))
+                {
+                    string[] arrIDAndQty = productIDAndQty.Split(":");
+                    if (arrIDAndQty.Length == 2)
+                    {
+                        int currentProductID = int.Parse(arrIDAndQty[0]);
+                        int currentQty = int.Parse(arrIDAndQty[1]);
+
+                        if (currentProductID != productID)
+                        {
+                            var productObj = _productRepo.GetProduct(currentProductID);
+                            if (productObj != null)
+                            {
+                                var cartItem = new CartItemVM
+                                {
+                                    ProductID = productObj.ID,
+                                    ProductName = productObj.ProductName,
+                                    Price = productObj.Price,
+                                    CartQuantity = currentQty
+                                };
+                                cartItems.Add(cartItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            var updatedCartList = new List<string>();
+            foreach (var item in cartItems)
+            {
+                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
+            }
+            var updatedCartString = string.Join(",", updatedCartList);
+
+            var encodedValue = WebUtility.UrlEncode(updatedCartString);
+            _cookieRepo.AddCookie("cart", encodedValue);
 
             return RedirectToAction("Index");
         }

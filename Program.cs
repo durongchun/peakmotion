@@ -21,7 +21,10 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<ProductRepo>();
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<CookieRepo>();
+
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddSession(options =>
