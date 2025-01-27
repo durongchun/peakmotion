@@ -20,6 +20,14 @@
         <p class="product-price">@Model.Price.ToString("C")</p>
     }
 
+    <!-- for cart btn  -->
+    <a asp-controller="Cart"
+       asp-action="AddCartItem"
+       asp-route-productId="@Model.ID"
+       class="add-to-cart-btn">
+       Add to Cart
+    </a>
+
  </div>
 
  <style>
