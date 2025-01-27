@@ -96,32 +96,32 @@ namespace peakmotion.Areas.Identity.Pages.Account
             public string LastName { get; set; }
 
             //phone number of user
-            [Required]
+            // [Required]
             [Display(Name = "Phone")]
             public string Phone { get; set; }
 
             //address of the user
-            [Required]
+            // [Required]
             [Display(Name = "Address")]
             public string Address { get; set; }
 
             //city
-            [Required]
+            // [Required]
             [Display(Name = "City")]
             public string City { get; set; }
 
             //provience
-            [Required]
+            // [Required]
             [Display(Name = "Province")]
             public string Province { get; set; }
 
             //postal code
-            [Required]
+            // [Required]
             [Display(Name = "Postal Code")]
             public string PostalCode { get; set; }
 
             //country
-            [Required]
+            // [Required]
             [Display(Name = "Country")]
             public string Country { get; set; }
 
@@ -186,8 +186,6 @@ namespace peakmotion.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-
-                //
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
@@ -195,12 +193,12 @@ namespace peakmotion.Areas.Identity.Pages.Account
                 {
                     Firstname = Input.FirstName,
                     Lastname = Input.LastName,
-                    Phone = Input.Phone,
-                    Address = Input.Address,
-                    City = Input.City,
-                    Province = Input.Province,
-                    Postalcode = Input.PostalCode,
-                    Country = Input.Country,
+                    // Phone = Input.Phone,
+                    // Address = Input.Address,
+                    // City = Input.City,
+                    // Province = Input.Province,
+                    // Postalcode = Input.PostalCode,
+                    // Country = Input.Country,
                     Email = Input.Email,
                     Lastloggedin = DateOnly.FromDateTime(DateTime.Now)
                 };

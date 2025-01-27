@@ -11,17 +11,17 @@ public partial class Pmuser
 
     public string Firstname { get; set; } = null!;
 
-    public string Phone { get; set; } = null!;
+    public string? Phone { get; set; }
 
-    public string Address { get; set; } = null!;
+    public string? Address { get; set; }
 
-    public string City { get; set; } = null!;
+    public string? City { get; set; }
 
-    public string Province { get; set; } = null!;
+    public string? Province { get; set; }
 
-    public string Postalcode { get; set; } = null!;
+    public string? Postalcode { get; set; }
 
-    public string Country { get; set; } = null!;
+    public string? Country { get; set; }
 
     public string Email { get; set; } = null!;
 
