@@ -27,6 +27,15 @@
        class="add-to-cart-btn">
        Add to Cart
     </a>
+    </br>
+
+        <!-- for wishlist btn  -->
+    <a asp-controller="Cart"
+       asp-action="AddCartItem"
+       asp-route-productId="@Model.ID"
+       class="add-to-wishlist-btn">
+       Add to Wishlist
+    </a>
 
  </div>
 
