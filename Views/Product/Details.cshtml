@@ -2,9 +2,6 @@
 
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
-    <script src="~/js/details.js"></script>
-    <link rel="stylesheet" type="text/css" href="~/css/slick-theme.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/slick.css" />
 </head>
 
 
@@ -14,21 +11,36 @@
     <div class="row">
         <div class="col-md-6">
             <div class="product-image-carousel">
-                <div class="carousel">
-                    @* <button class="carousel-arrow left-arrow" onclick="slide(-1)">&#10094;</button> *@
-                    <div>
-                        <img id="currentImage" src="https://picsum.photos/500/700?random=1" alt="Product Image 1" />
+                <div class="carousel slide" id="carouselExampleIndicators">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                            class="active" aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
                     </div>
-                    <div>
-                        <img id="currentImage" src="https://picsum.photos/500/700?random=2" alt="Product Image 2" />
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="https://picsum.photos/500/600?random=1" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://picsum.photos/500/600?random=2" class="d-block w-100" alt="...">
+                        </div>
+                        <div class="carousel-item">
+                            <img src="https://picsum.photos/500/600?random=3" class="d-block w-100" alt="...">
+                        </div>
                     </div>
-                    <div>
-                        <img id="currentImage" src="https://picsum.photos/500/700?random=3" alt="Product Image 3" />
-                    </div>
-                    <div>
-                        <img id="currentImage" src="https://picsum.photos/500/700?random=4" alt="Product Image 4" />
-                    </div>
-                    @* <button class="carousel-arrow right-arrow" onclick="slide(1)">&#10095;</button> *@
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -57,7 +69,7 @@
                     </select>
                 </div>
 
-                
+
                 <form method="post" asp-controller="Product" asp-action="Details">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
@@ -68,12 +80,12 @@
                         <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
                     </div>
 
-                     
+
 
 
                     <!-- Add to Cart Button -->
                     <button type="submit" class="add-to-cart">Add to Cart</button>
-                 </form>
+                </form>
             </div>
         </div>
     </div>
@@ -87,9 +99,3 @@
             aliquet nulla placerat.</p>
     </div>
 </div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="~/js/slick/slick.min.js"></script>
-<script type="text/javascript">
-    var $jq = jQuery.noConflict(); $jq(document).ready(function () { $jq('.carousel').slick({ dots: false, infinite: true, speed: 300, slidesToShow: 1, adaptiveHeight: true }); });
-
-</script>
