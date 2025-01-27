@@ -20,10 +20,29 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Domain = "localhost";  // For local development
+    options.IdleTimeout = TimeSpan.FromMinutes(20);
+});
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProductRepo>();
+builder.Services.AddScoped<OrderRepo>();
+builder.Services.AddScoped<ShopRepo>();
+builder.Services.AddScoped<CookieRepo>();
+
 builder.Services.AddScoped<WishlistRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddSession(options =>
+{
+options.IdleTimeout = TimeSpan.FromSeconds(10);
+});
+
 var app = builder.Build();
+
+app.UseSession();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

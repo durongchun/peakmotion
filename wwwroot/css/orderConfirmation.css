@@ -1,30 +1,18 @@
-.shippingOrderSummary {
+#orderConfirmation {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 5rem;
+  grid-template-rows: 1fr 6fr;
   margin-left: 6rem;
-  margin-top: 1rem;
+  align-items: center;
+  justify-content: center;
 }
 
-#name,
-#addressDetail,
-#provincePoscode,
-#giftApply {
+.orderInfo {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-}
-
-#apply {
-  margin-top: 25px;
-}
-
-input {
-  height: 38px;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 250px;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
 }
 
 button {
