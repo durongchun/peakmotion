@@ -86,46 +86,46 @@ namespace peakmotion.Areas.Identity.Pages.Account
         {
             //first name of the user
             [Required]
-            [Display(Name ="First Name")]
-            public string FirstName{get; set;}
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
 
 
             //last name of the user
             [Required]
             [Display(Name = "Last Name")]
-            public string LastName{get;set;}
+            public string LastName { get; set; }
 
             //phone number of user
             [Required]
-            [Display(Name ="Phone")]
-            public string Phone{get; set;}
+            [Display(Name = "Phone")]
+            public string Phone { get; set; }
 
             //address of the user
             [Required]
-            [Display(Name ="Address")]
-            public string Address{get; set;}
+            [Display(Name = "Address")]
+            public string Address { get; set; }
 
             //city
             [Required]
-            [Display(Name ="City")]
-            public string City{get; set;}
+            [Display(Name = "City")]
+            public string City { get; set; }
 
             //provience
             [Required]
-            [Display(Name ="Province")]
-            public string Province{get; set;}
-            
-             //postal code
-            [Required]
-            [Display(Name ="Postal Code")]
-            public string PostalCode{get; set;}
+            [Display(Name = "Province")]
+            public string Province { get; set; }
 
-             //country
+            //postal code
             [Required]
-            [Display(Name ="Country")]
-            public string Country{get; set;}
+            [Display(Name = "Postal Code")]
+            public string PostalCode { get; set; }
 
-            
+            //country
+            [Required]
+            [Display(Name = "Country")]
+            public string Country { get; set; }
+
+
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -154,15 +154,6 @@ namespace peakmotion.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            
-
-             //user type
-            public string UserType{get; set;}
-
-            
-
-             //Last LoggedIn
-            public string LastLoggedIn{get; set;}
         }
 
 
@@ -175,7 +166,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-                returnUrl ??= Url.Content("~/");
+            returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             string captchaResponse = Request.Form["g-Recaptcha-Response"];
@@ -194,33 +185,48 @@ namespace peakmotion.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
-               
 
+
+                //
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
-                  var customUser = new Pmuser
-                    {
-                        Firstname = Input.FirstName,
-                        Lastname = Input.LastName,
-                        Phone = Input.Phone,
-                        Address = Input.Address,
-                        City = Input.City,
-                        Province = Input.Province,
-                        Postalcode = Input.PostalCode,
-                        Country = Input.Country,
-                        Email = Input.Email,
-                        Lastloggedin = DateOnly.FromDateTime(DateTime.Now)
-                    };
-                     _context.Pmusers.Add(customUser);
-                    await _context.SaveChangesAsync();
+                var customUser = new Pmuser
+                {
+                    Firstname = Input.FirstName,
+                    Lastname = Input.LastName,
+                    Phone = Input.Phone,
+                    Address = Input.Address,
+                    City = Input.City,
+                    Province = Input.Province,
+                    Postalcode = Input.PostalCode,
+                    Country = Input.Country,
+                    Email = Input.Email,
+                    Lastloggedin = DateOnly.FromDateTime(DateTime.Now)
+                };
+                _context.Pmusers.Add(customUser);
+                await _context.SaveChangesAsync();
 
+                // Automatic role assignment
+                var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+                if (!roleResult.Succeeded)
+                {
+                    _logger.LogInformation("ERROR associating user with customer role");
+                    foreach (var error in roleResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return Page();
+                }
+                else
+                {
+                    _logger.LogInformation("User associated with customer role");
+                }
+
+                // Continue with registration process
                 if (result.Succeeded)
                 {
-
-                   
-
-                    _logger.LogInformation("User created a new account with password.");                  
+                    _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -234,25 +240,27 @@ namespace peakmotion.Areas.Identity.Pages.Account
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
                         $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-                    var response = await _emailService.SendSingleEmail(new ComposeEmailModel
-                    {
-                        Subject = "Confirm your email",
-                        Email = Input.Email,
-                        Body = $"Please confirm your account by <a " +
-                                $"href='{HtmlEncoder.Default.Encode(callbackUrl)}'> " +
-                                $"clicking here</a>."
-                    });
+                    // SendGrid
+                    // var response = await _emailService.SendSingleEmail(new ComposeEmailModel
+                    // {
+                    //     Subject = "Confirm your email",
+                    //     Email = Input.Email,
+                    //     Body = $"Please confirm your account by <a " +
+                    //             $"href='{HtmlEncoder.Default.Encode(callbackUrl)}'> " +
+                    //             $"clicking here</a>."
+                    // });
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
-                        return RedirectToPage("RegisterConfirmation",
-                                    new
-                                    {
-                                        email = Input.Email,
-                                        returnUrl = returnUrl,
-                                        DisplayConfirmAccountLink = false
-                                    });
+                        // SendGrid
+                        // return RedirectToPage("RegisterConfirmation",
+                        //             new
+                        //             {
+                        //                 email = Input.Email,
+                        //                 returnUrl = returnUrl,
+                        //                 DisplayConfirmAccountLink = false
+                        //             });
                     }
                     else
                     {
