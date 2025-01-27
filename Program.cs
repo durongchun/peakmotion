@@ -31,6 +31,7 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProductRepo>();
+builder.Services.AddScoped<OrderRepo>();
 builder.Services.AddScoped<ShopRepo>();
 builder.Services.AddScoped<CookieRepo>();
 // Identity-related
