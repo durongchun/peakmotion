@@ -18,8 +18,6 @@ public partial class ProductDetailViewModel
 
     public int Fkcategoryid { get; set; }
 
-    // public Category Fkcategory { get; set; } = null!;
-
     public IEnumerable<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
 
 }
