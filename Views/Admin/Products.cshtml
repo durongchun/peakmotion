@@ -4,91 +4,93 @@
     ViewData["Title"] = "Products";
 }
 
-<h1>Index</h1>
-
-<p>
-    @* <a asp-action="Create">Create New</a> *@
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DiscountLabel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Categories)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsFeatured)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsMembershipProduct)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Quantity)
-            </th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<main class="mx-7 my-5">
+    <h1>Product List</h1>
+    <p>
+        @* <a asp-action="Create">Create New</a> *@
+    </p>
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Price)
-                </td>
-                @if (item.DiscountLabel != null) {
-                    <td>
-                        <p class="list-item-tag">
-                        @Html.DisplayFor(modelItem => item.DiscountLabel)
-                        </p>
-                    </td>
-                } else { <td></td>}
-                @{
-                    var featuredLabel = item.IsFeatured ? "Featured" : "No";
-                    var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
-                }
-                <td>
-                    <div class="category-col">
-                    @foreach (var cat in item.Categories)
-                    {
-                        <p class="list-item-tag">@cat.Categoryname</p>
-                    }
-                    </div>
-                </td>
-                <td>
-                    <p class="list-item-tag">@featuredLabel</p>
-                </td>
-                <td>
-                    <p class="list-item-tag">@memberLabel</p>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Quantity)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DiscountLabel)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Categories)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsFeatured)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsMembershipProduct)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Quantity)
+                </th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    @if (item.DiscountLabel != null) {
+                        <td>
+                            <p class="list-item-tag">
+                            @Html.DisplayFor(modelItem => item.DiscountLabel)
+                            </p>
+                        </td>
+                    } else { <td></td>}
+                    @{
+                        var featuredLabel = item.IsFeatured ? "Featured" : "No";
+                        var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
+                    }
+                    <td>
+                        <div class="category-col">
+                        @foreach (var cat in item.Categories)
+                        {
+                            <p class="list-item-tag">@cat.Categoryname</p>
+                        }
+                        </div>
+                    </td>
+                    <td>
+                        <p class="list-item-tag">@featuredLabel</p>
+                    </td>
+                    <td>
+                        <p class="list-item-tag">@memberLabel</p>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</main>
+
 
 @{ var messageText = string.Empty;
     var alertClass = string.Empty;

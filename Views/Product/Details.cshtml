@@ -1,31 +1,77 @@
-@model peakmotion.Models.ProductDetailViewModel
+@model peakmotion.ViewModels.ProductDetailViewModel
 
 <head>
-    <link rel="stylesheet" href="~/css/details.css" />
+    <link rel="stylesheet" href="~/css/product-details.css" />
+    <script src="~/js/details.js"></script>
 </head>
 
-<div class="product-detail">
-    <h1>@Model.Productname</h1>
-    <p><strong>Price:</strong> $@Model.Unitprice.ToString("F2")</p>
-    <p><strong>Description:</strong> @Model.Description</p>
-    <p><strong>Quantity Available:</strong> @Model.Qty</p>
+<div class="product-container">
+    <!-- Product Image Carousel -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image-carousel">
+                <div class="carousel">
+                    <button class="carousel-arrow left-arrow" onclick="slide(-1)">&#10094;</button>
+                    <img id="currentImage" src="https://picsum.photos/500/700?random=1" alt="Product Image 1" />
+                    @* <img id="currentImage" src="https://picsum.photos/500/700?random=2" alt="Product Image 2" />
+            <img id="currentImage" src="https://picsum.photos/500/700?random=3" alt="Product Image 3" />
+            <img id="currentImage" src="https://picsum.photos/500/700?random=4" alt="Product Image 4" /> *@
+                    <button class="carousel-arrow right-arrow" onclick="slide(1)">&#10095;</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6"> <!-- Product Details -->
+            <div class="product-details">
+                <h1 class="product-name">Product Name</h1>
+                <p class="product-price">$49.99</p>
 
-    <p><strong>Category:</strong></p>
+                <!-- Color Selection -->
+                <div class="color-selection">
+                    <p>Select Color:</p>
+                    <div class="colors">
+                        <button class="color-circle" style="background-color: red;"></button>
+                        <button class="color-circle" style="background-color: blue;"></button>
+                        <button class="color-circle" style="background-color: green;"></button>
+                    </div>
+                </div>
 
-    <div>
-        <h4>Orders</h4>
-        @if (Model.OrderProducts.Any())
-        {
-            <ul>
-                @foreach (var order in Model.OrderProducts)
-                {
-                    <li>Order ID: @order.Fkorderid</li>
-                }
-            </ul>
-        }
-        else
-        {
-            <p>No orders for this product yet.</p>
-        }
+                <!-- Size Selection -->
+                <div class="size-selection">
+                    <p>Select Size:</p>
+                    <select id="sizeDropdown">
+                        <option value="S">Small</option>
+                        <option value="M">Medium</option>
+                        <option value="L">Large</option>
+                    </select>
+                </div>
+
+                
+                <form method="post" asp-controller="Product" asp-action="Details">
+                    <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
+                    <input type="hidden" name="ProductName" value="@Model.Productname" />
+                    <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
+                    <!-- Quantity Selection -->
+                    <div class="quantity-selection">
+                        <label for="Quantity">Select Quantity:</label>
+                        <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
+                    </div>
+
+                     
+
+
+                    <!-- Add to Cart Button -->
+                    <button type="submit" class="add-to-cart">Add to Cart</button>
+                 </form>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Product Description -->
+    <div class="product-description">
+        <h2>Product Description</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies nisl non enim gravida, ac
+            aliquet nulla placerat.</p>
     </div>
 </div>

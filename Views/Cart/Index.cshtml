@@ -1,0 +1,38 @@
+@model IEnumerable<peakmotion.ViewModels.CartItemVM>
+
+<link rel="stylesheet" href="~/css/cart.css" />
+
+@{
+    // Calculate order summary dynamically
+    decimal subtotal = Model.Sum(x => x.Price * x.CartQuantity);
+    decimal shipping = 0; // if there's a shipping fee, set it here
+    decimal tax = 0;      // if there's a tax calculation, set it here
+    decimal total = subtotal + shipping + tax;
+}
+
+<div class="cart-page">
+    <div class="cart-items">
+        <h2>MY CART</h2>
+        @Html.Partial("_CartItems", Model)
+        <p class="cart-save-later">
+            Do you want to save it for later?<br />
+            Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!
+        </p>
+    </div>
+    <div class="order-summary">
+        <h3>ORDER SUMMARY</h3>
+        <div class="order-summary-row">
+            <span>Subtotal</span><span>@subtotal.ToString("C")</span>
+        </div>
+        <div class="order-summary-row">
+            <span>Shipping</span><span>@shipping.ToString("C")</span>
+        </div>
+        <div class="order-summary-row">
+            <span>Tax</span><span>@tax.ToString("C")</span>
+        </div>
+        <div class="order-summary-row order-summary-total">
+            <span>TOTAL</span><span>@total.ToString("C")</span>
+        </div>
+        <a href="#" class="checkout-button">CHECKOUT</a>
+    </div>
+</div>
