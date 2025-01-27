@@ -17,8 +17,11 @@ builder.Services.AddDbContext<PeakmotionContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// Identity-related
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
 {
@@ -30,12 +33,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<ShopRepo>();
 builder.Services.AddScoped<CookieRepo>();
+// Identity-related
+builder.Services.AddScoped<RoleRepo>();
+builder.Services.AddScoped<UserRepo>();
+builder.Services.AddScoped<UserRoleRepo>();
 
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddSession(options =>
 {
-options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
 });
 
 var app = builder.Build();
@@ -68,5 +75,17 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
    .WithStaticAssets();
+
+// Seeding Role data
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[] { "Admin", "Employee", "Customer" };
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+    }
+}
 
 app.Run();
