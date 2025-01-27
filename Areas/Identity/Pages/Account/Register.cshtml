@@ -9,6 +9,9 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="row">
+    <div class="col-md-6 d-none d-md-block">
+    <img src="https://via.placeholder.com/800x600" alt="Placeholder Image" class="img-fluid h-100" style="object-fit: cover; width: 100%; height: 100vh;" />
+    </div>
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <h3>CREATE A MEMBER ACCOUNT</h3>
@@ -42,12 +45,13 @@
             <div class="g-recaptcha" data-sitekey='@ViewData["SiteKey"]'></div><br />
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">REGISTER YOUR ACCOUNT</button>
         </form>
-    </div>
-    </<hr>
-    <div>
+        
         <p>Already have account account?</p>
         <p>Please <a href="/Identity/Account/Login">login</a>here</p>
     </div>
+
+    
+
     
     @* <div class="col-md-6 col-md-offset-2">
         <section> *@
