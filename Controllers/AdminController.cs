@@ -22,4 +22,10 @@ public class AdminController : Controller
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
         return View(products);
     }
+
+    public IActionResult ProductEdit(int productId)
+    {
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+        return View(products);
+    }
 }

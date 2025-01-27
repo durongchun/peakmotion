@@ -1,0 +1,91 @@
+
+<link rel="stylesheet" href="~/css/productEdit.css">
+
+
+
+<main id="container">
+    <H2>Product Edit</H2>
+    <section id="productDetail">
+        <form class="product-form" action="/shipping" method="POST">
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="name">Name</label>
+                <input type="text">
+            </div>
+            <div class="price-qty">
+                <div class="form-group d-flex flex-column mb-3 ">
+                    <label for="price">Price</label>
+                    <input type="text">
+                </div>
+                <div class="form-group d-flex flex-column mb-3 ">
+                    <label for="quantity">Quantity</label>
+                    <input type="text">
+                </div>
+            </div>
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="description">Description</label>
+                <input type="text">
+            </div>
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="discount">Discount (%)</label>
+                <input type="text">
+            </div>
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="colour">Colour</label>
+                <input type="text">
+            </div>
+            <div class="form-group d-flex flex-column mb-3">
+                <label for="size">Size</label>
+                <input type="text">
+            </div>
+        </form>
+        <div id="primaryImage">
+            <img src="https://picsum.photos/500/700?random=1" alt="primary image">
+        </div>
+    </section>
+    <section class="categories">
+        <div id="categoryProperties">
+            <div>
+                <label for="category">Category</label>
+                <select name="category" id="category">
+                    <option value="Shirt">Shirt</option>
+                    <option value="Top">Top</option>
+                    <option value="Pant">Pant</option>
+                </select>
+            </div>
+            <div>
+                <label for="properties">Properties</label>
+                <select name="properties" id="properties">
+                    <option value="Wind Resistant">Wind Resistant</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Waterproof">Waterproof</option>
+                </select>
+            </div>
+        </div>
+        <button>ADD NEW CATEGORY</button>
+    </section>
+    <section id="images">
+        <H3>IMAGES</H3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Path</th>
+                    <th scope="col">Is Primary?</th>
+                    <th scope="col">Sort Order No.</th>
+                    <th scope="col">Thumbnail</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row"></th>
+                </tr>
+            </tbody>
+        </table>
+        <button>ADD NEW PHOTO</button>
+    </section>
+    <div id="saveDelete">
+        <button>DELETE</button>
+        <button>SAVE</button>
+    </div>
+</main>
