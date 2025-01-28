@@ -32,12 +32,11 @@
     </br>
 
         <!-- for wishlist btn  -->
-    <a asp-controller="Wishlist"
-       asp-action="Add"
-       asp-route-productId="@Model.ID"
-       class="add-to-wishlist-btn">
-       Add to Wishlist
-    </a>
+        <form asp-controller="Wishlist" asp-action="Add" method="post">
+            <input type="hidden" name="productId" value="@Model.ID" />
+            <button type="submit" class="add-to-wishlist-btn">Add to Wishlist</button>
+        </form>
+
 
     <!-- for cart btn  -->
     <a asp-controller="Cart" asp-action="AddCartItem" asp-route-productId="@Model.ID" class="add-to-cart-btn">

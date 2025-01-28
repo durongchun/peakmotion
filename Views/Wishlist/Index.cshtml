@@ -1,9 +1,5 @@
 @model IEnumerable<peakmotion.ViewModels.WishlistVM>
 
-@{
-    ViewData["Title"] = "Wishlist";
-}
-
 <h2>Wishlist</h2>
 
 @if (!Model.Any())
@@ -15,6 +11,7 @@ else
     <table class="table">
         <thead>
             <tr>
+                <th>Image</th>
                 <th>Product</th>
                 <th>Price</th>
                 <th>Remove</th>
@@ -24,6 +21,16 @@ else
         @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    @if (item.PrimaryImage != null)
+                    {
+                        <img src="@item.PrimaryImage.Url" alt="@item.ProductName" width="80" />
+                    }
+                    else
+                    {
+                        <span>No image</span>
+                    }
+                </td>
                 <td>@item.ProductName</td>
                 <td>@item.Price.ToString("C")</td>
                 <td>

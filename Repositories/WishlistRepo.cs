@@ -16,16 +16,37 @@ namespace peakmotion.Repositories
 
         public IEnumerable<WishlistVM> GetWishlistByUserId(int userId)
         {
-            var wishlistItems = from w in _context.Wishlists
-                                join p in _context.Products on w.Fkproductid equals p.Pkproductid
-                                where w.Fkpmuserid == userId
-                                select new WishlistVM
-                                {
-                                    WishlistId = w.Pkwishlistid,
-                                    ProductId = p.Pkproductid,
-                                    ProductName = p.Name,
-                                    Price = p.Regularprice
-                                };
+            var query =
+                from w in _context.Wishlists
+                join p in _context.Products
+                     on w.Fkproductid equals p.Pkproductid
+                join img in _context.ProductImages
+                     on p.Pkproductid equals img.Fkproductid
+                     into productImagesGroup
+                where w.Fkpmuserid == userId
+                select new
+                {
+                    w.Pkwishlistid,
+                    p.Pkproductid,
+                    p.Name,
+                    p.Regularprice,
+                    ProductImages = productImagesGroup
+                };
+
+            var wishlistItems = query.AsEnumerable().Select(x =>
+            {
+                var primaryImg = x.ProductImages.FirstOrDefault(i => i.Isprimary);
+
+                return new WishlistVM
+                {
+                    WishlistId   = x.Pkwishlistid,
+                    ProductId    = x.Pkproductid,
+                    ProductName  = x.Name,
+                    Price        = x.Regularprice,
+                    Images       = x.ProductImages.ToList(),
+                    PrimaryImage = primaryImg
+                };
+            });
 
             return wishlistItems;
         }
