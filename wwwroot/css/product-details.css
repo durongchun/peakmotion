@@ -52,11 +52,11 @@
   background-color: #0056b3;
 }
 
-.product-description {
+/* .product-description {
   margin-top: 20px;
   width: 100%;
   flex-basis: 100%;
-}
+} */
 
 .product-price {
   font-size: 1.5rem;

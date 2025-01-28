@@ -1,4 +1,4 @@
-@model peakmotion.ViewModels.ProductDetailViewModel
+@model peakmotion.ViewModels.ProductDetailVM
 
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
@@ -9,7 +9,7 @@
 <div class="product-container">
     <!-- Product Image Carousel -->
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-6 pe-5 ps-4">
             <div class="product-image-carousel">
                 <div class="carousel slide" id="carouselExampleIndicators">
                     <div class="carousel-indicators">
@@ -21,15 +21,30 @@
                             aria-label="Slide 3"></button>
                     </div>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="https://picsum.photos/500/600?random=1" class="d-block w-100" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/500/600?random=2" class="d-block w-100" alt="...">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/500/600?random=3" class="d-block w-100" alt="...">
-                        </div>
+                        @if (Model.Images?.Any() == true)
+                        {
+
+                            @foreach (var image in Model.Images)
+                            {
+                                <div class="carousel-item @(image == Model.Images.First() ? "active" : "")">
+                                    <img src="@image" class="d-block w-100" alt="@Model.Productname">
+                                </div>
+                            }
+
+                        }
+                        else
+                        {
+                            <div class="carousel-item active">
+                                <img src="https://picsum.photos/500/600?random=1" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://picsum.photos/500/600?random=2" class="d-block w-100" alt="...">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="https://picsum.photos/500/600?random=3" class="d-block w-100" alt="...">
+                            </div>
+                        }
+
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="prev">
@@ -44,42 +59,54 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6"> <!-- Product Details -->
-            <div class="product-details">
-                <h1 class="product-name">@Model.Productname</h1>
-                <p class="product-price">$@Model.Unitprice.ToString("F2")</p>
+        <div class="col-md-6 d-flex flex-column justify-content-center"> <!-- Product Details -->
+            <div class="product-details w-100">
+                <h1 class="product-name pb-5">@Model.Productname</h1>
+                <p class="product-price pb-5">$@Model.Unitprice.ToString("F2")</p>
 
                 <!-- Color Selection -->
-                @* @if (Model.colors?.Any() == true)
+                @if (Model.Colors?.Any() == true)
                 {
-                    <div class="color-selection">
+                    <div class="color-selection pb-5">
                         <p>Select Color:</p>
                         <div class="colors">
-                            @foreach (var color in Model.colors)
+                            @foreach (var color in Model.Colors)
                             {
                                 <button class="color-circle" style="background-color: @color;"></button>
                             }
                         </div>
                     </div>
-                } *@
-                <div class="color-selection">
+                }
+                @* <div class="color-selection">
                     <p>Select Color:</p>
                     <div class="colors">
                         <button class="color-circle" style="background-color: red;"></button>
                         <button class="color-circle" style="background-color: blue;"></button>
                         <button class="color-circle" style="background-color: green;"></button>
                     </div>
-                </div>
+                </div> *@
 
                 <!-- Size Selection -->
-                <div class="size-selection">
+                @if (Model.Sizes?.Any() == true)
+                {
+                    <div class="size-selection pb-5">
+                        <p>Select Size:</p>
+                        <select id="sizeDropdown">
+                            @foreach (var size in Model.Sizes)
+                            {
+                                <option value="@size">@size</option>
+                            }
+                        </select>
+                    </div>
+                }
+                @* <div class="size-selection">
                     <p>Select Size:</p>
                     <select id="sizeDropdown">
                         <option value="S">Small</option>
                         <option value="M">Medium</option>
                         <option value="L">Large</option>
                     </select>
-                </div>
+                </div> *@
 
 
                 <form method="post" asp-controller="Product" asp-action="Details">
@@ -87,7 +114,7 @@
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
                     <!-- Quantity Selection -->
-                    <div class="quantity-selection">
+                    <div class="quantity-selection pb-3">
                         <label for="Quantity">Select Quantity:</label>
                         <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
                     </div>
@@ -99,15 +126,31 @@
                     <button type="submit" class="add-to-cart">Add to Cart</button>
                 </form>
             </div>
+            <!-- Product Description -->
+            <div class="d-flex w-100">
+                <div class="product-description d-flex flex-column mw-50 pt-5">
+                    @if (Model.Description != null)
+                    {
+                        <p>@Model.Description</p>
+                    }
+                    else
+                    {
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies nisl non enim
+                            gravida,
+                            ac
+                            aliquet nulla placerat. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                            ultricies nisl non enim
+                            gravida,
+                            ac
+                            aliquet nulla placerat.</p>
+                    }
+                </div>
+            </div>
         </div>
+
     </div>
 
 
 
-    <!-- Product Description -->
-    <div class="product-description">
-        <h2>Product Description</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies nisl non enim gravida, ac
-            aliquet nulla placerat.</p>
-    </div>
+
 </div>

@@ -1,8 +1,13 @@
 ﻿@model peakmotion.ViewModels.ProductVM
 
 <div class="product">
-    <img src="images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image" width="200">
-    <p class="product-name">@Model.ProductName</p>
+
+    <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
+
+
+        <img src="images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image" width="200">
+        <p class="product-name">@Model.ProductName</p>
+    </a>
     <p class="product-desc">@Model.Description</p>
     @{
         var hasDiscount = @Model.Discount != null && @Model.Discount.Description != "free shipping";
@@ -21,8 +26,8 @@
         <p class="product-price">@Model.Price.ToString("C")</p>
     }
 
-    <a asp-controller="Product" asp-action="Detail" asp-route-productId="@Model.ID" class="">
-        detail
+    <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
+
     </a>
 
     <!-- for cart btn  -->
