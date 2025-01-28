@@ -70,6 +70,31 @@ namespace peakmotion.Repositories
             return products;
         }
 
+        public String RemoveProduct(int id)
+        {
+            Product? product = _context.Products
+                                .Where(i => i.Pkproductid == id)
+                                .FirstOrDefault();
+
+            if (product == null)
+            {
+                return $"warning,Unable to find product ID: {id}";
+            }
+
+            try
+            {
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+
+                return $"success,Successfully deleted product ID: {id}";
+            }
+            catch (Exception ex)
+            {
+                return $"error,Product could not be deleted: {ex.Message}";
+            }
+        }
+
+
 
 
     }

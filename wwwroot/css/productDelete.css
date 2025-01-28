@@ -1,0 +1,19 @@
+main {
+  margin: 0 6rem;
+}
+
+button {
+  font-size: 16px;
+  color: #fff;
+  background-color: black;
+  border: 1px solid black;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 200px;
+  height: 38px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

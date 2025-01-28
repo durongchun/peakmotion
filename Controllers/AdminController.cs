@@ -2,6 +2,7 @@ using System.Collections;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using peakmotion.Models;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
 
@@ -29,4 +30,27 @@ public class AdminController : Controller
 
         return View(product);
     }
+
+
+
+    public IActionResult ProductDelete(int id)
+    {
+        ProductVM? product = _productRepo.GetProduct(id);
+
+        return View(product);
+    }
+
+    [HttpPost, ActionName("ProductDelete")]
+    public IActionResult DeleteConfirmed(int id)
+    {
+        string returnMessage = _productRepo.RemoveProduct(id);
+
+        return RedirectToAction("Products",
+                                new { message = returnMessage });
+
+    }
+
+
+
+
 }

@@ -3,8 +3,7 @@
   /* grid-template-rows: 0.5 3fr 1fr 2fr 1fr; */
   grid-template-rows: repeat(auto-fit, minmax(100px, auto));
   align-items: center;
-  margin-left: 6rem;
-  margin-right: 6rem;
+  margin: 0 6rem;
   gap: 2rem;
 }
 #productDetail {
