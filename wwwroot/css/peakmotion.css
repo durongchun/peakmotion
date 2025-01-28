@@ -12,6 +12,11 @@ body {
   font-size: 3rem;
 }
 
+.px-7 {
+  padding-left: 5rem;
+  padding-right: 5rem;
+}
+
 .mx-7 {
   margin-left: 5rem;
   margin-right: 5rem;
