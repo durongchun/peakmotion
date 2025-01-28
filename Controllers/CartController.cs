@@ -58,7 +58,8 @@ namespace peakmotion.Controllers
 
         // Adds a new product to the cart if it does not exist.
         // If the product exists, redirects to UpdateCartItem instead.
-        public IActionResult AddCartItem(int productID, int qty = 1)
+        [HttpPost]
+        public IActionResult Add(int productID, int qty = 1)
         {
             var product = _productRepo.GetProduct(productID);
             if (product == null)
@@ -146,7 +147,8 @@ namespace peakmotion.Controllers
         }
 
         // Updates the quantity of an existing product in the cart
-        public IActionResult UpdateCartItem(int productID, int newQty)
+        [HttpPost]
+        public IActionResult Update(int productID, int newQty)
         {
             var product = _productRepo.GetProduct(productID);
             if (product == null)
@@ -230,7 +232,8 @@ namespace peakmotion.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult DeleteCartItem(int productID)
+        [HttpPost]
+        public IActionResult Delete(int productID)
         {
             var encodedCartString = _cookieRepo.GetCookie("cart");
             var cartItems = new List<CartItemVM>();
