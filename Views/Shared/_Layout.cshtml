@@ -20,24 +20,19 @@
 </head>
 
 <body>
-    @{
-        // temproary testing conditional for different layouts
-        var role = "Customer";
-    }
-
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container-fluid">
-                <h1 class="fs-2"><a class="navbar-brand" asp-area="" asp-controller="Home"
+            <div class="container-fluid gap-4">
+                <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
                         asp-action="Index">peakmotion</a></h1>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @if (@role == "Admin") 
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
                     {
-                        <h2 class="pl-4">Admin Portal</h2>
+                        <h2 class="pl-4">Employee Portal</h2>
                     }
                     else
                     {
@@ -63,7 +58,7 @@
                     }
 
                     @* Temporarily have conditional here - role/signin check not working yet *@
-                    @if (@role == "Admin") 
+                    @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
                     {
                         <ul class="navbar-nav d-flex gap-4 align-items-center">
                             <li>
@@ -120,7 +115,7 @@
 
     @* Content *@
     <div class="container-fluid p-0">
-        @if (@role == "Admin") 
+        @if (User.IsInRole("Admin") || User.IsInRole("Employee"))  
         {
             @* Admin Content with Sidebar *@
             <div class="d-flex flex-col mx-7 my-5 gap-4">
@@ -138,16 +133,29 @@
                     </div>
                     <div class="sidebar-buttons d-flex flex-column gap-2">
                         <button class="w-100 btn btn-outline-dark">Dashboard</button>
-                        @* If Admin *@
-                        <button class="w-100 btn btn-outline-dark">Employees</button>
-                        @* If Employee *@
-                        <a class="w-100 btn btn-outline-dark" 
-                                asp-area="" 
-                                asp-controller="Admin"
-                                asp-action="Products">
-                                Products
-                        </a>
-                        <button class="w-100 btn btn-link"><u>Sign Out</u></button>
+                         @* @if (User.IsInRole("Admin")) 
+                         { *@
+                            <button class="w-100 btn btn-outline-dark">Employees</button>
+                         @* }
+                        @if (User.IsInRole("Employee")) 
+                        { *@
+                            <a class="w-100 btn btn-outline-dark" 
+                                    asp-area="" 
+                                    asp-controller="Admin"
+                                    asp-action="Products">
+                                    Products
+                            </a>
+                            <a class="w-100 btn btn-outline-dark" 
+                                    asp-area="" 
+                                    asp-controller="Order"
+                                    asp-action="Index">
+                                    Orders
+                            </a>
+                        @* } *@
+                        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button  type="submit" class="w-100 btn btn-link">Sign Out</button>
+                        </form>
+                        
                     </div>
                 </section>
                 <main role="main" class="pb-3">
