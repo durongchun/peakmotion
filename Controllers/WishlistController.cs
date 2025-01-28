@@ -22,11 +22,18 @@ namespace peakmotion.Controllers
         public async Task<IActionResult> Index()
         {
             var identityUser = await _userManager.GetUserAsync(User);
+
+            if (identityUser == null)
+            {
+                return Redirect("/Identity/Account/Login");
+
+            }
+
             var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
 
             if (userId == null)
             {
-                return RedirectToAction("Login", "Account");
+                return Redirect("/Identity/Account/Login");
             }
             else{
                 IEnumerable<WishlistVM> wishlistItems = _wishlistRepo.GetWishlistByUserId(userId);
@@ -40,11 +47,16 @@ namespace peakmotion.Controllers
         public async Task<IActionResult> Add(int productId)
         {
             var identityUser = await _userManager.GetUserAsync(User);
-            var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
 
+            if (identityUser == null)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
+            var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
             if (userId == null)
             {
-                return RedirectToAction("Login", "Account");
+                return Redirect("/Identity/Account/Login");
             }
             else
             {
@@ -58,11 +70,16 @@ namespace peakmotion.Controllers
         public async Task<IActionResult> Remove(int productId)
         {
             var identityUser = await _userManager.GetUserAsync(User);
-            var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
 
+            if (identityUser == null)
+            {
+                return Redirect("/Identity/Account/Login");
+            }
+
+                var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
             if (userId == null)
             {
-                return RedirectToAction("Login", "Account");
+                return Redirect("/Identity/Account/Login");
             }
             else
             {
