@@ -1,3 +1,8 @@
+@model peakmotion.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Product Edit";
+}
 
 <link rel="stylesheet" href="~/css/productEdit.css">
 
@@ -9,25 +14,25 @@
         <form class="product-form" action="/shipping" method="POST">
             <div class="form-group d-flex flex-column mb-3">
                 <label for="name">Name</label>
-                <input type="text">
+                @Html.TextBoxFor(m => m.ProductName, new { @id = "name", @placeholder = "", @class = "form-control" })
             </div>
             <div class="price-qty">
                 <div class="form-group d-flex flex-column mb-3 ">
                     <label for="price">Price</label>
-                    <input type="text">
+                    @Html.TextBoxFor(m => m.Price, new { @id = "price", @placeholder = "", @class = "form-control" })
                 </div>
                 <div class="form-group d-flex flex-column mb-3 ">
                     <label for="quantity">Quantity</label>
-                    <input type="text">
+                     @Html.TextBoxFor(m => m.Quantity, new { @id = "quantity", @placeholder = "", @class = "form-control" })
                 </div>
             </div>
             <div class="form-group d-flex flex-column mb-3">
                 <label for="description">Description</label>
-                <input type="text">
+                 @Html.TextBoxFor(m => m.Description, new { @id = "description", @placeholder = "", @class = "form-control" })
             </div>
             <div class="form-group d-flex flex-column mb-3">
                 <label for="discount">Discount (%)</label>
-                <input type="text">
+                 @Html.TextBoxFor(m => m.Discount, new { @id = "discount", @placeholder = "", @class = "form-control" })
             </div>
             <div class="form-group d-flex flex-column mb-3">
                 <label for="colour">Colour</label>

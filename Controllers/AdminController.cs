@@ -23,9 +23,10 @@ public class AdminController : Controller
         return View(products);
     }
 
-    public IActionResult ProductEdit(int productId)
+    public IActionResult ProductEdit(int id)
     {
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
-        return View(products);
+        ProductVM? product = _productRepo.GetProduct(id);
+
+        return View(product);
     }
 }

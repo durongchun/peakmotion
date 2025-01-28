@@ -2,6 +2,7 @@
   display: grid;
   grid-template-rows: 1fr 6fr;
   margin-left: 6rem;
+  margin-right: 6rem;
   align-items: center;
   justify-content: center;
 }
@@ -23,7 +24,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 184px;
+  width: 200px;
   height: 38px;
 }
 
