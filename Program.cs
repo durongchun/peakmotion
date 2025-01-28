@@ -31,7 +31,9 @@ builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<OrderRepo>();
 builder.Services.AddScoped<ShopRepo>();
 builder.Services.AddScoped<CookieRepo>();
+builder.Services.AddScoped<PmuserRepo>();
 
+builder.Services.AddScoped<WishlistRepo>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddSession(options =>
