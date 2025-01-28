@@ -4,7 +4,7 @@ using peakmotion.Models;
 
 namespace peakmotion.ViewModels;
 
-public partial class ProductDetailViewModel
+public partial class ProductDetailVM
 {
     public int Pkproductid { get; set; }
 
@@ -18,8 +18,12 @@ public partial class ProductDetailViewModel
 
     public int Fkcategoryid { get; set; }
 
-    // public Category Fkcategory { get; set; } = null!;
+    public IEnumerable<String> Colors { get; set; } = new List<String>();
 
     public IEnumerable<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();
+
+    public IEnumerable<String> Sizes { get; set; } = new List<String>();
+
+    public IEnumerable<String> Images { get; set; } = new List<String>();
 
 }
