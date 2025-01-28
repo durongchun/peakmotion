@@ -1,7 +1,7 @@
 #orderConfirmation {
   display: grid;
   grid-template-rows: 1fr 6fr;
-  margin-left: 6rem;
+  /* margin-left: 6rem; */
   align-items: center;
   justify-content: center;
 }

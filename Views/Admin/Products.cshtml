@@ -4,7 +4,7 @@
     ViewData["Title"] = "Products";
 }
 
-<main class="mx-7 my-5">
+<main class="">
     <h1>Product List</h1>
     <p>
         @* <a asp-action="Create">Create New</a> *@
@@ -12,7 +12,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>
+                <th class="show-on-sm">
                     @Html.DisplayNameFor(model => model.ID)
                 </th>
                 <th>
@@ -21,19 +21,19 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Price)
                 </th>
-                <th>
+                <th class="show-on-sm">
                     @Html.DisplayNameFor(model => model.DiscountLabel)
                 </th>
-                <th>
+                <th class="show-on-lg">
                     @Html.DisplayNameFor(model => model.Categories)
                 </th>
-                <th>
+                <th class="show-on-xlg">
                     @Html.DisplayNameFor(model => model.IsFeatured)
                 </th>
-                <th>
+                <th class="show-on-xlg">
                     @Html.DisplayNameFor(model => model.IsMembershipProduct)
                 </th>
-                <th>
+                <th class="show-on-sm">
                     @Html.DisplayNameFor(model => model.Quantity)
                 </th>
                 <th>Actions</th>
@@ -43,7 +43,7 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
+                    <td class="show-on-sm">
                         @Html.DisplayFor(modelItem => item.ID)
                     </td>
                     <td>
@@ -53,17 +53,17 @@
                         @Html.DisplayFor(modelItem => item.Price)
                     </td>
                     @if (item.DiscountLabel != null) {
-                        <td>
+                        <td class="show-on-sm">
                             <p class="list-item-tag">
                             @Html.DisplayFor(modelItem => item.DiscountLabel)
                             </p>
                         </td>
-                    } else { <td></td>}
+                    } else { <td class="show-on-sm"></td>}
                     @{
                         var featuredLabel = item.IsFeatured ? "Featured" : "No";
                         var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
                     }
-                    <td>
+                    <td class="show-on-lg">
                         <div class="category-col">
                         @foreach (var cat in item.Categories)
                         {
@@ -71,13 +71,13 @@
                         }
                         </div>
                     </td>
-                    <td>
+                    <td class="show-on-xlg">
                         <p class="list-item-tag">@featuredLabel</p>
                     </td>
-                    <td>
+                    <td class="show-on-xlg">
                         <p class="list-item-tag">@memberLabel</p>
                     </td>
-                    <td>
+                    <td class="show-on-sm">
                         @Html.DisplayFor(modelItem => item.Quantity)
                     </td>
                     <td>
