@@ -5,7 +5,7 @@
 }
 
 <link rel="stylesheet" href="~/css/productEdit.css">
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 
 <main id="container">
@@ -69,7 +69,7 @@
         <button>ADD NEW CATEGORY</button>
     </section>
     <section id="images">
-        <H3>IMAGES</H3>
+        <h3>IMAGES</h3>
         <table class="table">
             <thead>
                 <tr>
@@ -81,16 +81,135 @@
                     <th scope="col">Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <th scope="row"></th>
-                </tr>
+            <tbody id="imageTableBody">
+                <!-- Existing rows will be here -->
             </tbody>
+            <!-- Editable Input Row -->
+            <tfoot>
+                <tr id="addPhotoRow" style="display: none;">
+                    <td><input type="text" id="photoName" placeholder="Enter Name" class="form-control" /></td>
+                    <td><input type="text" id="photoPath" placeholder="Enter Path (URL)" class="form-control" /></td>
+                    <td><input type="checkbox" id="isPrimary" /></td>
+                    <td><input type="number" id="sortOrder" placeholder="Sort Order" class="form-control" /></td>
+                    <td>
+                        <!-- Thumbnail preview -->
+                        <span id="thumbnailPreview"></span>
+                    </td>
+                    <td>
+                        <i class="fas fa-trash-alt">
+                    </td>
+                </tr>
+            </tfoot>
         </table>
-        <button>ADD NEW PHOTO</button>
+        <button id="addPhotoBtn" >ADD NEW PHOTO</button>
     </section>
     <div id="saveDelete">
         <button>DELETE</button>
         <button>SAVE</button>
     </div>
 </main>
+
+<script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const addPhotoBtn = document.getElementById("addPhotoBtn");
+        const addPhotoRow = document.getElementById("addPhotoRow");
+        const photoNameInput = document.getElementById("photoName");
+        const photoPathInput = document.getElementById("photoPath");
+        const isPrimaryInput = document.getElementById("isPrimary");
+        const sortOrderInput = document.getElementById("sortOrder");
+        const thumbnailPreview = document.getElementById("thumbnailPreview");
+        const imageTableBody = document.getElementById("imageTableBody");
+
+        // Show the editable row when "ADD NEW PHOTO" is clicked
+        addPhotoBtn.addEventListener("click", () => {
+            addPhotoRow.style.display = "table-row";
+            photoNameInput.focus(); // Focus on the first input
+        });
+
+        // Update thumbnail preview dynamically
+        photoPathInput.addEventListener("input", () => {
+            const imagePath = photoPathInput.value;
+            thumbnailPreview.innerHTML = imagePath
+                ? `<img src="${imagePath}" alt="Thumbnail" width="50" />`
+                : '';
+        });
+
+        // Handle input blur or pressing Enter to save the new photo
+        const saveNewPhoto = () => {
+            const photoName = photoNameInput.value;
+            const photoPath = photoPathInput.value;
+            const isPrimary = isPrimaryInput.checked;
+            const sortOrder = sortOrderInput.value;
+
+            // Validate required fields
+            if (!photoName || !photoPath || !sortOrder) {
+                @* alert("Please fill in all required fields."); *@
+                return;
+            }
+
+            // Add the new photo row to the table
+            const newRow = `
+                <tr>
+                    <td>${photoName}</td>
+                    <td>${photoPath}</td>
+                    <td>${isPrimary ? "Yes" : "No"}</td>
+                    <td>${sortOrder}</td>
+                    <td><img src="${photoPath}" alt="${photoName}" width="50" /></td>
+                    <td>
+                        <button class="btn btn-danger btn-sm deletePhoto">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            `;
+            imageTableBody.innerHTML += newRow;
+
+            // Optionally, send the data to the server
+            fetch('/YourEndpoint/AddImage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: photoName,
+                    path: photoPath,
+                    isPrimary: isPrimary,
+                    sortOrder: sortOrder
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log("Photo added:", data))
+            .catch(error => console.error("Error adding photo:", error));
+
+            // Clear and hide the input row
+            photoNameInput.value = "";
+            photoPathInput.value = "";
+            isPrimaryInput.checked = false;
+            sortOrderInput.value = "";
+            thumbnailPreview.innerHTML = "";
+            addPhotoRow.style.display = "none";
+        };
+
+        // Save photo on input blur or Enter key press
+        [photoNameInput, photoPathInput, sortOrderInput].forEach((input) => {
+            input.addEventListener("blur", saveNewPhoto); // Save on blur
+            input.addEventListener("keypress", (e) => {
+                if (e.key === "Enter") {
+                    saveNewPhoto();
+                }
+            });
+        });
+
+        // Handle delete button click dynamically
+        imageTableBody.addEventListener("click", (e) => {
+            if (e.target.closest(".deletePhoto")) {
+                const row = e.target.closest("tr");
+                row.remove();
+
+                // Optionally, send a request to delete the photo on the server
+                // fetch('/YourEndpoint/DeleteImage', { method: 'DELETE', body: JSON.stringify({ id: photoId }) });
+            }
+        });
+    });
+
+</script>
