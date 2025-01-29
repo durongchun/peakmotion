@@ -94,8 +94,54 @@ namespace peakmotion.Repositories
             }
         }
 
+        public async Task UploadImagesFromAdminProductEdit(List<IFormFile> files, string photoName, string photoPath, bool isPrimary, int sortOrder, int productId)
+        {
+            try
+            {
+                if (files != null && files.Count > 0)
+                {
+                    // Save each uploaded file to a directory and get the path
+                    foreach (var file in files)
+                    {
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", file.FileName);
 
+                        // Ensure directory exists
+                        var directory = Path.GetDirectoryName(filePath);
+                        if (!Directory.Exists(directory))
+                        {
+                            Directory.CreateDirectory(directory);
+                        }
 
+                        // Save the file asynchronously
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        // Create a new Image record and add it to the database
+                        var image = new ProductImage
+                        {
+                            Url = filePath,   // Store the file path
+                            Isprimary = isPrimary,
+                            Fkproductid = productId,
+                        };
+
+                        _context.ProductImages.Add(image);
+                    }
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (You can use any logging framework like Serilog, NLog, etc.)
+                // For example: _logger.LogError(ex, "An error occurred while uploading images.");
+
+                // Optionally, rethrow or handle the exception (return an error response, etc.)
+                throw new Exception("An error occurred while uploading images.", ex);
+            }
+        }
 
     }
 }

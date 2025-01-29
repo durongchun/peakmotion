@@ -50,7 +50,17 @@ public class AdminController : Controller
 
     }
 
+    [HttpPost("Product/UploadImages")]
+    public async Task<IActionResult> UploadImages(List<IFormFile> files, string photoName, string photoPath, bool isPrimary, int sortOrder, int productId)
+    {
+        _productRepo.UploadImagesFromAdminProductEdit(files, photoName, photoPath, isPrimary, sortOrder, productId);
 
-
-
+        // Redirect to a relevant page (e.g., Product details page)
+        return RedirectToAction("ProductEdit", new { id = 1 }); // Adjust the ID or redirect to another action as needed
+    }
 }
+
+
+
+
+
