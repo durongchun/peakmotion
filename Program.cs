@@ -5,8 +5,6 @@ using peakmotion.Data;
 using peakmotion.Models;
 using peakmotion.Repositories;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,10 +32,14 @@ builder.Services.AddScoped<ProductRepo>();
 builder.Services.AddScoped<OrderRepo>();
 builder.Services.AddScoped<ShopRepo>();
 builder.Services.AddScoped<CookieRepo>();
+builder.Services.AddScoped<WishlistRepo>();
+
 // Identity-related
 builder.Services.AddScoped<RoleRepo>();
 builder.Services.AddScoped<UserRepo>();
 builder.Services.AddScoped<UserRoleRepo>();
+builder.Services.AddScoped<PmuserRepo>();
+
 
 builder.Services.AddTransient<IEmailService, EmailService>();
 
