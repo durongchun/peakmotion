@@ -17,6 +17,11 @@ public class AdminController : Controller
         _productRepo = productRepo;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     public IActionResult Products()
     {
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts();

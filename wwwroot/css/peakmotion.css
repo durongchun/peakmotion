@@ -12,6 +12,10 @@ body {
   font-size: 3rem;
 }
 
+.fs-8 {
+  font-size: 0.8rem;
+}
+
 .px-7 {
   padding-left: 5rem;
   padding-right: 5rem;

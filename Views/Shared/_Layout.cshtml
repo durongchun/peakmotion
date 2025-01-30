@@ -30,87 +30,9 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
-                    {
-                        <h2 class="pl-4">Employee Portal</h2>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Product"
-                                    asp-action="Index">Products</a>
-                            </li>
-                           <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment
-                                    Page</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Shop"
-                                    asp-action="PayPalConfirmation">Order Confirmation
-                                    Page</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-light" asp-area="" asp-controller="Order" asp-action="Index">(Admin
-                                    Orders)</a>
-                            </li>
-                        </ul>
-                    }
-
-                    @* Temporarily have conditional here - role/signin check not working yet *@
-                    @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
-                    {
-                        <ul class="navbar-nav d-flex gap-4 align-items-center">
-                            <li>
-                                <img src="~/images/profile_solid.svg" 
-                                    alt="Profile Button"
-                                    width="32"
-                                    height="32"
-                                >
-                            </li>
-                            <li class="nav-item border border-white px-2">
-                                <a class="nav-link text-light" 
-                                    asp-area="" 
-                                    asp-page="">
-                                    Go Back To Main Site
-                                </a>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav d-flex gap-2 align-items-center mx-4">
-                            <a class="btn-image">
-                                <img src="~/images/search.svg" 
-                                    alt="Search Button"
-                                    width="32"
-                                    height="32"
-                                >
-                            </a>
-                            <a class="btn-image"
-                                asp-area="" 
-                                asp-controller="Wishlist" 
-                                asp-action="Index">
-                                <img src="~/images/heart.svg" 
-                                    alt="Wishlist Button"
-                                    width="32"
-                                    height="32"
-                                >
-                            </a>
-                            <a class="btn-image" 
-                                asp-area="" 
-                                asp-controller="Cart" 
-                                asp-action="Index">
-                                <img src="~/images/cart.svg" 
-                                    alt="Checkout Button"
-                                    width="32"
-                                    height="32"
-                                >  
-                            </a>     
-                        </ul>
-                        
-                        <partial name="_LoginPartial" />
-                    }
+                   
+                    <partial name="_LoginPartial" />
+                    
                 </div>
             </div>
         </nav>
