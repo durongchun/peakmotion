@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/peakmotion.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/peakmotion.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,53 +22,80 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
-            <div class="container-fluid">
-                <h1 class="fs-2"><a class="navbar-brand" asp-area="" asp-controller="Home"
+            <div class="container-fluid gap-4">
+                <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
                         asp-action="Index">peakmotion</a></h1>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <h2>Admin Portal</h2>
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Product"
-                                asp-action="Index">Products</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment
-                                Page</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Shop"
-                                asp-action="PayPalConfirmation">Order Confirmation
-                                Page</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Admin"
-                                asp-action="Products">(Admin Products)</a>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Order" asp-action="Index">(Admin
-                                Orders)</a>
-                        </li>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Cart" asp-action="Index">Cart</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Wishlist" asp-action="Index">Wishlist</a>
-                        </li>
-                    </ul>
+                   
                     <partial name="_LoginPartial" />
+                    
                 </div>
             </div>
         </nav>
     </header>
+
+    @* Content *@
     <div class="container-fluid p-0">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+        @if (User.IsInRole("Admin") || User.IsInRole("Employee"))  
+        {
+            @* Admin Content with Sidebar *@
+            <div class="d-flex flex-col mx-7 my-5 gap-4">
+                <section class="sidebar-admin d-flex flex-column gap-4">
+                    <div class="sidebar-profile d-flex gap-2 align-items-center flex-wrap justify-content-center">
+                        <img src="~/images/profile.svg" 
+                            alt="Profile Image"
+                            width="100"
+                            height="100"
+                            >
+                        <div class="">
+                            <p class="font-bold">Amelia</p>
+                            <p class="text-muted">Employee</p>
+                        </div>
+                    </div>
+                    <div class="sidebar-buttons d-flex flex-column gap-2">
+                        <button class="w-100 btn btn-outline-dark">Dashboard</button>
+                         @* @if (User.IsInRole("Admin")) 
+                         { *@
+                            <button class="w-100 btn btn-outline-dark">Employees</button>
+                         @* }
+                        @if (User.IsInRole("Employee")) 
+                        { *@
+                            <a class="w-100 btn btn-outline-dark" 
+                                    asp-area="" 
+                                    asp-controller="Admin"
+                                    asp-action="Products">
+                                    Products
+                            </a>
+                            <a class="w-100 btn btn-outline-dark" 
+                                    asp-area="" 
+                                    asp-controller="Order"
+                                    asp-action="Index">
+                                    Orders
+                            </a>
+                        @* } *@
+                        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                            <button  type="submit" class="w-100 btn btn-link">Sign Out</button>
+                        </form>
+                        
+                    </div>
+                </section>
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        } 
+        else 
+        {
+            @* Customer Content *@
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        }
+       
     </div>
 
     <footer class="border-top footer text-muted">

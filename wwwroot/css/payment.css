@@ -2,8 +2,8 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 5rem;
-  margin-left: 6rem;
-  margin-top: 1rem;
+  /* margin-left: 6rem; */
+  /* margin-top: 1rem; */
 }
 
 #name,

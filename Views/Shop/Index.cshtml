@@ -77,32 +77,34 @@
 }
 
 
-<partial name="_Shop" for="@Model" />
+<div class="mx-7 my-5">
+    <partial name="_Shop" for="@Model" />
+</div>
 
 @if (User.Identity.IsAuthenticated)
 {
     string currency = "CAD";
     <div class="row">
-    <div class="offset-9 col-sm-3 col-md-2">
-        <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
+        <div class="offset-9 col-sm-3 col-md-2">
+            <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
+        </div>
     </div>
-</div>
     <div class="row">
-    <div class="offset-9 col-sm-2">
-        <table class="table">
-            <tbody>
-                <tr>
-                    <td>
-                        <span style="color:darkred;">Amount:</span> 
-                        $<span id="totalAmount">@totalPrice.ToString("F2")</span> 
-                        <span id="currency">@currency</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="offset-9 col-sm-2">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>
+                            <span style="color:darkred;">Amount:</span> 
+                            $<span id="totalAmount">@totalPrice.ToString("F2")</span> 
+                            <span id="currency">@currency</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-</div>
     <script>
     paypal.Buttons({
         // Set up the transaction

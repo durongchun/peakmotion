@@ -7,7 +7,7 @@ using peakmotion.ViewModels;
 
 namespace peakmotion.Controllers;
 
-// [Authorize(Roles = "Admin, Employee")]
+[Authorize(Roles = "Admin, Employee")]
 public class AdminController : Controller
 {
     private readonly ProductRepo _productRepo;
@@ -15,6 +15,11 @@ public class AdminController : Controller
     public AdminController(ProductRepo productRepo)
     {
         _productRepo = productRepo;
+    }
+
+    public IActionResult Index()
+    {
+        return View();
     }
 
     public IActionResult Products()
