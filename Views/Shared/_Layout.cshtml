@@ -19,9 +19,14 @@
         rel="stylesheet">
 </head>
 
+@{
+    @* Use session flag + checks *@
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var onAdmin = currentController == "Admin";
+}
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? "bg-dark" : "navbar-brand-customer")">
             <div class="container-fluid gap-4">
                 <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
                         asp-action="Index">peakmotion</a></h1>
@@ -77,10 +82,7 @@
                                     Orders
                             </a>
                         @* } *@
-                        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                            <button  type="submit" class="w-100 btn btn-link">Sign Out</button>
-                        </form>
-                        
+                       
                     </div>
                 </section>
                 <main role="main" class="pb-3">
@@ -103,6 +105,7 @@
             &copy; 2024 - peakmotion - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
