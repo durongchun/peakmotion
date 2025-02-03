@@ -49,6 +49,14 @@ namespace peakmotion.ViewModels
                 [Display(Name = "Main Image")]
                 public ProductImage? PrimaryImage { get; set; }
 
+                public List<string> Colors { get; set; }  // List of available colors
+                public List<string> Sizes { get; set; }   // List of available sizes
+
+                public List<string> Types { get; set; }   // List of available sizes
+
+                public List<Category> ColorDropdown { get; set; }    // List of available sizes
+
+
         }
 }
 

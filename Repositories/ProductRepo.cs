@@ -2,6 +2,7 @@
 using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.X86;
 
 namespace peakmotion.Repositories
 {
@@ -17,22 +18,77 @@ namespace peakmotion.Repositories
         // Get specific product in the database.
         public ProductVM? GetProduct(int id)
         {
-            ProductVM? product = _context.Products.Select(p => new ProductVM
+            // Fetch product details
+            var product = FetchProductFromDb(id);
+            if (product == null)
             {
-                ID = p.Pkproductid,
-                ProductName = p.Name,
-                Description = p.Description,
-                Price = p.Regularprice,
-                Quantity = p.Qtyinstock,
-                IsFeatured = p.Isfeatured == 1,
-                IsMembershipProduct = p.Ismembershipproduct == 1,
-                Discount = p.Fkdiscount,
-                // Currency = p.Currency,
-                // Image = p.Image
-            }).FirstOrDefault(p => p.ID == id);
+                return null;  // Return null if no product is found
+            }
 
-            return product;
+            // Fetch attributes
+            var colors = GetProductAttributes(id, "color");
+            var sizes = GetProductAttributes(id, "size");
+            var types = GetProductAttributes(id, "category");
+            var colordropdown = FetchCategoryDropdown("color");
+
+            // Map to ViewModel
+            var productVM = new ProductVM
+            {
+                ID = product.Pkproductid,
+                ProductName = product.Name,
+                Description = product.Description,
+                Price = product.Regularprice,
+                Quantity = product.Qtyinstock,
+                IsFeatured = product.Isfeatured == 1,
+                IsMembershipProduct = product.Ismembershipproduct == 1,
+                Discount = product.Fkdiscount,
+                Colors = colors,
+                Sizes = sizes,
+                Types = types,
+                ColorDropdown = colordropdown,
+
+
+            };
+
+            return productVM;
         }
+
+        public List<Category> FetchCategoryDropdown(string categoryGroup)
+        {
+
+            return _context.Categories
+                           .Where(c => c.Categorygroup == categoryGroup)
+                           .ToList();
+        }
+
+        public Product? FetchProductFromDb(int id)
+        {
+            return (from p in _context.Products
+                    join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid
+                    join d in _context.Discounts on p.Fkdiscountid equals d.Pkdiscountid
+                    where p.Pkproductid == id
+                    select new Product
+                    {
+                        Pkproductid = p.Pkproductid,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Regularprice = p.Regularprice,
+                        Qtyinstock = p.Qtyinstock,
+                        Isfeatured = p.Isfeatured,
+                        Ismembershipproduct = p.Ismembershipproduct,
+                        Fkdiscountid = p.Fkdiscountid
+                    }).FirstOrDefault();
+        }
+
+        // Generalized method to fetch product attributes
+        public List<string> GetProductAttributes(int id, string categoryGroup)
+        {
+            return (from pc in _context.ProductCategories
+                    join c in _context.Categories on pc.Fkcategoryid equals c.Pkcategoryid
+                    where pc.Fkproductid == id && c.Categorygroup == categoryGroup
+                    select c.Categoryname).ToList();
+        }
+
 
         // Get all products in the database.
         public IEnumerable<ProductVM> GetAllProducts()
