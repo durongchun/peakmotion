@@ -6,6 +6,13 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var onAdmin = currentController == "Admin";
     var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var user = await UserManager.GetUserAsync(User);
+    var roleStr = "";
+    if (user != null) {
+        var roles = await UserManager.GetRolesAsync(user);
+        roleStr = string.Join(", ", @roles);
+    }
 }
 
 <!DOCTYPE html>
@@ -16,17 +23,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - peakmotion</title>
     <script type="importmap"></script>
+
+    <link rel="preload" href="https://fonts.googleapis.com">
+    <link rel="preload" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        as="font" 
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/peakmotion.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/peakmotion.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
+
 </head>
 
 <body>
@@ -54,7 +65,7 @@
         {
             @* Admin Content with Sidebar *@
             <div class="d-flex flex-col mx-7 my-5 gap-4">
-                <section class="sidebar-admin d-flex flex-column gap-4 mb-4">
+                <section class="sidebar-admin d-flex flex-column gap-4 mb-4 w-25">
                     <div class="sidebar-profile d-flex gap-2 align-items-center flex-wrap justify-content-center">
                         <img src="~/images/profile.svg" 
                             alt="Profile Image"
@@ -62,8 +73,8 @@
                             height="100"
                             >
                         <div class="">
-                            <p class="font-bold">Amelia</p>
-                            <p class="text-muted">Employee</p>
+                            <p class="">@user?.UserName</p>
+                            <p class="text-muted">@roleStr</p>
                         </div>
                     </div>
                     <div class="sidebar-buttons d-flex flex-column gap-2">
