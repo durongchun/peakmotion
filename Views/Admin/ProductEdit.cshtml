@@ -36,19 +36,38 @@
                         <label for="discount">Discount (%)</label>
                         @Html.TextBoxFor(m => m.Discount, new { @id = "discount", @placeholder = "", @class = "form-control" })
                     </div>
-                    <div class="form-group d-flex flex-column mb-3">
+                    <div class="form-group mb-3">
                         <label for="colour">Colour</label>
-                         <input type="text" id="colour" name="Colour" class="form-control" 
-                                value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")">
-                          <!-- Dropdown to select predefined colors -->
-                        <select id="colorDropdown" class="form-control mt-2">
-                            <option value="">Select a color</option>
-                            @foreach (var color in Model.ColorDropdown) 
-                            {
-                                <option value="@color.Categoryname">@color.Categoryname</option>
-                            }
-                        </select>
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="colorContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Colors != null)
+                                {
+                                    @foreach (var color in Model.Colors)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 color-badge">
+                                            @color <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="colorDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a color</option>
+                                @foreach (var color in Model.ColorDropdown)
+                                {
+                                    <option value="@color.Categoryname">@color.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="colour" name="Colour" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")">
                     </div>
+
+
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="size">Size</label>
                         <input type="text" id="size" name="Size" class="form-control" 
@@ -128,6 +147,62 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortOrderInput = document.getElementById("sortOrder");
     const thumbnailPreview = document.getElementById("thumbnailPreview");
     const imageTableBody = document.getElementById("imageTableBody");
+   
+
+    const colorContainer = document.getElementById("colorContainer");
+    const colorInput = document.getElementById("colour");
+    const colorDropdown = document.getElementById("colorDropdown");
+
+    // Function to remove color when clicking (×)
+    function removeColor(event) {
+        const badge = event.target.closest(".color-badge");
+        if (badge) {
+            const colorName = badge.innerText.trim().replace(" ×", "");
+            let existingColors = colorInput.value ? colorInput.value.split(", ") : [];
+
+            // Remove color from the list
+            existingColors = existingColors.filter(color => color !== colorName);
+            colorInput.value = existingColors.join(", ");
+            
+            // Remove badge from UI
+            badge.remove();
+        }
+    }
+
+    // Attach event listeners to existing color badges
+    document.querySelectorAll(".remove-color").forEach(btn => {
+        btn.addEventListener("click", removeColor);
+    });
+
+    // Handle dropdown selection
+    colorDropdown.addEventListener("change", function () {
+        const selectedColor = this.value;
+        if (selectedColor) {
+            let existingColors = colorInput.value ? colorInput.value.split(", ") : [];
+
+            // Check if color is already added
+            if (!existingColors.includes(selectedColor)) {
+                existingColors.push(selectedColor);
+
+                // Create new badge
+                const badge = document.createElement("span");
+                badge.className = "badge bg-secondary text-white me-2 p-2 color-badge";
+                badge.innerHTML = `${selectedColor} <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>`;
+
+                // Append badge & update hidden input
+                colorContainer.appendChild(badge);
+                colorInput.value = existingColors.join(", ");
+
+                // Add event listener for removal
+                badge.querySelector(".remove-color").addEventListener("click", removeColor);
+            }
+
+            this.value = ""; // Reset dropdown
+        }
+    });
+
+
+
 
     // Show the editable row when "ADD NEW PHOTO" is clicked
     addPhotoBtn.addEventListener("click", () => {
@@ -200,5 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
             // fetch('/YourEndpoint/DeleteImage', { method: 'DELETE', body: JSON.stringify({ id: photoId }) });
         }
     });
+
+    
+    
 });
 </script>
