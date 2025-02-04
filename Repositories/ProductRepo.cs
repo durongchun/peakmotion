@@ -30,6 +30,8 @@ namespace peakmotion.Repositories
             var sizes = GetProductAttributes(id, "size");
             var types = GetProductAttributes(id, "category");
             var colordropdown = FetchCategoryDropdown("color");
+            var sizedropdown = FetchCategoryDropdown("size");
+            var categorydropdown = FetchCategoryDropdown("category");
 
             // Map to ViewModel
             var productVM = new ProductVM
@@ -46,6 +48,8 @@ namespace peakmotion.Repositories
                 Sizes = sizes,
                 Types = types,
                 ColorDropdown = colordropdown,
+                SizeDropdown = sizedropdown,
+                TypeDropdown = categorydropdown,
 
 
             };

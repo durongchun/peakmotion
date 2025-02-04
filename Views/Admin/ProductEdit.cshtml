@@ -67,17 +67,68 @@
                         <input type="hidden" id="colour" name="Colour" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")">
                     </div>
 
-
-                    <div class="form-group d-flex flex-column mb-3">
+                    <div class="form-group mb-3">
                         <label for="size">Size</label>
-                        <input type="text" id="size" name="Size" class="form-control" 
-                                value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="sizeContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Sizes != null)
+                                {
+                                    @foreach (var size in Model.Sizes)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 color-badge">
+                                            @size <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="sizeDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a size</option>
+                                @foreach (var size in Model.SizeDropdown)
+                                {
+                                    <option value="@size.Categoryname">@size.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="size" name="Size" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
                     </div>
-                    <div class="form-group d-flex flex-column mb-3">
+
+                       <div class="form-group mb-3">
                         <label for="category">Category</label>
-                        <input type="text" id="category" name="Category" class="form-control" 
-                                value="@(Model.Types != null ? string.Join(", ", Model.Types) : "")">
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="categoryContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Types != null)
+                                {
+                                    @foreach (var category in Model.Types)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 color-badge">
+                                            @category <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="categoryDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a category</option>
+                                @foreach (var category in Model.TypeDropdown)
+                                {
+                                    <option value="@category.Categoryname">@category.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="category" name="Category" value="@(Model.Categories != null ? string.Join(", ", Model.Categories) : "")">
                     </div>
+
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="properties">Properties</label>
                         <input type="text">

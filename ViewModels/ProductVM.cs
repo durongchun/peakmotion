@@ -56,6 +56,10 @@ namespace peakmotion.ViewModels
 
                 public List<Category> ColorDropdown { get; set; }    // List of available sizes
 
+                public List<Category> SizeDropdown { get; set; }
+                public List<Category> TypeDropdown { get; set; }
+
+
 
         }
 }
