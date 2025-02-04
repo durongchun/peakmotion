@@ -1,0 +1,70 @@
+@model IEnumerable<peakmotion.ViewModels.OrderVM>
+@{
+    ViewData["Title"] = "Orders";
+    var statuses = new List<SelectListItem> {
+        new SelectListItem { Text = "Pending", Value = "Pending" },
+        new SelectListItem { Text = "Shipped", Value = "Shipped" },
+        new SelectListItem { Text = "Delivered", Value = "Delivered" },
+        new SelectListItem { Text = "Cancelled", Value = "Cancelled" }
+    };
+}
+<h1>Orders</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Order Number</th>
+            <th>Customer Name</th>
+            <th>Order Date</th>
+            <th>Total</th>
+            <th>Shipping Status</th>            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.customerName</td>
+                <td>@order.OrderDate</td>
+                <td>@order.Total</td>
+                <td>
+                    <form method="post" action="@Url.Action("UpdateShippingStatus", "Admin")" id="form_@order.OrderId">
+                        <input type="hidden" name="orderId" value="@order.OrderId" />
+
+                        <!-- Use DropDownList to bind the status value -->
+                        @Html.DropDownList(
+                                "status",  // The name for the select field will be "status" to match parameter in controller
+                                statuses,
+                                "-- Select Status --",
+                                new { @class = "form-control statusDropdown", data_orderid = order.OrderId, selected = order.ShippingStatus }
+                                )
+                        <button type="submit" class="btn btn-primary">Update Status</button>
+                    </form>
+                </td>
+            </tr>
+            <br />
+        }
+    </tbody>
+</table>
+
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        padding: 12px 15px;
+        border: 1px solid black;
+    }
+
+    .btn-sm {
+        font-size: 0.875rem;
+        padding: 5px 10px;
+    }
+
+    .form-control.statusDropdown {
+        width: 150px;
+    }
+</style>
