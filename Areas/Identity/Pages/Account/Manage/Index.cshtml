@@ -1,0 +1,47 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex" style="min-height: 100vh;">
+    <aside>
+        @await Html.PartialAsync("_SideNavProfile")
+    </aside>
+    <main class="flex-grow-1 p-5">
+        <h2 class="mb-4">PROFILE</h2>
+        <partial name="_StatusMessage" for="StatusMessage" />
+        <div class="mb-3">
+            <label class="fw-bold d-block">Name</label>
+            <p>@Model.Username</p>
+        </div>
+        <div class="mb-3">
+            <label class="fw-bold d-block">Email</label>
+            <p>@User.Identity?.Name</p>
+        </div>
+        <div class="mb-3">
+            <label class="fw-bold d-block">Password</label>
+            <p>********</p>
+        </div>
+        <h4 class="mt-5">SHIPPING ADDRESS</h4>
+        <button class="btn btn-outline-dark mt-2">+ ADD A SHIPPING ADDRESS</button>
+        <h4 class="mt-5 mb-3">Edit Phone Number</h4>
+        <form id="profile-form" method="post" class="mb-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone number" />
+                <label asp-for="Input.PhoneNumber"></label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="btn btn-dark">Save</button>
+        </form>
+        <div class="mt-4">
+            <button class="btn btn-dark">EDIT</button>
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
