@@ -156,15 +156,13 @@
                         @foreach (var image in Model.Images)
                         {
                             <tr>
-                                <td></td>
+                                <td>@image.Alttag</td>
                                 <td>@image.Url</td>
                                 <td>@(image.Isprimary ? "Yes" : "No")</td>
                                 <td></td>
                                 <td><img src="@image.Url" alt="" width="50" /></td>
                                 <td class="deleteButt">
-                                    <button type="button" >
-                                        <i class="fas fa-trash-alt"></i> 
-                                    </button>
+                                    <i class="fas fa-trash-alt deletePhoto"></i>
                                 </td>
                             </tr>
                         }
@@ -207,6 +205,19 @@
 </main>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const imageTableBody = document.getElementById("imageTableBody");
+
+    imageTableBody.addEventListener("click", (e) => {
+        if (e.target.classList.contains("deletePhoto")) {
+            const row = e.target.closest("tr");
+            if (row) {
+                row.remove();
+            }
+        }
+    });
+});
+
 document.addEventListener("DOMContentLoaded", () => {
     const addPhotoBtn = document.getElementById("addPhotoBtn");
     const addPhotoRow = document.getElementById("addPhotoRow");
@@ -315,65 +326,9 @@ document.addEventListener("DOMContentLoaded", () => {
         thumbnailPreview.innerHTML = imagePath ? `<img src="${imagePath}" alt="Thumbnail" width="50" />` : '';
     });
 
-    // Handle input blur or pressing Enter to save the new photo
-    const saveNewPhoto = () => {
-        const photoName = photoNameInput.value;
-        const photoPath = photoPathInput.value;
-        const isPrimary = isPrimaryInput.checked;
-        const sortOrder = sortOrderInput.value;
+    
 
-        // Validate required fields
-        if (!photoName || !photoPath || !sortOrder) {
-            alert("Please fill in all required fields.");
-            return;
-        }
-
-        // Add the new photo row to the table
-        const newRow = `
-            <tr>
-                <td>${photoName}</td>
-                <td>${photoPath}</td>
-                <td>${isPrimary ? "Yes" : "No"}</td>
-                <td>${sortOrder}</td>
-                <td><img src="${photoPath}" alt="${photoName}" width="50" /></td>
-                <td>
-                    <button class="btn btn-danger btn-sm deletePhoto">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                </td>
-            </tr>
-        `;
-        imageTableBody.insertAdjacentHTML('beforeend', newRow);
-
-        // Clear and hide the input row
-        photoNameInput.value = "";
-        photoPathInput.value = "";
-        isPrimaryInput.checked = false;
-        sortOrderInput.value = "";
-        thumbnailPreview.innerHTML = "";
-        addPhotoRow.style.display = "none";
-    };
-
-    // Save photo on input blur or Enter key press
-    [photoNameInput, photoPathInput, sortOrderInput].forEach((input) => {
-        input.addEventListener("blur", saveNewPhoto); // Save on blur
-        input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                saveNewPhoto();
-            }
-        });
-    });
-
-    // Handle delete button click dynamically
-    imageTableBody.addEventListener("click", (e) => {
-        if (e.target.closest(".deletePhoto")) {
-            const row = e.target.closest("tr");
-            row.remove();
-
-            // Optionally, send a request to delete the photo on the server
-            // fetch('/YourEndpoint/DeleteImage', { method: 'DELETE', body: JSON.stringify({ id: photoId }) });
-        }
-    });
+  
 
     
     

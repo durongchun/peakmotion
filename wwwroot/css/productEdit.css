@@ -79,10 +79,12 @@ button:hover {
   background-color: none;
 }
 
-.deleteButt button {
-  background-color: transparent;
-  color: black;
-  border: none;
-  text-decoration: underline;
-  font-weight: 500;
+.deletePhoto {
+  cursor: pointer;
+  font-size: 20px;
+  color: bisque;
+}
+
+.deletePhoto:hover {
+  color: darkred;
 }
