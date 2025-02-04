@@ -204,55 +204,85 @@ document.addEventListener("DOMContentLoaded", () => {
     const colorInput = document.getElementById("colour");
     const colorDropdown = document.getElementById("colorDropdown");
 
-    // Function to remove color when clicking (×)
-    function removeColor(event) {
-        const badge = event.target.closest(".color-badge");
-        if (badge) {
-            const colorName = badge.innerText.trim().replace(" ×", "");
-            let existingColors = colorInput.value ? colorInput.value.split(", ") : [];
+    const sizeContainer = document.getElementById("sizeContainer");
+    const sizeInput = document.getElementById("size");
+    const sizeDropdown = document.getElementById("sizeDropdown");
 
-            // Remove color from the list
-            existingColors = existingColors.filter(color => color !== colorName);
-            colorInput.value = existingColors.join(", ");
+    const categoryContainer = document.getElementById("categoryContainer");
+    const categoryInput = document.getElementById("category");
+    const categoryDropdown = document.getElementById("categoryDropdown");
+
+    // Function to remove selected item (color, size, category)
+    function removeItem(event, inputElement, containerElement) {
+        const badge = event.target.closest(".badge");
+        if (badge) {
+            const itemName = badge.innerText.trim().replace(" ×", "");
+            let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
+
+            // Remove item from the list
+            existingItems = existingItems.filter(item => item !== itemName);
+            inputElement.value = existingItems.join(", ");
             
             // Remove badge from UI
             badge.remove();
         }
     }
 
-    // Attach event listeners to existing color badges
-    document.querySelectorAll(".remove-color").forEach(btn => {
-        btn.addEventListener("click", removeColor);
-    });
+    // Function to handle dropdown selection (color, size, category)
+    function handleSelection(event, inputElement, containerElement, dropdownElement) {
+        const selectedItem = event.target.value;
+        if (selectedItem) {
+            let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
 
-    // Handle dropdown selection
-    colorDropdown.addEventListener("change", function () {
-        const selectedColor = this.value;
-        if (selectedColor) {
-            let existingColors = colorInput.value ? colorInput.value.split(", ") : [];
-
-            // Check if color is already added
-            if (!existingColors.includes(selectedColor)) {
-                existingColors.push(selectedColor);
+            // Check if item is already added
+            if (!existingItems.includes(selectedItem)) {
+                existingItems.push(selectedItem);
 
                 // Create new badge
                 const badge = document.createElement("span");
-                badge.className = "badge bg-secondary text-white me-2 p-2 color-badge";
-                badge.innerHTML = `${selectedColor} <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>`;
+                badge.className = "badge bg-secondary text-white me-2 p-2";
+                badge.innerHTML = `${selectedItem} <span class="ms-1 text-white" style="cursor:pointer;">&times;</span>`;
 
                 // Append badge & update hidden input
-                colorContainer.appendChild(badge);
-                colorInput.value = existingColors.join(", ");
+                containerElement.appendChild(badge);
+                inputElement.value = existingItems.join(", ");
 
                 // Add event listener for removal
-                badge.querySelector(".remove-color").addEventListener("click", removeColor);
+                badge.querySelector("span").addEventListener("click", (e) => removeItem(e, inputElement, containerElement));
             }
 
-            this.value = ""; // Reset dropdown
+            dropdownElement.value = ""; // Reset dropdown
         }
+    }
+
+
+
+    // Attach event listeners to existing color badges
+    document.querySelectorAll(".remove-color").forEach(btn => {
+        btn.addEventListener("click", (e) => removeItem(e, colorInput, colorContainer));
     });
 
+    // Handle color dropdown selection
+    colorDropdown.addEventListener("change", (e) => handleSelection(e, colorInput, colorContainer, colorDropdown));
 
+
+    // Attach event listeners to existing size badges
+    document.querySelectorAll(".remove-size").forEach(btn => {
+        btn.addEventListener("click", (e) => removeItem(e, sizeInput, sizeContainer));
+    });
+
+    // Handle size dropdown selection
+    sizeDropdown.addEventListener("change", (e) => handleSelection(e, sizeInput, sizeContainer, sizeDropdown));
+
+
+
+    // Attach event listeners to existing category badges
+    document.querySelectorAll(".remove-category").forEach(btn => {
+        btn.addEventListener("click", (e) => removeItem(e, categoryInput, categoryContainer));
+    });
+
+    // Handle category dropdown selection
+    categoryDropdown.addEventListener("change", (e) => handleSelection(e, categoryInput, categoryContainer, categoryDropdown));
 
 
     // Show the editable row when "ADD NEW PHOTO" is clicked
