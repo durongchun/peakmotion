@@ -173,14 +173,17 @@
 
             <!-- SAVE & DELETE Buttons -->
             <div id="saveDelete">
-                <button type="submit" class="">SAVE</button>
+                <button type="submit" class="">SAVE PRODUCT</button>
             </div>
         </form>
         
         <!-- Separate Delete Form -->
         <form action="/Product/Delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
             <input type="hidden" name="productId" value="@Model.ID" />
-            <button type="submit" class="btn btn-danger">DELETE</button>
+            <div class="deleteButt">
+                <button type="submit" >DELETE PRODUCT</button>
+            </div>
+            
         </form>
    
     </section>

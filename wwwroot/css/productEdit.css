@@ -72,37 +72,17 @@ button:hover {
   background-color: #0056b3;
 }
 
-.input-with-select {
-  position: relative;
+.deleteButt {
   display: flex;
-  align-items: center;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  background-color: none;
 }
 
-.input-with-select input {
-  flex: 1; /* Take available space */
-  padding-right: 50px; /* Space for dropdown */
-}
-
-.color-dropdown {
-  position: absolute;
-  right: 5px;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 100%;
+.deleteButt button {
+  background-color: transparent;
+  color: black;
   border: none;
-  background: transparent;
-  cursor: pointer;
-  width: 50px;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Remove default dropdown arrow */
-.color-dropdown::-ms-expand {
-  display: none;
-}
-.color-dropdown {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  text-decoration: underline;
+  font-weight: 500;
 }
