@@ -153,8 +153,23 @@
                         </tr>
                     </thead>
                     <tbody id="imageTableBody">
-                        <!-- Existing rows will be here -->
+                        @foreach (var image in Model.Images)
+                        {
+                            <tr>
+                                <td></td>
+                                <td>@image.Url</td>
+                                <td>@(image.Isprimary ? "Yes" : "No")</td>
+                                <td></td>
+                                <td><img src="@image.Url" alt="" width="50" /></td>
+                                <td class="deleteButt">
+                                    <button type="button" >
+                                        <i class="fas fa-trash-alt"></i> 
+                                    </button>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
+
                     <!-- Editable Input Row -->
                     <tfoot>
                         <tr id="addPhotoRow" style="display: none;">

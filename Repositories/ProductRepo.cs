@@ -32,6 +32,9 @@ namespace peakmotion.Repositories
             var colordropdown = FetchCategoryDropdown("color");
             var sizedropdown = FetchCategoryDropdown("size");
             var categorydropdown = FetchCategoryDropdown("category");
+            var productimages = GetProductImage(id);
+
+
 
             // Map to ViewModel
             var productVM = new ProductVM
@@ -50,6 +53,7 @@ namespace peakmotion.Repositories
                 ColorDropdown = colordropdown,
                 SizeDropdown = sizedropdown,
                 TypeDropdown = categorydropdown,
+                Images = productimages,
 
 
             };
@@ -91,6 +95,21 @@ namespace peakmotion.Repositories
                     join c in _context.Categories on pc.Fkcategoryid equals c.Pkcategoryid
                     where pc.Fkproductid == id && c.Categorygroup == categoryGroup
                     select c.Categoryname).ToList();
+        }
+
+        public List<ProductImage> GetProductImage(int id)
+        {
+            var images = _context.ProductImages
+                    .Where(img => img.Fkproductid == id)
+                    .Select(img => new ProductImage
+                    {
+                        Url = img.Url,
+                        Isprimary = img.Isprimary,
+                        Alttag = img.Alttag,
+                    })
+                    .ToList();
+            return images;
+
         }
 
 
