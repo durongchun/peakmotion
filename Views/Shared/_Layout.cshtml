@@ -5,6 +5,7 @@
     @* Use session flag + checks *@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var onAdmin = currentController == "Admin";
+    var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
 }
 
 <!DOCTYPE html>
@@ -66,27 +67,36 @@
                         </div>
                     </div>
                     <div class="sidebar-buttons d-flex flex-column gap-2">
-                        <button class="w-100 btn btn-outline-dark">Dashboard</button>
-                            @* @if (User.IsInRole("Admin")) 
-                            { *@
-                            <button class="w-100 btn btn-outline-dark">Employees</button>
-                            @* }
+                         <a class="w-100 btn @(currentPage=="Index" ? "btn-dark" : "btn-outline-dark")" 
+                                asp-area="" 
+                                asp-controller="Admin"
+                                asp-action="Index">
+                                Dashboard
+                        </a>
+                        @* @if (User.IsInRole("Admin")) 
+                        { *@
+                        <a class="w-100 btn @(currentPage=="Employees" ? "btn-dark" : "btn-outline-dark")" 
+                                asp-area="" 
+                                asp-controller="Admin"
+                                asp-action="Employees">
+                                Employees
+                        </a>
+                        @* }
                         @if (User.IsInRole("Employee")) 
                         { *@
-                            <a class="w-100 btn btn-outline-dark" 
-                                    asp-area="" 
-                                    asp-controller="Admin"
-                                    asp-action="Products">
-                                    Products
-                            </a>
-                            <a class="w-100 btn btn-outline-dark" 
-                                    asp-area="" 
-                                    asp-controller="Order"
-                                    asp-action="Index">
-                                    Orders
-                            </a>
-                        @* } *@
-                        
+                        <a class="w-100 btn @(currentPage=="Products" ? "btn-dark" : "btn-outline-dark")" 
+                                asp-area="" 
+                                asp-controller="Admin"
+                                asp-action="Products">
+                                Products
+                        </a>
+                        <a class="w-100 btn @(currentPage=="Orders" ? "btn-dark" : "btn-outline-dark")" 
+                                asp-area="" 
+                                asp-controller="Order"
+                                asp-action="Index">
+                                Orders
+                        </a>
+                    @* } *@
                     </div>
                 </section>
                 <main role="main" class="container pb-3">
