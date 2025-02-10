@@ -1,0 +1,45 @@
+@model NavbarVM
+@using Microsoft.AspNetCore.Identity
+@using peakmotion.ViewModels;
+@inject SignInManager<IdentityUser> SignInManager
+
+@* Right Side *@
+<ul class="navbar-nav d-flex gap-2 align-items-center">
+@if (SignInManager.IsSignedIn(User) && (User.IsInRole("Customer") || @Model.OnAdminPortal == false)) 
+{
+    <li class="nav-item">
+        <a class="btn-image">
+            <img src="~/images/search.svg" 
+                alt="Search Button"
+                width="32"
+                height="32"
+            >
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="btn-image"
+            asp-area="" 
+            asp-controller="Wishlist" 
+            asp-action="Index">
+            <img src="~/images/heart.svg" 
+                alt="Wishlist Button"
+                width="32"
+                height="32"
+            >
+        </a>
+    </li>
+    
+    <li class="nav-item">
+        <a class="btn-image" 
+            asp-area="" 
+            asp-controller="Cart" 
+            asp-action="Index">
+            <img src="~/images/cart.svg" 
+                alt="Checkout Button"
+                width="32"
+                height="32"
+            >  
+        </a>  
+    </li>
+}

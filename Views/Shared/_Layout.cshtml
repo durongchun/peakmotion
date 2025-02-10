@@ -1,18 +1,28 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using peakmotion.ViewModels
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 @{
     @* Use session flag + checks *@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var onAdmin = currentController == "Admin";
     var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
 
     var user = await UserManager.GetUserAsync(User);
-    var roleStr = "";
+    var role = "";
     if (user != null) {
         var roles = await UserManager.GetRolesAsync(user);
-        roleStr = string.Join(", ", @roles);
+        role = roles.First();
     }
+
+    var onAdmin = SignInManager.IsSignedIn(User) && currentController == "Admin" && (User.IsInRole("Admin") || User.IsInRole("Employee"));
+
+    var navbarVM = new NavbarVM
+    {
+        Controller = currentController,
+        Page = currentPage,
+        RoleName = role,
+        OnAdminPortal = onAdmin
+    };
 }
 
 <!DOCTYPE html>
@@ -37,7 +47,6 @@
     <link rel="stylesheet" href="~/css/peakmotion.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 
-
 </head>
 
 <body>
@@ -52,7 +61,9 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                    
-                    <partial name="_LoginPartial" />
+                    <partial name="_NavLeft" model="navbarVM"/>
+                    <partial name="_NavRight" model="navbarVM"/>
+                    <partial name="_LoginPartial" model="navbarVM" />
                     
                 </div>
             </div>
@@ -60,71 +71,15 @@
     </header>
 
     @* Content *@
-    <div class="container-fluid p-0">
-        @if (SignInManager.IsSignedIn(User) && @onAdmin == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
+    <main class="p-0 pb-4 @(navbarVM.OnAdminPortal ? "container-admin mx-7 my-5" : "container-fluid")">
+        @if (@navbarVM.OnAdminPortal)
         {
-            @* Admin Content with Sidebar *@
-            <div class="d-flex flex-col mx-7 my-5 gap-4">
-                <section class="sidebar-admin d-flex flex-column gap-4 mb-4 w-25">
-                    <div class="sidebar-profile d-flex gap-2 align-items-center flex-wrap justify-content-center">
-                        <img src="~/images/profile.svg" 
-                            alt="Profile Image"
-                            width="100"
-                            height="100"
-                            >
-                        <div class="">
-                            <p class="">@user?.UserName</p>
-                            <p class="text-muted">@roleStr</p>
-                        </div>
-                    </div>
-                    <div class="sidebar-buttons d-flex flex-column gap-2">
-                         <a class="w-100 btn @(currentPage=="Index" ? "btn-dark" : "btn-outline-dark")" 
-                                asp-area="" 
-                                asp-controller="Admin"
-                                asp-action="Index">
-                                Dashboard
-                        </a>
-                        @* @if (User.IsInRole("Admin")) 
-                        { *@
-                        <a class="w-100 btn @(currentPage=="Employees" ? "btn-dark" : "btn-outline-dark")" 
-                                asp-area="" 
-                                asp-controller="Admin"
-                                asp-action="Employees">
-                                Employees
-                        </a>
-                        @* }
-                        @if (User.IsInRole("Employee")) 
-                        { *@
-                        <a class="w-100 btn @(currentPage=="Products" ? "btn-dark" : "btn-outline-dark")" 
-                                asp-area="" 
-                                asp-controller="Admin"
-                                asp-action="Products">
-                                Products
-                        </a>
-                        <a class="w-100 btn @(currentPage=="Orders" ? "btn-dark" : "btn-outline-dark")" 
-                                asp-area="" 
-                                asp-controller="Order"
-                                asp-action="Index">
-                                Orders
-                        </a>
-                    @* } *@
-                    </div>
-                </section>
-                <main role="main" class="container pb-3">
-                    @RenderBody()
-                </main>
-            </div>
+            <partial name="_Sidebar" model="navbarVM"/>
         }
-        else 
-        {
-            @* Customer Content *@
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        } 
-        
-        
-    </div>
+        <div role="main" class="pb-3 @(navbarVM.OnAdminPortal ? "container" : "")">
+            @RenderBody()
+        </div>
+    </main>
 
     <footer class="border-top footer text-muted">
         <div class="container">

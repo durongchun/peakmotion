@@ -1,0 +1,56 @@
+@model NavbarVM
+@using Microsoft.AspNetCore.Identity
+@using peakmotion.ViewModels;
+@inject SignInManager<IdentityUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
+{
+    @* Admin Content with Sidebar *@
+    @* <div class="d-flex flex-col mx-7 my-5 gap-4"></div> *@
+    <section class="sidebar-admin d-flex flex-column gap-4 mb-4 w-25">
+        <div class="sidebar-profile d-flex flex-row gap-2 align-items-center justify-content-center">
+            <img src="~/images/profile.svg" 
+                alt="Profile Image"
+                width="100"
+                height="100"
+                >
+            <div class="">
+                <p class="m-0">@User.Identity?.Name</p>
+                <p class="m-0 text-muted">@Model.RoleName</p>
+            </div>
+        </div>
+        <div class="sidebar-buttons d-flex flex-column gap-2">
+                <a class="w-100 btn @(Model.Page=="Index" ? "btn-dark" : "btn-outline-dark")" 
+                    asp-area="" 
+                    asp-controller="Admin"
+                    asp-action="Index">
+                    Dashboard
+            </a>
+            @* @if (User.IsInRole("Admin")) 
+            { *@
+            <a class="w-100 btn @(Model.Page=="Employees" ? "btn-dark" : "btn-outline-dark")" 
+                    asp-area="" 
+                    asp-controller="Admin"
+                    asp-action="Employees">
+                    Employees
+            </a>
+            @* }
+            @if (User.IsInRole("Employee")) 
+            { *@
+            <a class="w-100 btn @(Model.Page=="Products" ? "btn-dark" : "btn-outline-dark")" 
+                    asp-area="" 
+                    asp-controller="Admin"
+                    asp-action="Products">
+                    Products
+            </a>
+            <a class="w-100 btn @(Model.Page=="Orders" ? "btn-dark" : "btn-outline-dark")" 
+                    asp-area="" 
+                    asp-controller="Order"
+                    asp-action="Index">
+                    Orders
+            </a>
+        @* } *@
+        </div>
+    </section>
+}
+
