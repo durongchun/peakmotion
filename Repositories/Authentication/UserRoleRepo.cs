@@ -36,19 +36,4 @@ public class UserRoleRepo
         var result = await _userManager.RemoveFromRoleAsync(user, roleName);
         return result.Succeeded;
     }
-
-    public async Task<IEnumerable<UserRoleVM>> GetUserRolesAsync(string email)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
-        {
-            return Enumerable.Empty<UserRoleVM>();
-        }
-
-        var roles = await _userManager.GetRolesAsync(user);
-
-        return roles.Select(r =>
-           new UserRoleVM { Email = email, RoleName = r });
-    }
 }

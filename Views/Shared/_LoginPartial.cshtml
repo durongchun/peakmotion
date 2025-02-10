@@ -2,7 +2,6 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-@* temp *@
 @{
     @* Use session flag + checks *@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
@@ -14,11 +13,12 @@
         roleStr = string.Join(", ", @roles);
     }
 }
+
 @* Left Side *@
 <ul class="navbar-nav flex-grow-1">
 @if (SignInManager.IsSignedIn(User) && @onAdmin == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
 {
-    <h2 class="pl-4">Employee Portal</h2>  
+    <h2 class="text-header pl-4 text-light">Employee Portal</h2>  
 }
 else
 {
@@ -49,84 +49,103 @@ else
 {
     @if (@onAdmin == false || User.IsInRole("Customer"))
     {
-        <a class="btn-image">
-            <img src="~/images/search.svg" 
-                alt="Search Button"
-                width="32"
-                height="32"
-            >
-        </a>
-        <a class="btn-image"
-            asp-area="" 
-            asp-controller="Wishlist" 
-            asp-action="Index">
-            <img src="~/images/heart.svg" 
-                alt="Wishlist Button"
-                width="32"
-                height="32"
-            >
-        </a>
-        <a class="btn-image" 
-            asp-area="" 
-            asp-controller="Cart" 
-            asp-action="Index">
-            <img src="~/images/cart.svg" 
-                alt="Checkout Button"
-                width="32"
-                height="32"
-            >  
-        </a>  
-    }
-
-    if (@onAdmin == false)
-    {
-          <li class="nav-item">
-            <a class="nav-link text-light d-flex flex-row align-items-center gap-2" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                <img src="~/images/profile_solid.svg" 
-                                alt="Profile Button"
-                                width="32"
-                                height="32"
+        <li class="nav-item">
+            <a class="btn-image">
+                <img src="~/images/search.svg" 
+                    alt="Search Button"
+                    width="32"
+                    height="32"
                 >
-                @* temporarily have the email + role here (for quick reference) *@
-                <div class="d-flex flex-column">
-                    <p class="m-0 fs-8">@User.Identity?.Name</p>
-                    <p class="m-0 fs-8 opacity-50">@roleStr</p>
-                </div>
             </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="btn-image"
+                asp-area="" 
+                asp-controller="Wishlist" 
+                asp-action="Index">
+                <img src="~/images/heart.svg" 
+                    alt="Wishlist Button"
+                    width="32"
+                    height="32"
+                >
+            </a>
+        </li>
+        
+        <li class="nav-item">
+            <a class="btn-image" 
+                asp-area="" 
+                asp-controller="Cart" 
+                asp-action="Index">
+                <img src="~/images/cart.svg" 
+                    alt="Checkout Button"
+                    width="32"
+                    height="32"
+                >  
+            </a>  
         </li>
     }
-  
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-light">Logout</button>
-        </form>
-    </li>
 
-    @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
-    {
-        @if (@onAdmin == true)
-        {
-            <li class="nav-item border border-white px-2">
-                <a class="nav-link text-light" 
-                    asp-area="" 
-                    asp-controller="Home" 
-                    asp-action="Index">
-                    Go Back To Main Site
-                </a>
-            </li>
-         }
-        else 
-        {
-        <li class="nav-item border border-white px-2">
-            <a class="nav-link text-light" 
-                asp-area="" 
-                asp-controller="Admin" 
-                asp-action="Index">
-                Go Back To Employee Portal
+    <ul class="nav nav-link p-0">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-light d-flex flex-row align-items-center gap-1 p-0" 
+                data-toggle="dropdown" 
+                data-bs-toggle="dropdown" 
+                role="button" 
+                aria-haspopup="true" 
+                aria-expanded="false"
+                >
+                <img src="~/images/profile_solid.svg" 
+                    alt="Profile Button"
+                    width="32"
+                    height="32"
+                    />
             </a>
+            <ul class="dropdown-menu dropdown-menu-end my-3">
+                <li class="d-flex flex-column px-3">
+                    <p class="m-0 fw-normal">@User.Identity?.Name</p>
+                    <p class="m-0 fs-8 opacity-50">@roleStr</p>
+                </li>
+                 <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-dark" 
+                    asp-area="Identity" 
+                    asp-page="/Account/Manage/Index" 
+                    title="Manage"
+                    >
+                    Edit Profile
+                </a>
+                <a class="dropdown-item text-dark" 
+                    asp-area="Identity" 
+                    asp-page="/Account/Logout" 
+                    asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })"
+                    >
+                    Logout
+                </a>
+                <div class="dropdown-divider"></div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
+                {
+                    @if (@onAdmin == true)
+                    {
+                        <a class="dropdown-item text-dark" 
+                            asp-area="" 
+                            asp-controller="Home" 
+                            asp-action="Index">
+                            Go Back To Main Site
+                        </a>
+                    }
+                    else 
+                    {
+                        <a class="dropdown-item text-dark" 
+                            asp-area="" 
+                            asp-controller="Admin" 
+                            asp-action="Index">
+                            Go Back To Employee Portal
+                        </a>
+                    }   
+                } 
+            </ul>
         </li>
-        }   
-    } 
+    </ul>
     
 }
 else
