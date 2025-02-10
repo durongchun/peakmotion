@@ -74,7 +74,7 @@ button:hover {
 
 .deleteButt {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-top: 1rem;
   background-color: none;
 }
@@ -82,7 +82,7 @@ button:hover {
 .deletePhoto {
   cursor: pointer;
   font-size: 20px;
-  color: bisque;
+  color: black;
 }
 
 .deletePhoto:hover {

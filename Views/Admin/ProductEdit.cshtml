@@ -176,7 +176,7 @@
                             <td><input type="checkbox" id="isPrimary" name="isPrimary" /></td>
                             <td><input type="number" id="sortOrder" name="sortOrder" placeholder="Sort Order" class="form-control" /></td>
                             <td><span id="thumbnailPreview"></span></td>
-                            <td><i class="fas fa-trash-alt"></i></td>
+                            <td class="deleteButt"><i class="fas fa-trash-alt deletePhoto"></i></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -205,18 +205,52 @@
 </main>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", function () {
     const imageTableBody = document.getElementById("imageTableBody");
+    const addPhotoRow = document.getElementById("addPhotoRow");
+    const addPhotoBtn = document.getElementById("addPhotoBtn");
 
-    imageTableBody.addEventListener("click", (e) => {
-        if (e.target.classList.contains("deletePhoto")) {
-            const row = e.target.closest("tr");
-            if (row) {
-                row.remove();
+    if (imageTableBody) {
+        // Handle delete for existing and newly added rows
+        imageTableBody.addEventListener("click", function (event) {
+            if (event.target.classList.contains("deletePhoto")) {
+                const row = event.target.closest("tr");
+                if (row) {
+                    row.remove();
+                }
             }
-        }
-    });
+        });
+    }
+
+    if (addPhotoBtn && addPhotoRow) {
+        addPhotoBtn.addEventListener("click", function () {
+            const newRow = addPhotoRow.cloneNode(true); // Clone the row
+            newRow.style.display = "table-row"; // Ensure it's visible
+            newRow.removeAttribute("id"); // Remove ID to avoid duplicates
+
+            // Reset input values in the cloned row
+            newRow.querySelectorAll("input").forEach(input => {
+                if (input.type === "checkbox") {
+                    input.checked = false;
+                } else {
+                    input.value = "";
+                }
+            });
+
+            // Append the new row to the table body
+            imageTableBody.appendChild(newRow);
+        });
+
+        // Handle delete for the original footer row
+        addPhotoRow.addEventListener("click", function (event) {
+            if (event.target.classList.contains("deletePhoto")) {
+                addPhotoRow.remove(); // Directly remove the row
+            }
+        });
+    }
 });
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const addPhotoBtn = document.getElementById("addPhotoBtn");
@@ -314,7 +348,7 @@ document.addEventListener("DOMContentLoaded", () => {
     categoryDropdown.addEventListener("change", (e) => handleSelection(e, categoryInput, categoryContainer, categoryDropdown));
 
 
-    // Show the editable row when "ADD NEW PHOTO" is clicked
+    @* // Show the editable row when "ADD NEW PHOTO" is clicked
     addPhotoBtn.addEventListener("click", () => {
         addPhotoRow.style.display = "table-row";
         photoNameInput.focus(); // Focus on the first input
@@ -325,6 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const imagePath = photoPathInput.value;
         thumbnailPreview.innerHTML = imagePath ? `<img src="${imagePath}" alt="Thumbnail" width="50" />` : '';
     });
+     *@
 
     
 
