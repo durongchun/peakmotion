@@ -35,8 +35,9 @@ namespace peakmotion.Controllers
             {
                 return Redirect("/Identity/Account/Login");
             }
-            else{
-                IEnumerable<WishlistVM> wishlistItems = _wishlistRepo.GetWishlistByUserId(userId);
+            else
+            {
+                IEnumerable<WishlistVM> wishlistItems = _wishlistRepo.GetWishlistByUserId((int)userId);
                 return View(wishlistItems);
             }
 
@@ -60,7 +61,7 @@ namespace peakmotion.Controllers
             }
             else
             {
-                _wishlistRepo.AddToWishlist(userId, productId);
+                _wishlistRepo.AddToWishlist((int)userId, productId);
                 return RedirectToAction(nameof(Index));
             }
 
@@ -76,14 +77,14 @@ namespace peakmotion.Controllers
                 return Redirect("/Identity/Account/Login");
             }
 
-                var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
+            var userId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
             if (userId == null)
             {
                 return Redirect("/Identity/Account/Login");
             }
             else
             {
-                _wishlistRepo.RemoveFromWishlist(userId, productId);
+                _wishlistRepo.RemoveFromWishlist((int)userId, productId);
                 return RedirectToAction(nameof(Index));
             }
 
