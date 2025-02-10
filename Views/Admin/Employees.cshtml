@@ -1,0 +1,40 @@
+@model IEnumerable<peakmotion.ViewModels.UserVM>
+
+@{ ViewData["Title"] = "Employees";}
+<br />
+<h1>Employees</h1>
+<br />
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-info">@ViewBag.Message</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.First().FullName)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Email)</th>
+            <th>@Html.DisplayNameFor(model => model.First().RoleName)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>
+                    <select asp-for="@user.RoleName" 
+                            asp-items="ViewBag.RoleSelectList" 
+                            class="form-select">
+                        <option value="">Select Role</option>
+                    </select>
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@user.Email">Delete</a>
+                </td>
+                </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    @* Use session flag + checks *@
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var onAdmin = currentController == "Admin";
+    var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
+
+    var user = await UserManager.GetUserAsync(User);
+    var roleStr = "";
+    if (user != null)
+    {
+        var roles = await UserManager.GetRolesAsync(user);
+        roleStr = string.Join(", ", @roles);
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,6 +24,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - peakmotion</title>
     <script type="importmap"></script>
+
+    <link rel="preload" href="https://fonts.googleapis.com">
+    <link rel="preload" href="https://fonts.gstatic.com" crossorigin>
+    <link as="font"
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/peakmotion.styles.css" asp-append-version="true" />
@@ -20,11 +45,13 @@
     <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons" as="style"
         crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous">
+
 </head>
 
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <nav
+            class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? "bg-dark" : "navbar-brand-customer")">
             <div class="container-fluid gap-4">
                 <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
                         asp-action="Index">peakmotion</a></h1>
@@ -43,41 +70,45 @@
 
     @* Content *@
     <div class="container-fluid p-0">
-        @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+        @if (SignInManager.IsSignedIn(User) && @onAdmin == true && (User.IsInRole("Admin") ||
+        User.IsInRole("Employee")))
         {
             @* Admin Content with Sidebar *@
             <div class="d-flex flex-col mx-7 my-5 gap-4">
-                <section class="sidebar-admin d-flex flex-column gap-4">
+                <section class="sidebar-admin d-flex flex-column gap-4 mb-4 w-25">
                     <div class="sidebar-profile d-flex gap-2 align-items-center flex-wrap justify-content-center">
                         <img src="~/images/profile.svg" alt="Profile Image" width="100" height="100">
                         <div class="">
-                            <p class="font-bold">Amelia</p>
-                            <p class="text-muted">Employee</p>
+                            <p class="">@user?.UserName</p>
+                            <p class="text-muted">@roleStr</p>
                         </div>
                     </div>
                     <div class="sidebar-buttons d-flex flex-column gap-2">
-                        <button class="w-100 btn btn-outline-dark">Dashboard</button>
+                        <a class="w-100 btn @(currentPage=="Index" ? "btn-dark" : "btn-outline-dark")" asp-area=""
+                            asp-controller="Admin" asp-action="Index">
+                            Dashboard
+                        </a>
                         @* @if (User.IsInRole("Admin")) 
-                         { *@
-                        <button class="w-100 btn btn-outline-dark">Employees</button>
+                        { *@
+                        <a class="w-100 btn @(currentPage=="Employees" ? "btn-dark" : "btn-outline-dark")" asp-area=""
+                            asp-controller="Admin" asp-action="Employees">
+                            Employees
+                        </a>
                         @* }
                         @if (User.IsInRole("Employee")) 
                         { *@
-                        <a class="w-100 btn btn-outline-dark" asp-area="" asp-controller="Admin" asp-action="Products">
+                        <a class="w-100 btn @(currentPage=="Products" ? "btn-dark" : "btn-outline-dark")" asp-area=""
+                            asp-controller="Admin" asp-action="Products">
                             Products
                         </a>
-                        <a class="w-100 btn btn-outline-dark" asp-area="" asp-controller="Order" asp-action="Index">
+                        <a class="w-100 btn @(currentPage=="Orders" ? "btn-dark" : "btn-outline-dark")" asp-area=""
+                            asp-controller="Order" asp-action="Index">
                             Orders
                         </a>
                         @* } *@
-                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout"
-                            asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                            <button type="submit" class="w-100 btn btn-link">Sign Out</button>
-                        </form>
-
                     </div>
                 </section>
-                <main role="main" class="pb-3">
+                <main role="main" class="container pb-3">
                     @RenderBody()
                 </main>
             </div>
@@ -90,6 +121,7 @@
             </main>
         }
 
+
     </div>
 
     <footer class="border-top footer text-muted">
@@ -97,6 +129,7 @@
             &copy; 2024 - peakmotion - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
