@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
+  //   const searchToggle = document.getElementById('searchToggle');
+  //   const searchForm = document.getElementById('searchForm');
+
   const searchToggle = document.getElementById('searchToggle');
+  console.log('Search toggle found:', !!searchToggle);
   const searchForm = document.getElementById('searchForm');
+  console.log('Search form found:', !!searchForm);
+
   searchToggle.addEventListener('click', function () {
     searchForm.classList.toggle('expanded');
     if (searchForm.classList.contains('expanded')) {
