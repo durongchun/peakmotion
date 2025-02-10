@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace peakmotion.Repositories
 {
-  public class ProductRepo
-  {
-    private readonly PeakmotionContext _context;
-
-    public ProductRepo(PeakmotionContext context)
+    public class ProductRepo
     {
-      _context = context;
-    }
+        private readonly PeakmotionContext _context;
 
-    // Get specific product in the database.
+        public ProductRepo(PeakmotionContext context)
+        {
+            _context = context;
+        }
+
+        // Get specific product in the database.
         public ProductVM? GetProduct(int id)
         {
             ProductVM? product = _context.Products.Select(p => new ProductVM
@@ -34,7 +34,7 @@ namespace peakmotion.Repositories
             return product;
         }
 
-    // Get all products in the database.
+        // Get all products in the database.
         public IEnumerable<ProductVM> GetAllProducts()
         {
             IEnumerable<ProductVM> products = from p in _context.Products
@@ -69,6 +69,7 @@ namespace peakmotion.Repositories
             Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
             return products;
         }
-  }
+
+    }
 }
 
