@@ -3,8 +3,6 @@
 @using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
 
-@* Right Side *@
-<ul class="navbar-nav d-flex gap-2 align-items-center">
 @if (SignInManager.IsSignedIn(User))
 {
     @* Profile and Dropdown *@
@@ -80,3 +78,5 @@ else
     </li>
 }
 </ul>
+
+<script src="~/js/search.js"></script>

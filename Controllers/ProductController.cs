@@ -23,9 +23,15 @@ public class ProductController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IActionResult Index()
+    public IActionResult Index(string searchString = null)
     {
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
+        }
+
+        ViewBag.SearchString = searchString;
         return View(products);
     }
 
