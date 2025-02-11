@@ -1,9 +1,8 @@
 @model IEnumerable<peakmotion.ViewModels.UserVM>
 
 @{ ViewData["Title"] = "Employees";}
-<br />
-<h1>Employees</h1>
-<br />
+<h1 class="mb-4">Employees</h1>
+
 @if (!string.IsNullOrEmpty(ViewBag.Message))
 {
     <div class="alert alert-info">@ViewBag.Message</div>

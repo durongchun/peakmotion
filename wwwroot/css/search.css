@@ -4,7 +4,7 @@
   z-index: 2;
 }
 .search-form {
-  position: absolute;
+  /* position: absolute; */
   left: 40px; /* adjust based on your icon size */
   width: 0;
   overflow: hidden;
