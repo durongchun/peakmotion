@@ -29,9 +29,11 @@ namespace peakmotion.Repositories
             var colors = GetProductAttributes(id, "color");
             var sizes = GetProductAttributes(id, "size");
             var types = GetProductAttributes(id, "category");
+            var properties = GetProductAttributes(id, "property");
             var colordropdown = FetchCategoryDropdown("color");
             var sizedropdown = FetchCategoryDropdown("size");
             var categorydropdown = FetchCategoryDropdown("category");
+            var propertydropdown = FetchCategoryDropdown("property");
             var productimages = GetProductImage(id);
 
 
@@ -50,9 +52,11 @@ namespace peakmotion.Repositories
                 Colors = colors,
                 Sizes = sizes,
                 Types = types,
+                Properties = properties,
                 ColorDropdown = colordropdown,
                 SizeDropdown = sizedropdown,
                 TypeDropdown = categorydropdown,
+                PropertyDropdown = propertydropdown,
                 Images = productimages,
 
 

@@ -98,7 +98,7 @@
                         <input type="hidden" id="size" name="Size" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
                     </div>
 
-                       <div class="form-group mb-3">
+                    <div class="form-group mb-3">
                         <label for="category">Category</label>
                         <div class="d-flex align-items-center border rounded p-2 position-relative">
                             <!-- Color Badges Container -->
@@ -131,8 +131,35 @@
 
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="properties">Properties</label>
-                        <input type="text">
+                          <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Property Badges Container -->
+                            <div id="propertyContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Types != null)
+                                {
+                                    @foreach (var property in Model.Properties)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 property-badge">
+                                            @property <span class="ms-1 text-white remove-property" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="propertyDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a property</option>
+                                @foreach (var property in Model.PropertyDropdown)
+                                {
+                                    <option value="@property.Categoryname">@property.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="property" name="Property" value="@(Model.Properties != null ? string.Join(", ", Model.Properties) : "")">
                     </div>
+
                 </div>
                 <div id="primaryImage">
                     <img src="https://picsum.photos/500/700?random=1" alt="primary image">
@@ -275,6 +302,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoryInput = document.getElementById("category");
     const categoryDropdown = document.getElementById("categoryDropdown");
 
+    const propertyContainer = document.getElementById("propertyContainer");
+    const propertyInput = document.getElementById("property");
+    const propertyDropdown = document.getElementById("propertyDropdown");
+
     // Function to remove selected item (color, size, category)
     function removeItem(event, inputElement, containerElement) {
         const badge = event.target.closest(".badge");
@@ -346,6 +377,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle category dropdown selection
     categoryDropdown.addEventListener("change", (e) => handleSelection(e, categoryInput, categoryContainer, categoryDropdown));
+
+     // Attach event listeners to existing property badges
+    document.querySelectorAll(".remove-property").forEach(btn => {
+        btn.addEventListener("click", (e) => removeItem(e, propertyInput, propertyContainer));
+    });
+
+    // Handle category dropdown selection
+   propertyDropdown.addEventListener("change", (e) => handleSelection(e, propertyInput, propertyContainer, propertyDropdown));
 
 
     @* // Show the editable row when "ADD NEW PHOTO" is clicked

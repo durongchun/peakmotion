@@ -58,6 +58,55 @@ public class AdminController : Controller
         // Redirect to a relevant page (e.g., Product details page)
         return RedirectToAction("ProductEdit", new { id = 1 }); // Adjust the ID or redirect to another action as needed
     }
+
+
+
+    public async Task<IActionResult> ProductDetailsEdit(ProductVM model)
+    {
+        if (!ModelState.IsValid)
+        {
+            foreach (var key in ModelState.Keys)
+            {
+                foreach (var error in ModelState[key].Errors)
+                {
+                    // Log or display the error messages
+                    Console.WriteLine($"Error with key '{key}': {error.ErrorMessage}");
+                }
+            }
+            return View(model);
+        }
+
+        var existingProduct = _productRepo.GetProduct(model.ID);
+
+
+        if (existingProduct == null)
+        {
+            return NotFound();
+        }
+
+        // Update properties with new values from the model
+        existingProduct.ProductName = model.ProductName;
+        existingProduct.Description = model.Description;
+        existingProduct.Price = model.Price;
+        existingProduct.Currency = model.Currency;
+        existingProduct.Quantity = model.Quantity;
+        existingProduct.IsFeatured = model.IsFeatured;
+        existingProduct.IsMembershipProduct = model.IsMembershipProduct;
+
+        // Handle Categories, Images, Colors, Sizes, and Types if needed
+        existingProduct.Categories = model.Categories;
+        existingProduct.Images = model.Images;
+        existingProduct.Colors = model.Colors;
+        existingProduct.Sizes = model.Sizes;
+        existingProduct.Types = model.Types;
+
+        // Save changes
+        // _context.SaveChanges();
+
+        // Redirect to another page (e.g., Product List)
+        return RedirectToAction("ProductEdit");
+    }
+
 }
 
 
