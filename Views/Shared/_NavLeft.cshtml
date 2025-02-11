@@ -3,6 +3,10 @@
 @using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
     
+<head>
+    <link rel="stylesheet" href="~/css/search.css" />
+</head>
+
 @* Left Side *@
 <ul class="navbar-nav flex-grow-1">
 @if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
@@ -28,5 +32,23 @@ else
         <a class="nav-link text-light" asp-area="" asp-controller="Order" asp-action="Index">(Admin
             Orders)</a>
     </li>
+    <li class="position-relative d-flex align-items-center">
+        <li class="nav-item" id="searchToggle">
+            <a class="btn-image">
+                <img src="~/images/search.svg" 
+                    alt="Search Button"
+                    width="32"
+                    height="32"
+                >
+            </a>
+        </li>
+        <form asp-controller="Product" asp-action="Index" method="get" class="search-form" id="searchForm">
+            <input type="text" name="searchString" placeholder="Search" class="form-control"
+                value="@ViewBag.SearchFilter" />
+        </form>
+    </li>
+
 }
 </ul>
+
+<script src="~/js/search.js"></script>
