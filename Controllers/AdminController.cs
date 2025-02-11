@@ -110,6 +110,7 @@ public class AdminController : Controller
         // Update existing images
         existingProduct.Images = model.Images.ToList();
 
+
         // Handle new images
         if (NewImages != null && NewImages.Any())
         {

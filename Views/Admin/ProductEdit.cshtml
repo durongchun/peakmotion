@@ -200,8 +200,7 @@
                     <tfoot>
                         <tr id="addPhotoRow" style="display: none;">
                             <td><input type="text" id="photoName" name="photoName" placeholder="Enter Name" class="form-control" /></td>
-                            <td><input type="file" class="form-control imageFile" name="NewImages" accept="image/*" /></td>
-                            @* <td><input type="file" id="imageFile" name="files" class="form-control" /></td> *@
+                            <td><input type="file" id="imageFile" name="files" class="form-control" /></td>
                             <td><input type="checkbox" id="isPrimary" name="isPrimary" /></td>
                             <td><input type="number" id="sortOrder" name="sortOrder" placeholder="Sort Order" class="form-control" /></td>
                             <td><span id="thumbnailPreview"></span></td>
@@ -234,12 +233,11 @@
 </main>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const imageTableBody = document.getElementById("imageTableBody");
-    const addPhotoRow = document.getElementById("addPhotoRow");
-    const addPhotoBtn = document.getElementById("addPhotoBtn");
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageTableBody = document.getElementById("imageTableBody");
+        const addPhotoRow = document.getElementById("addPhotoRow");
+        const addPhotoBtn = document.getElementById("addPhotoBtn");
 
-    if (imageTableBody) {
         // Handle delete for existing and newly added rows
         imageTableBody.addEventListener("click", function (event) {
             if (event.target.classList.contains("deletePhoto")) {
@@ -249,164 +247,93 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
-    }
 
-    if (addPhotoBtn && addPhotoRow) {
-        addPhotoBtn.addEventListener("click", function () {
-            const newRow = addPhotoRow.cloneNode(true); // Clone the row
-            newRow.style.display = "table-row"; // Ensure it's visible
-            newRow.removeAttribute("id"); // Remove ID to avoid duplicates
+        // Handle adding new photo row
+        if (addPhotoBtn && addPhotoRow) {
+            addPhotoBtn.addEventListener("click", function () {
+                const newRow = addPhotoRow.cloneNode(true); // Clone the row
+                newRow.style.display = "table-row"; // Ensure it's visible
+                newRow.removeAttribute("id"); // Remove ID to avoid duplicates
 
-            // Reset input values in the cloned row
-            newRow.querySelectorAll("input").forEach(input => {
-                if (input.type === "checkbox") {
-                    input.checked = false;
-                } else {
-                    input.value = "";
-                }
+                // Reset input values in the cloned row
+                newRow.querySelectorAll("input").forEach(input => {
+                    if (input.type === "checkbox") {
+                        input.checked = false;
+                    } else {
+                        input.value = "";
+                    }
+                });
+
+                // Append the new row to the table body
+                imageTableBody.appendChild(newRow);
             });
-
-            // Append the new row to the table body
-            imageTableBody.appendChild(newRow);
-        });
-
-        // Handle delete for the original footer row
-        addPhotoRow.addEventListener("click", function (event) {
-            if (event.target.classList.contains("deletePhoto")) {
-                addPhotoRow.remove(); // Directly remove the row
-            }
-        });
-    }
-});
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-    const addPhotoBtn = document.getElementById("addPhotoBtn");
-    const addPhotoRow = document.getElementById("addPhotoRow");
-    const photoNameInput = document.getElementById("photoName");
-    const photoPathInput = document.getElementById("photoPath");
-    const isPrimaryInput = document.getElementById("isPrimary");
-    const sortOrderInput = document.getElementById("sortOrder");
-    const thumbnailPreview = document.getElementById("thumbnailPreview");
-    const imageTableBody = document.getElementById("imageTableBody");
-   
-
-    const colorContainer = document.getElementById("colorContainer");
-    const colorInput = document.getElementById("Colors");
-    const colorDropdown = document.getElementById("colorDropdown");
-
-    const sizeContainer = document.getElementById("sizeContainer");
-    const sizeInput = document.getElementById("Sizes");
-    const sizeDropdown = document.getElementById("sizeDropdown");
-
-    const categoryContainer = document.getElementById("categoryContainer");
-    const categoryInput = document.getElementById("Types");
-    const categoryDropdown = document.getElementById("categoryDropdown");
-
-    const propertyContainer = document.getElementById("propertyContainer");
-    const propertyInput = document.getElementById("Properties");
-    const propertyDropdown = document.getElementById("propertyDropdown");
-
-    // Function to remove selected item (color, size, category)
-    function removeItem(event, inputElement, containerElement) {
-        const badge = event.target.closest(".badge");
-        if (badge) {
-            const itemName = badge.innerText.trim().replace(" ×", "");
-            let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
-
-            // Remove item from the list
-            existingItems = existingItems.filter(item => item !== itemName);
-            inputElement.value = existingItems.join(", ");
-            
-            // Remove badge from UI
-            badge.remove();
         }
-    }
 
-    // Function to handle dropdown selection (color, size, category)
-    function handleSelection(event, inputElement, containerElement, dropdownElement) {
-        const selectedItem = event.target.value;
-        if (selectedItem) {
-            let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
+        // Function to remove selected item (color, size, category, property)
+        function removeItem(event, inputElement, containerElement) {
+            const badge = event.target.closest(".badge");
+            if (badge) {
+                const itemName = badge.innerText.trim().replace(" ×", "");
+                let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
 
-            // Check if item is already added
-            if (!existingItems.includes(selectedItem)) {
-                existingItems.push(selectedItem);
-
-                // Create new badge
-                const badge = document.createElement("span");
-                badge.className = "badge bg-secondary text-white me-2 p-2";
-                badge.innerHTML = `${selectedItem} <span class="ms-1 text-white" style="cursor:pointer;">&times;</span>`;
-
-                // Append badge & update hidden input
-                containerElement.appendChild(badge);
+                // Remove item from the list
+                existingItems = existingItems.filter(item => item !== itemName);
                 inputElement.value = existingItems.join(", ");
-
-                // Add event listener for removal
-                badge.querySelector("span").addEventListener("click", (e) => removeItem(e, inputElement, containerElement));
+                
+                // Remove badge from UI
+                badge.remove();
             }
-
-            dropdownElement.value = ""; // Reset dropdown
         }
-    }
 
+        // Function to handle dropdown selection (color, size, category, property)
+        function handleSelection(event, inputElement, containerElement, dropdownElement) {
+            const selectedItem = event.target.value;
+            if (selectedItem) {
+                let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
 
+                // Check if item is already added
+                if (!existingItems.includes(selectedItem)) {
+                    existingItems.push(selectedItem);
 
-    // Attach event listeners to existing color badges
-    document.querySelectorAll(".remove-color").forEach(btn => {
-        btn.addEventListener("click", (e) => removeItem(e, colorInput, colorContainer));
+                    // Create new badge
+                    const badge = document.createElement("span");
+                    badge.className = "badge bg-secondary text-white me-2 p-2";
+                    badge.innerHTML = `${selectedItem} <span class="ms-1 text-white" style="cursor:pointer;">&times;</span>`;
+
+                    // Append badge & update hidden input
+                    containerElement.appendChild(badge);
+                    inputElement.value = existingItems.join(", ");
+
+                    // Add event listener for removal
+                    badge.querySelector("span").addEventListener("click", (e) => removeItem(e, inputElement, containerElement));
+                }
+
+                dropdownElement.value = ""; // Reset dropdown
+            }
+        }
+
+        // Attach event listeners to existing color, size, category, and property badges
+        document.querySelectorAll(".remove-color").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Colors"), document.getElementById("colorContainer")));
+        });
+
+        document.querySelectorAll(".remove-size").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Sizes"), document.getElementById("sizeContainer")));
+        });
+
+        document.querySelectorAll(".remove-category").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Types"), document.getElementById("categoryContainer")));
+        });
+
+        document.querySelectorAll(".remove-property").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Properties"), document.getElementById("propertyContainer")));
+        });
+
+        // Handle dropdown selection for color, size, category, property
+        document.getElementById("colorDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Colors"), document.getElementById("colorContainer"), e.target));
+        document.getElementById("sizeDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Sizes"), document.getElementById("sizeContainer"), e.target));
+        document.getElementById("categoryDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Types"), document.getElementById("categoryContainer"), e.target));
+        document.getElementById("propertyDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Properties"), document.getElementById("propertyContainer"), e.target));
     });
 
-    // Handle color dropdown selection
-    colorDropdown.addEventListener("change", (e) => handleSelection(e, colorInput, colorContainer, colorDropdown));
-
-
-    // Attach event listeners to existing size badges
-    document.querySelectorAll(".remove-size").forEach(btn => {
-        btn.addEventListener("click", (e) => removeItem(e, sizeInput, sizeContainer));
-    });
-
-    // Handle size dropdown selection
-    sizeDropdown.addEventListener("change", (e) => handleSelection(e, sizeInput, sizeContainer, sizeDropdown));
-
-
-
-    // Attach event listeners to existing category badges
-    document.querySelectorAll(".remove-category").forEach(btn => {
-        btn.addEventListener("click", (e) => removeItem(e, categoryInput, categoryContainer));
-    });
-
-    // Handle category dropdown selection
-    categoryDropdown.addEventListener("change", (e) => handleSelection(e, categoryInput, categoryContainer, categoryDropdown));
-
-     // Attach event listeners to existing property badges
-    document.querySelectorAll(".remove-property").forEach(btn => {
-        btn.addEventListener("click", (e) => removeItem(e, propertyInput, propertyContainer));
-    });
-
-    // Handle category dropdown selection
-   propertyDropdown.addEventListener("change", (e) => handleSelection(e, propertyInput, propertyContainer, propertyDropdown));
-
-
-    @* // Show the editable row when "ADD NEW PHOTO" is clicked
-    addPhotoBtn.addEventListener("click", () => {
-        addPhotoRow.style.display = "table-row";
-        photoNameInput.focus(); // Focus on the first input
-    });
-
-    // Update thumbnail preview dynamically
-    photoPathInput.addEventListener("input", () => {
-        const imagePath = photoPathInput.value;
-        thumbnailPreview.innerHTML = imagePath ? `<img src="${imagePath}" alt="Thumbnail" width="50" />` : '';
-    });
-     *@
-
-    
-
-  
-
-    
-    
-});
 </script>
