@@ -11,7 +11,7 @@
 <main id="container">
     <H2>Product Edit</H2>
     <section >
-        <form class="product-form" action="/Product/Edit" method="POST">
+        <form class="product-form" action="/Product/Edit" method="POST" enctype="multipart/form-data">
             <div id="productDetail">
                 <div >
                     <div class="form-group d-flex flex-column mb-3">
@@ -63,8 +63,7 @@
                             </select>
                         </div>
 
-                        <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="Colors" name="Colors" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")" />
+                       
                     </div>
 
                     <div class="form-group mb-3">
@@ -94,8 +93,7 @@
                             </select>
                         </div>
 
-                        <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="Sizes" name="Sizes" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
+                        
                     </div>
 
                     <div class="form-group mb-3">
@@ -125,8 +123,6 @@
                             </select>
                         </div>
 
-                        <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="Types" name="Types" value="@(Model.Categories != null ? string.Join(", ", Model.Categories) : "")">
                     </div>
 
                     <div class="form-group d-flex flex-column mb-3">
@@ -157,6 +153,9 @@
                         </div>
 
                         <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="Colors" name="Colors" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")" />
+                        <input type="hidden" id="Sizes" name="Sizes" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
+                        <input type="hidden" id="Types" name="Types" value="@(Model.Types != null ? string.Join(", ", Model.Types) : "")">
                         <input type="hidden" id="Properties" name="Properties" value="@(Model.Properties != null ? string.Join(", ", Model.Properties) : "")">
                         <input type="hidden" name="ID" value="@Model.ID" />
 
@@ -201,7 +200,8 @@
                     <tfoot>
                         <tr id="addPhotoRow" style="display: none;">
                             <td><input type="text" id="photoName" name="photoName" placeholder="Enter Name" class="form-control" /></td>
-                            <td><input type="file" id="imageFile" name="files" class="form-control" /></td>
+                            <td><input type="file" class="form-control imageFile" name="NewImages" accept="image/*" /></td>
+                            @* <td><input type="file" id="imageFile" name="files" class="form-control" /></td> *@
                             <td><input type="checkbox" id="isPrimary" name="isPrimary" /></td>
                             <td><input type="number" id="sortOrder" name="sortOrder" placeholder="Sort Order" class="form-control" /></td>
                             <td><span id="thumbnailPreview"></span></td>

@@ -116,6 +116,19 @@ namespace peakmotion.Repositories
 
         }
 
+        public List<string> FormatDropdownSelectedValue(string key)
+        {
+            if (!string.IsNullOrEmpty(key))
+            {
+                return key.ToString()
+                    .Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries)
+                    .ToList();
+            }
+            return new List<string>();
+        }
+
+
+
 
         // Get all products in the database.
         public IEnumerable<ProductVM> GetAllProducts()

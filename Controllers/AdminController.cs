@@ -61,7 +61,7 @@ public class AdminController : Controller
 
 
     [HttpPost("Product/Edit")]
-    public async Task<IActionResult> ProductDetailsEdit(ProductVM model)
+    public async Task<IActionResult> ProductDetailsEdit(ProductVM model, List<IFormFile> NewImages)
     {
         if (!ModelState.IsValid)
         {
@@ -84,6 +84,14 @@ public class AdminController : Controller
             return NotFound();
         }
 
+        // Manually split comma separated fields if necessary
+        model.Colors = _productRepo.FormatDropdownSelectedValue(Request.Form["Colors"]);
+        model.Sizes = _productRepo.FormatDropdownSelectedValue(Request.Form["Sizes"]);
+        model.Types = _productRepo.FormatDropdownSelectedValue(Request.Form["Types"]);
+        model.Properties = _productRepo.FormatDropdownSelectedValue(Request.Form["Properties"]);
+
+
+
         // Update properties with new values from the model
         existingProduct.ProductName = model.ProductName;
         existingProduct.Description = model.Description;
@@ -93,14 +101,40 @@ public class AdminController : Controller
         existingProduct.IsFeatured = model.IsFeatured;
         existingProduct.IsMembershipProduct = model.IsMembershipProduct;
 
-        // Handle Categories, Images, Colors, Sizes, and Types if needed
-        existingProduct.Categories = model.Categories;
-        existingProduct.Images = model.Images;
+        // Handle Categories=types, Images, Colors, Sizes
         existingProduct.Colors = model.Colors;
         existingProduct.Sizes = model.Sizes;
         existingProduct.Types = model.Types;
+        existingProduct.Properties = model.Properties;
 
-        // Save changes
+        // Update existing images
+        existingProduct.Images = model.Images.ToList();
+
+        // Handle new images
+        if (NewImages != null && NewImages.Any())
+        {
+            foreach (var file in NewImages)
+            {
+                if (file.Length > 0)
+                {
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+
+                    existingProduct.Images.Add(new ProductImage
+                    {
+                        Url = "/images/" + fileName,
+                        Alttag = Path.GetFileNameWithoutExtension(file.FileName),
+                        Isprimary = false
+                    });
+                }
+            }
+        }
+        //Save changes
         // _context.SaveChanges();
 
         // Redirect to another page (e.g., Product List)
