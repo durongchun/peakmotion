@@ -1,5 +1,7 @@
 
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using peakmotion.Models;
 
 namespace peakmotion.ViewModels
@@ -55,13 +57,17 @@ namespace peakmotion.ViewModels
                 public List<string> Types { get; set; }   // List of available sizes
                 public List<string> Properties { get; set; }   // List of available sizes
 
-                public List<Category> ColorDropdown { get; set; }    // List of available sizes
+                [BindNever, ValidateNever]
+                public List<Category> ColorDropdown { get; set; } = new List<Category>();
 
-                public List<Category> SizeDropdown { get; set; }
-                public List<Category> TypeDropdown { get; set; }
+                [BindNever, ValidateNever]
+                public List<Category> SizeDropdown { get; set; } = new List<Category>();
 
-                public List<Category> PropertyDropdown { get; set; }
+                [BindNever, ValidateNever]
+                public List<Category> TypeDropdown { get; set; } = new List<Category>();
 
+                [BindNever, ValidateNever]
+                public List<Category> PropertyDropdown { get; set; } = new List<Category>();
 
 
         }

@@ -64,7 +64,7 @@
                         </div>
 
                         <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="colour" name="Colour" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")">
+                        <input type="hidden" id="Colors" name="Colors" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")" />
                     </div>
 
                     <div class="form-group mb-3">
@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="size" name="Size" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
+                        <input type="hidden" id="Sizes" name="Sizes" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
                     </div>
 
                     <div class="form-group mb-3">
@@ -126,7 +126,7 @@
                         </div>
 
                         <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="category" name="Category" value="@(Model.Categories != null ? string.Join(", ", Model.Categories) : "")">
+                        <input type="hidden" id="Types" name="Types" value="@(Model.Categories != null ? string.Join(", ", Model.Categories) : "")">
                     </div>
 
                     <div class="form-group d-flex flex-column mb-3">
@@ -157,7 +157,9 @@
                         </div>
 
                         <!-- Hidden input to store selected values -->
-                        <input type="hidden" id="property" name="Property" value="@(Model.Properties != null ? string.Join(", ", Model.Properties) : "")">
+                        <input type="hidden" id="Properties" name="Properties" value="@(Model.Properties != null ? string.Join(", ", Model.Properties) : "")">
+                        <input type="hidden" name="ID" value="@Model.ID" />
+
                     </div>
 
                 </div>

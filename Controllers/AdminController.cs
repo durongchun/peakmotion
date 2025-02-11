@@ -50,7 +50,7 @@ public class AdminController : Controller
 
     }
 
-    [HttpPost("Product/Edit")]
+    // [HttpPost("Product/Edit")]
     public async Task<IActionResult> UploadImages(List<IFormFile> files, string photoName, string photoPath, bool isPrimary, int sortOrder, int productId)
     {
         _productRepo.UploadImagesFromAdminProductEdit(files, photoName, photoPath, isPrimary, sortOrder, productId);
@@ -60,7 +60,7 @@ public class AdminController : Controller
     }
 
 
-
+    [HttpPost("Product/Edit")]
     public async Task<IActionResult> ProductDetailsEdit(ProductVM model)
     {
         if (!ModelState.IsValid)
