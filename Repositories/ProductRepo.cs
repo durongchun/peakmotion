@@ -190,52 +190,40 @@ namespace peakmotion.Repositories
             }
         }
 
-        public async Task UploadImagesFromAdminProductEdit(List<IFormFile> files, string photoName, string photoPath, bool isPrimary, int sortOrder, int productId)
+        public async Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages, ProductVM existingProduct)
         {
-            try
+            // Handle new images
+            if (NewImages != null && NewImages.Any())
             {
-                if (files != null && files.Count > 0)
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                existingProduct.Images = _context.ProductImages
+                            .Where(img => img.Fkproductid == model.ID) // Get images for this product
+                            .ToList();
+
+                foreach (var file in NewImages)
                 {
-                    // Save each uploaded file to a directory and get the path
-                    foreach (var file in files)
+                    var extension = Path.GetExtension(file.FileName).ToLower();
+                    if (file.Length > 0)
                     {
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/products", file.FileName);
+                        var fileName = Guid.NewGuid().ToString() + extension;
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products", fileName);
 
-                        // Ensure directory exists
-                        var directory = Path.GetDirectoryName(filePath);
-                        if (!Directory.Exists(directory))
-                        {
-                            Directory.CreateDirectory(directory);
-                        }
-
-                        // Save the file asynchronously
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
                         }
 
-                        // Create a new Image record and add it to the database
-                        var image = new ProductImage
+                        existingProduct.Images.Add(new ProductImage
                         {
-                            Url = filePath,   // Store the file path
-                            Isprimary = isPrimary,
-                            Fkproductid = productId,
-                        };
-
-                        _context.ProductImages.Add(image);
+                            Fkproductid = model.ID,
+                            Url = "/images/products/" + fileName,
+                            Alttag = Path.GetFileNameWithoutExtension(file.FileName),
+                            Isprimary = false
+                        });
                     }
 
-                    // Save changes to the database
-                    await _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
-            }
-            catch (Exception ex)
-            {
-                // Log the exception (You can use any logging framework like Serilog, NLog, etc.)
-                // For example: _logger.LogError(ex, "An error occurred while uploading images.");
-
-                // Optionally, rethrow or handle the exception (return an error response, etc.)
-                throw new Exception("An error occurred while uploading images.", ex);
             }
         }
 
