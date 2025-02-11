@@ -55,7 +55,7 @@ public class ProductController : Controller
             // Fkcategory = null
         };
 
-        _cookieRepo.SetProductDataToSession();
+        _cookieRepo.SetProductDataToCookie(productDetailViewModel);
 
         // Return the view with the view model
         return View(productDetailViewModel);
