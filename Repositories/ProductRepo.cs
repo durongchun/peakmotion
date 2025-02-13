@@ -3,6 +3,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Runtime.Intrinsics.X86;
+using System.Linq.Expressions;
 
 namespace peakmotion.Repositories
 {
@@ -190,41 +191,138 @@ namespace peakmotion.Repositories
             }
         }
 
-        public async Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages, ProductVM existingProduct)
+        public Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages)
         {
-            // Handle new images
-            if (NewImages != null && NewImages.Any())
+            try
             {
-                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
-                existingProduct.Images = _context.ProductImages
-                            .Where(img => img.Fkproductid == model.ID) // Get images for this product
-                            .ToList();
+                if (NewImages?.Any() != true) return;
+
+                // Create directory if it doesn't exist
+                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
+                Directory.CreateDirectory(uploadPath); // Ensures the directory exists
+
+                var existingProduct = GetProduct(model.ID);
+
+                // Load existing images
+                existingProduct.Images = await _context.ProductImages
+                    .Where(img => img.Fkproductid == model.ID)
+                    .ToListAsync();
+
+                // Process all images first
+                var newImageEntities = new List<ProductImage>();
 
                 foreach (var file in NewImages)
                 {
-                    var extension = Path.GetExtension(file.FileName).ToLower();
-                    if (file.Length > 0)
+                    if (file.Length <= 0) continue;
+
+                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName).ToLower()}";
+                    var filePath = Path.Combine(uploadPath, fileName);
+
+                    // Copy the file first
+                    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        var fileName = Guid.NewGuid().ToString() + extension;
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products", fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
-                        }
-
-                        existingProduct.Images.Add(new ProductImage
-                        {
-                            Fkproductid = model.ID,
-                            Url = "/images/products/" + fileName,
-                            Alttag = Path.GetFileNameWithoutExtension(file.FileName),
-                            Isprimary = false
-                        });
+                        file.CopyToAsync(stream);
+                        stream.FlushAsync(); // Ensure all bytes are written
                     }
 
-                    _context.SaveChanges();
+                    // Create the image entity
+                    var newImage = new ProductImage
+                    {
+                        Fkproductid = model.ID,
+                        Url = $"/images/products/{fileName}",
+                        Alttag = Path.GetFileNameWithoutExtension(file.FileName),
+                        Isprimary = false
+                    };
+
+                    newImageEntities.Add(newImage);
+                    existingProduct.Images.Add(newImage);
                 }
+
+                // Add all new images to context
+                _context.ProductImages.AddRangeAsync(newImageEntities);
+
+                // Save all changes
+                _context.SaveChangesAsync();
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing images: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw new Exception($"Error processing images: {ex.Message}", ex);
+            }
+        }
+
+        public void UpdateProductDetail(Product product, ProductVM model)
+        {
+
+            // Update the entity with new values
+            product.Name = model.ProductName;
+            product.Description = model.Description;
+            product.Regularprice = model.Price;
+            product.Qtyinstock = model.Quantity;
+            product.Isfeatured = model.IsFeatured ? 1 : 0;
+            product.Ismembershipproduct = model.IsMembershipProduct ? 1 : 0;
+            product.Fkdiscountid = 1;
+
+            // Save changes
+            _context.SaveChangesAsync();
+
+
+        }
+
+        public void UpdateProductCategeries(ProductVM model)
+        {
+            // Remove existing category associations for the product
+            var existingCategories = _context.ProductCategories
+                .Where(pc => pc.Fkproductid == model.ID);
+
+            // Remove existing categories
+            _context.ProductCategories.RemoveRange(existingCategories);
+
+
+
+            // Combine all selected category names from Types, Colors, Sizes, and Properties
+            var categoryNames = (model.Types ?? new List<string>())
+                                    .Concat(model.Colors ?? new List<string>())
+                                    .Concat(model.Sizes ?? new List<string>())
+                                    .Concat(model.Properties ?? new List<string>())
+                                    .Distinct() // Remove duplicates
+                                    .ToList();
+
+            // Ensure categories in the database and categoryNames are compared case-insensitively
+            var categoryNamesTrimmedLower = categoryNames
+                                            .Select(c => c.Trim().ToLower()) // Trim and convert to lower case for consistency
+                                            .Distinct() // Ensure no duplicates in category names
+                                            .ToList();
+
+            // Log the category names for debugging (optional)
+            Console.WriteLine("Category Names for Query: " + string.Join(", ", categoryNamesTrimmedLower));
+
+            // Query the database for categories
+            var categories = _context.Categories
+                .Where(c => categoryNamesTrimmedLower.Contains(c.Categoryname.Trim().ToLower())) // Trim and compare case-insensitively
+                .ToDictionary(c => c.Categoryname.ToLower(), c => c.Pkcategoryid);
+
+            // Log the categories for debugging (optional)
+            Console.WriteLine("Categories Retrieved: " + string.Join(", ", categories.Keys));
+
+
+            // Create new ProductCategory entries
+            var newProductCategories = categoryNamesTrimmedLower
+                .Where(category => categories.ContainsKey(category)) // Ensure category exists in dictionary
+                .Select(category => new ProductCategory
+                {
+                    Fkproductid = model.ID,
+                    Fkcategoryid = categories[category]
+                })
+                .ToList();
+
+            // Bulk insert new category associations
+            _context.ProductCategories.AddRangeAsync(newProductCategories);
+
+            // Save changes to the database
+            _context.SaveChangesAsync();
+
         }
 
     }

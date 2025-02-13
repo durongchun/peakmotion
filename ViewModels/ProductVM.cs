@@ -50,6 +50,8 @@ namespace peakmotion.ViewModels
 
                 [Display(Name = "Main Image")]
                 public ProductImage? PrimaryImage { get; set; }
+                public int? Pkdiscountid { get; set; }  // Nullable in case there's no discount applied
+
 
                 public List<string> Colors { get; set; }  // List of available colors
                 public List<string> Sizes { get; set; }   // List of available sizes

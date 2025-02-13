@@ -70,33 +70,20 @@ public class AdminController : Controller
             return View(model);
         }
 
-        var existingProduct = _productRepo.GetProduct(model.ID);
-
-        if (existingProduct == null)
+        var product = await _context.Products.FindAsync(model.ID);
+        if (product == null)
         {
             return NotFound();
         }
 
-        model.Colors = _productRepo.FormatDropdownSelectedValue(Request.Form["Colors"]);
-        model.Sizes = _productRepo.FormatDropdownSelectedValue(Request.Form["Sizes"]);
-        model.Types = _productRepo.FormatDropdownSelectedValue(Request.Form["Types"]);
-        model.Properties = _productRepo.FormatDropdownSelectedValue(Request.Form["Properties"]);
+        _productRepo.UpdateProductDetail(product, model);
 
-        existingProduct.ProductName = model.ProductName;
-        existingProduct.Description = model.Description;
-        existingProduct.Price = model.Price;
-        existingProduct.Currency = model.Currency;
-        existingProduct.Quantity = model.Quantity;
-        existingProduct.IsFeatured = model.IsFeatured;
-        existingProduct.IsMembershipProduct = model.IsMembershipProduct;
-        existingProduct.Colors = model.Colors;
-        existingProduct.Sizes = model.Sizes;
-        existingProduct.Types = model.Types;
-        existingProduct.Properties = model.Properties;
-        existingProduct.Images = model.Images.ToList();
+
+        _productRepo.UpdateProductCategeries(model);
+
 
         // Handle new images
-        _productRepo.UploadImagesFromAdminProductEdit(model, NewImages, existingProduct);
+        _productRepo.UploadImagesFromAdminProductEdit(model, NewImages);
 
 
         // Redirect to the product edit page
