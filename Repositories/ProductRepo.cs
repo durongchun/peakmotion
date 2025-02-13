@@ -191,7 +191,7 @@ namespace peakmotion.Repositories
             }
         }
 
-        public Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages)
+        public async Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages)
         {
             try
             {
