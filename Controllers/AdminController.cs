@@ -79,7 +79,7 @@ public class AdminController : Controller
         _productRepo.UpdateProductDetail(product, model);
 
 
-        _productRepo.UpdateProductCategeries(model);
+        _productRepo.UpdateProductCategories(model);
 
 
         // Handle new images

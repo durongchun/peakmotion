@@ -270,46 +270,44 @@ namespace peakmotion.Repositories
 
         }
 
-        public void UpdateProductCategeries(ProductVM model)
+        public async Task UpdateProductCategories(ProductVM model)
         {
+
             // Remove existing category associations for the product
             var existingCategories = _context.ProductCategories
                 .Where(pc => pc.Fkproductid == model.ID);
 
-            // Remove existing categories
             _context.ProductCategories.RemoveRange(existingCategories);
-
-
 
             // Combine all selected category names from Types, Colors, Sizes, and Properties
             var categoryNames = (model.Types ?? new List<string>())
-                                    .Concat(model.Colors ?? new List<string>())
-                                    .Concat(model.Sizes ?? new List<string>())
-                                    .Concat(model.Properties ?? new List<string>())
-                                    .Distinct() // Remove duplicates
-                                    .ToList();
+                                .Concat(model.Colors ?? new List<string>())
+                                .Concat(model.Sizes ?? new List<string>())
+                                .Concat(model.Properties ?? new List<string>())
+                                .Distinct() // Remove duplicates
+                                .ToList();
 
-            // Ensure categories in the database and categoryNames are compared case-insensitively
-            var categoryNamesTrimmedLower = categoryNames
-                                            .Select(c => c.Trim().ToLower()) // Trim and convert to lower case for consistency
-                                            .Distinct() // Ensure no duplicates in category names
-                                            .ToList();
+            // Ensure categories are case-insensitive and properly trimmed
+            var splitCategoryNames = categoryNames
+                .SelectMany(name => name.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                .Select(name => name.ToLower()) // Convert to lowercase
+                .Distinct() // Remove duplicates
+                .ToList();
 
-            // Log the category names for debugging (optional)
-            Console.WriteLine("Category Names for Query: " + string.Join(", ", categoryNamesTrimmedLower));
+            // Log category names for debugging
+            Console.WriteLine("Category Names for Query: " + string.Join(", ", splitCategoryNames));
 
-            // Query the database for categories
-            var categories = _context.Categories
-                .Where(c => categoryNamesTrimmedLower.Contains(c.Categoryname.Trim().ToLower())) // Trim and compare case-insensitively
-                .ToDictionary(c => c.Categoryname.ToLower(), c => c.Pkcategoryid);
+            // Query categories from the database (DO NOT use AsEnumerable here)
+            var categories = await _context.Categories
+                .Where(c => splitCategoryNames.Contains(c.Categoryname.Trim().ToLower()))
+                .ToDictionaryAsync(c => c.Categoryname.Trim().ToLower(), c => c.Pkcategoryid);
 
-            // Log the categories for debugging (optional)
+            // Log retrieved categories
             Console.WriteLine("Categories Retrieved: " + string.Join(", ", categories.Keys));
 
-
             // Create new ProductCategory entries
-            var newProductCategories = categoryNamesTrimmedLower
-                .Where(category => categories.ContainsKey(category)) // Ensure category exists in dictionary
+            var newProductCategories = splitCategoryNames
+                .Where(category => categories.ContainsKey(category)) // Ensure category exists
                 .Select(category => new ProductCategory
                 {
                     Fkproductid = model.ID,
@@ -317,12 +315,26 @@ namespace peakmotion.Repositories
                 })
                 .ToList();
 
-            // Bulk insert new category associations
-            _context.ProductCategories.AddRangeAsync(newProductCategories);
+            foreach (var item in newProductCategories)
+            {
+                Console.WriteLine($"✅ Adding ProductCategory: ProductID = {item.Fkproductid}, CategoryID = {item.Fkcategoryid}");
+            }
 
-            // Save changes to the database
-            _context.SaveChangesAsync();
+            try
+            {
 
+                // Bulk insert new category associations
+                await _context.ProductCategories.AddRangeAsync(newProductCategories);
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing categories: {ex.Message}");
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+                throw new Exception($"Error processing categoriess: {ex.Message}", ex);
+            }
         }
 
     }
