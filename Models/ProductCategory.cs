@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace peakmotion.Models;
 
 public partial class ProductCategory
 {
+
     public int Pkproductcategoryid { get; set; }
 
     public int Fkcategoryid { get; set; }

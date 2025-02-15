@@ -272,58 +272,71 @@ namespace peakmotion.Repositories
 
         public void UpdateProductCategories(ProductVM model)
         {
-            // Remove existing category associations for the product
-            // Fetch the existing categories synchronously using Result (blocking async)
-            var existingCategories = _context.ProductCategories
-                .Where(pc => pc.Fkproductid == model.ID)
-                .ToListAsync()  // This will still be asynchronous
-                .Result; // Blocking call
-
-            if (existingCategories.Any())  // Only remove if there are existing categories
-            {
-                _context.ProductCategories.RemoveRange(existingCategories);  // Remove categories
-                _context.SaveChanges();  // Save changes synchronously (no await)
-            }
-
-            // Combine all selected category names from Types, Colors, Sizes, and Properties
-            var categoryNames = (model.Types ?? new List<string>())
-                                    .Concat(model.Colors ?? new List<string>())
-                                    .Concat(model.Sizes ?? new List<string>())
-                                    .Concat(model.Properties ?? new List<string>())
-                                    .Distinct() // Remove duplicates
-                                    .ToList();
-            // Ensure categories in the database and categoryNames are compared case-insensitively
-            var categoryNamesTrimmedLower = categoryNames
-                                            .Select(c => c.Trim().ToLower()) // Trim and convert to lower case for consistency
-                                            .Distinct() // Ensure no duplicates in category names
-                                            .ToList();
-            // Log the category names for debugging (optional)
-            Console.WriteLine("Category Names for Query: " + string.Join(", ", categoryNamesTrimmedLower));
-            // Query the database for categories
-            var categories = _context.Categories
-                .Where(c => categoryNamesTrimmedLower.Contains(c.Categoryname.Trim().ToLower())) // Trim and compare case-insensitively
-                .ToDictionary(c => c.Categoryname.ToLower(), c => c.Pkcategoryid);
-            // Log the categories for debugging (optional)
-            Console.WriteLine("Categories Retrieved: " + string.Join(", ", categories.Keys));
-
-            // Create new ProductCategory entries
-            var newProductCategories = categoryNamesTrimmedLower
-                                        .Where(category => categories.ContainsKey(category)) // Ensure category exists in dictionary
-                                        .Select(category =>
-                                        {
-                                            // Safely retrieve the category ID using TryGetValue
-                                            categories.TryGetValue(category, out var categoryId);
-
-                                            return new ProductCategory
-                                            {
-                                                Fkproductid = model.ID,
-                                                Fkcategoryid = categoryId // Assign categoryId if found, else it will be default value (0 or null)
-                                            };
-                                        })
-                                        .ToList();
 
             try
-            {            // Bulk insert new category associations
+            {
+                // Remove existing category associations for the product
+                var existingCategories = _context.ProductCategories
+                    .Where(pc => pc.Fkproductid == model.ID)
+                    .ToListAsync()
+                    .Result;
+
+                if (existingCategories.Any())
+                {
+                    _context.ProductCategories.RemoveRange(existingCategories);
+                    _context.SaveChanges();
+                }
+
+                // Combine all selected category names from Types, Colors, Sizes, and Properties
+                var categoryNames = (model.Types ?? new List<string>())
+                                        .Concat(model.Colors ?? new List<string>())
+                                        .Concat(model.Sizes ?? new List<string>())
+                                        .Concat(model.Properties ?? new List<string>())
+                                        .Distinct() // Remove duplicates
+                                        .ToList();
+
+
+                var categoryNamesTrimmedLower = categoryNames
+                                                    .Select(name =>
+                                                    {
+                                                        if (string.IsNullOrEmpty(name))
+                                                        {
+                                                            Console.WriteLine("Null or empty category name found.");
+                                                        }
+                                                        return name;
+                                                    })
+                                                    .Where(name => !string.IsNullOrEmpty(name))
+                                                    .SelectMany(name => name.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+                                                    .Select(name => name.ToLower())
+                                                    .Distinct()
+                                                    .ToList();
+
+                Console.WriteLine("Category Names for Query: " + string.Join(", ", categoryNamesTrimmedLower));
+
+                // Query the database for categories
+                var categories = _context.Categories
+                    .Where(c => categoryNamesTrimmedLower.Contains(c.Categoryname.Trim().ToLower()))
+                    .ToDictionary(c => c.Categoryname.ToLower(), c => c.Pkcategoryid);
+
+                Console.WriteLine("Categories Retrieved: " + string.Join(", ", categories.Keys));
+
+                // Create new ProductCategory entries
+                var newProductCategories = categoryNamesTrimmedLower
+                                            .Where(category => categories.ContainsKey(category))
+                                            .Select(category =>
+                                            {
+                                                // Safely retrieve the category ID using TryGetValue
+                                                categories.TryGetValue(category, out var categoryId);
+
+                                                return new ProductCategory
+                                                {
+
+                                                    Fkproductid = model.ID,
+                                                    Fkcategoryid = categoryId
+                                                };
+                                            })
+                                            .ToList();
+                // Bulk insert new category associations
                 _context.ProductCategories.AddRangeAsync(newProductCategories);
 
                 // Save changes to the database
