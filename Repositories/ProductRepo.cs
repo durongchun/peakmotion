@@ -215,14 +215,14 @@ namespace peakmotion.Repositories
                 {
                     if (file.Length <= 0) continue;
 
-                    var fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName).ToLower()}";
+                    var fileName = model.photoName.Replace(" ", "").Trim();
                     var filePath = Path.Combine(uploadPath, fileName);
 
                     // Copy the file first
-                    using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                    await using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        file.CopyToAsync(stream);
-                        stream.FlushAsync(); // Ensure all bytes are written
+                        await file.CopyToAsync(stream);
+                        await stream.FlushAsync(); // Ensure all bytes are written
                     }
 
                     // Create the image entity
@@ -230,8 +230,8 @@ namespace peakmotion.Repositories
                     {
                         Fkproductid = model.ID,
                         Url = $"/images/products/{fileName}",
-                        Alttag = Path.GetFileNameWithoutExtension(file.FileName),
-                        Isprimary = false
+                        Alttag = model.photoName,
+                        Isprimary = false,
                     };
 
                     newImageEntities.Add(newImage);
@@ -239,10 +239,10 @@ namespace peakmotion.Repositories
                 }
 
                 // Add all new images to context
-                _context.ProductImages.AddRangeAsync(newImageEntities);
+                await _context.ProductImages.AddRangeAsync(newImageEntities);
 
                 // Save all changes
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -252,9 +252,8 @@ namespace peakmotion.Repositories
             }
         }
 
-        public void UpdateProductDetail(Product product, ProductVM model)
+        public async Task UpdateProductDetail(Product product, ProductVM model)
         {
-
             // Update the entity with new values
             product.Name = model.ProductName;
             product.Description = model.Description;
@@ -265,10 +264,9 @@ namespace peakmotion.Repositories
             product.Fkdiscountid = 1;
 
             // Save changes
-            _context.SaveChangesAsync();
-
-
+            await _context.SaveChangesAsync(); // ✅ Await the async method
         }
+
 
         public async Task UpdateProductCategoriesAsync(ProductVM model)
         {

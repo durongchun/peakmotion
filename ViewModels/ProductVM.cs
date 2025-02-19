@@ -71,6 +71,8 @@ namespace peakmotion.ViewModels
                 [BindNever, ValidateNever]
                 public List<Category> PropertyDropdown { get; set; } = new List<Category>();
 
+                public string? photoName { get; set; } //alttage
+
 
         }
 }

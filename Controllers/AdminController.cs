@@ -76,14 +76,14 @@ public class AdminController : Controller
             return NotFound();
         }
 
-        _productRepo.UpdateProductDetail(product, model);
+        await _productRepo.UpdateProductDetail(product, model);
 
 
         await _productRepo.UpdateProductCategoriesAsync(model);
 
 
         // Handle new images
-        _productRepo.UploadImagesFromAdminProductEdit(model, NewImages);
+        await _productRepo.UploadImagesFromAdminProductEdit(model, NewImages);
 
 
         // Redirect to the product edit page
