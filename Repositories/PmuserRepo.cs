@@ -71,5 +71,16 @@ namespace peakmotion.Repositories
 
             return new SelectList(roles, "Value", "Text");
         }
+
+        public Pmuser? GetPmuserByEmail(string email)
+        {
+            return _db.Pmusers.FirstOrDefault(pm => pm.Email == email);
+        }
+
+        public void UpdatePmuser(Pmuser pmUser)
+        {
+            _db.Pmusers.Update(pmUser);
+            _db.SaveChanges();
+        }
     }
 }
