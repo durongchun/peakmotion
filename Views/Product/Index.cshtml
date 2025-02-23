@@ -1,4 +1,4 @@
-﻿<div class="product-list-header">   
+﻿<div class="product-list-header">
     <div class="product-list-header-overlay px-7">
         <p>Home / Womens</p>
         <h2>Women's Apparel</h2>
@@ -11,13 +11,21 @@
     </div>
     <div>
         @{
-            var filter = new List<string> {"Women", "Tops"};
+            var filter = new List<string> { "Women", "Tops" };
         }
         @foreach (var item in filter)
         {
+
             <partial name="Filter/_FilteredButton" for="@item" />
         }
+
         <button class="filter-clear">Clear All</button>
+        @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+        {
+            <div class="">Search: @ViewBag.SearchString
+                <a asp-controller="Product" asp-action="Index">X</a>
+            </div>
+        }
     </div>
 </div>
 <section class="product-container mx-7">
@@ -45,17 +53,21 @@
     p {
         margin: 0;
     }
-    .product-list-header { 
+
+    .product-list-header {
         width: 100%;
         height: 300px;
         background-image: url("images/pexels-taryn-elliott-4840243.jpg");
         background-size: 100% auto;
         background-position: 0% 50%;
         overflow: hidden;
-        p, h2 {
+
+        p,
+        h2 {
             color: white;
         }
     }
+
     .product-list-header-overlay {
         background-color: rgba(0, 0, 0, 0.3);
         width: 100%;
@@ -63,55 +75,64 @@
         padding-top: 1.5rem;
         padding-bottom: 1.5rem;
     }
-    .product-list-summary {        
+
+    .product-list-summary {
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
         padding: 1rem 0rem;
+
         div:first-child {
             display: flex;
             justify-content: space-between;
             gap: 1rem;
             border-bottom: 1px solid black;
         }
+
         div:nth-child(2) {
             display: flex;
             gap: 1rem;
         }
     }
+
     .product-container {
         padding: 1rem 0rem;
         display: flex;
     }
+
     .product-filters {
         width: 200px;
     }
+
     .product-filter-group {
         display: flex;
         flex-direction: column;
     }
+
     .product-grid {
         width: 100%;
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         row-gap: 1rem;
     }
+
     .filter-clear:hover {
         opacity: 0.5;
     }
+
     .filter-clear {
         padding: 0.25rem;
         margin-bottom: 0;
         font-size: 0.7rem;
         font-weight: 500;
         line-clamp: 1;
-        text-overflow: ellipsis; 
-        overflow: hidden; 
+        text-overflow: ellipsis;
+        overflow: hidden;
         white-space: nowrap;
         text-decoration: underline;
         text-transform: uppercase;
-        border: none; 
+        border: none;
         background-color: transparent;
     }
 
-</styles>
+    </styles>

@@ -51,6 +51,11 @@ body {
   margin-bottom: 5rem;
 }
 
+.container-admin {
+  display: flex;
+  gap: 1.5rem;
+}
+
 button.btn,
 a.btn {
   font-size: 1rem;
