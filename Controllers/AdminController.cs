@@ -25,6 +25,11 @@ public class AdminController : Controller
         _pmuserRepo = pmuserRepo;
     }
 
+    public IActionResult Index()
+    {
+        return View();
+    }
+
     // Products View
     public IActionResult Products()
     {
@@ -52,10 +57,10 @@ public class AdminController : Controller
             Total = order.OrderProducts.Sum(op => op.Unitprice * op.Qty),
             ShippingStatus = order.OrderStatuses.LastOrDefault()?.Orderstate ?? "Unknown"
         }).ToList();
-        
+
         var shippingStatus = new List<String> { "Pending", "Shipped", "Delivered", "Cancelled" };
         ViewBag.shippingStatus = shippingStatus;
-        
+
         return View(OrderVM);
     }
 
@@ -82,7 +87,7 @@ public class AdminController : Controller
                     Unitprice = op.Unitprice
                 }).ToList()
             };
-            
+
             var initialStatus = new OrderStatus
             {
                 Orderstate = "Pending",
