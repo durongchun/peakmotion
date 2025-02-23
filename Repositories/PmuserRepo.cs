@@ -17,13 +17,14 @@ namespace peakmotion.Repositories
             _db = db;
         }
 
-        public int GetUserIdByUserEmail(string email)
+        public int? GetUserIdByUserEmail(string email)
         {
             var userId = _db.Pmusers
                 .Where(u => u.Email == email)
                 .Select(u => u.Pkpmuserid)
                 .FirstOrDefault();
 
+            // result may be null - if not specified as int? the function can give a run-time error
             return userId;
         }
 
