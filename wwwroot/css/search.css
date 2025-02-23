@@ -1,0 +1,22 @@
+.material-icons {
+  font-size: 32px !important;
+  vertical-align: middle;
+  z-index: 2;
+}
+.search-form {
+  /* position: absolute; */
+  left: 40px; /* adjust based on your icon size */
+  width: 0;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out;
+}
+.search-form.expanded {
+  width: 200px; /* adjust width as needed */
+}
+.search-form input {
+  width: 200px; /* should match the expanded width */
+  height: 32px; /* match your icon height */
+}
+.cursor-pointer {
+  cursor: pointer;
+}

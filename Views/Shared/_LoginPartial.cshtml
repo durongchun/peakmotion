@@ -1,91 +1,11 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@model NavbarVM
+@using Microsoft.AspNetCore.Identity
+@using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
 
-@{
-    @* Use session flag + checks *@
-    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var onAdmin = currentController == "Admin";
-    var user = await UserManager.GetUserAsync(User);
-    var roleStr = "";
-    if (user != null) {
-        var roles = await UserManager.GetRolesAsync(user);
-        roleStr = string.Join(", ", @roles);
-    }
-}
-
-@* Left Side *@
-<ul class="navbar-nav flex-grow-1">
-@if (SignInManager.IsSignedIn(User) && @onAdmin == true && (User.IsInRole("Admin") || User.IsInRole("Employee")))
-{
-    <h2 class="text-header pl-4 text-light">Employee Portal</h2>  
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-light" asp-area="" asp-controller="Product"
-            asp-action="Index">Products</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment
-            Page</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-light" asp-area="" asp-controller="Shop"
-            asp-action="PayPalConfirmation">Order Confirmation
-            Page</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-light" asp-area="" asp-controller="Order" asp-action="Index">(Admin
-            Orders)</a>
-    </li>
-}
-
-</ul>
-
-@* Right Side *@
-<ul class="navbar-nav d-flex gap-2 align-items-center">
 @if (SignInManager.IsSignedIn(User))
 {
-    @if (@onAdmin == false || User.IsInRole("Customer"))
-    {
-        <li class="nav-item">
-            <a class="btn-image">
-                <img src="~/images/search.svg" 
-                    alt="Search Button"
-                    width="32"
-                    height="32"
-                >
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="btn-image"
-                asp-area="" 
-                asp-controller="Wishlist" 
-                asp-action="Index">
-                <img src="~/images/heart.svg" 
-                    alt="Wishlist Button"
-                    width="32"
-                    height="32"
-                >
-            </a>
-        </li>
-        
-        <li class="nav-item">
-            <a class="btn-image" 
-                asp-area="" 
-                asp-controller="Cart" 
-                asp-action="Index">
-                <img src="~/images/cart.svg" 
-                    alt="Checkout Button"
-                    width="32"
-                    height="32"
-                >  
-            </a>  
-        </li>
-    }
-
+    @* Profile and Dropdown *@
     <ul class="nav nav-link p-0">
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle text-light d-flex flex-row align-items-center gap-1 p-0" 
@@ -104,7 +24,7 @@ else
             <ul class="dropdown-menu dropdown-menu-end my-3">
                 <li class="d-flex flex-column px-3">
                     <p class="m-0 fw-normal">@User.Identity?.Name</p>
-                    <p class="m-0 fs-8 opacity-50">@roleStr</p>
+                    <p class="m-0 fs-8 opacity-50">@Model.RoleName</p>
                 </li>
                  <div class="dropdown-divider"></div>
                 <a class="dropdown-item text-dark" 
@@ -125,7 +45,7 @@ else
                 @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
                 {
                     <div class="dropdown-divider"></div>
-                    @if (@onAdmin == true)
+                    @if (@Model.OnAdminPortal == true)
                     {
                         <a class="dropdown-item text-dark" 
                             asp-area="" 
@@ -159,3 +79,4 @@ else
     </li>
 }
 </ul>
+
