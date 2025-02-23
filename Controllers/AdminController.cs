@@ -30,11 +30,74 @@ public class AdminController : Controller
         return View();
     }
 
+
     // Products View
     public IActionResult Products()
     {
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
         return View(products);
+    }
+
+    public IActionResult ProductEdit(int id)
+    {
+        ProductVM? product = _productRepo.GetProduct(id);
+
+        return View(product);
+    }
+
+    [HttpPost("Product/Edit")]
+    public async Task<IActionResult> ProductDetailsEdit(ProductVM model, List<IFormFile> NewImages)
+    {
+        if (!ModelState.IsValid)
+        {
+            foreach (var key in ModelState.Keys)
+            {
+                foreach (var error in ModelState[key].Errors)
+                {
+                    Console.WriteLine($"Error with key '{key}': {error.ErrorMessage}");
+                }
+            }
+            return View(model);
+        }
+
+        var product = await _context.Products.FindAsync(model.ID);
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        await _productRepo.UpdateProductDetail(product, model);
+
+
+        await _productRepo.UpdateProductCategoriesAsync(model);
+
+
+        // Handle new images
+        await _productRepo.UploadImagesFromAdminProductEdit(model, NewImages);
+
+
+        // Redirect to the product edit page
+        return RedirectToAction("ProductEdit", new { id = model.ID });
+    }
+
+
+
+
+    public IActionResult ProductDelete(int id)
+    {
+        ProductVM? product = _productRepo.GetProduct(id);
+
+        return View(product);
+    }
+
+    [HttpPost, ActionName("ProductDelete")]
+    public IActionResult ProductDeleteConfirmed(int id)
+    {
+        string returnMessage = _productRepo.RemoveProduct(id);
+
+        return RedirectToAction("Products",
+                                new { message = returnMessage });
+
     }
 
     // Employees View
