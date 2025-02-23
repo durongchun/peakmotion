@@ -9,10 +9,10 @@ namespace peakmotion.Controllers
     public class UserController : Controller
     {
         private readonly PmuserRepo _pmuserRepo;
-
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ILogger<HomeController> _logger;
+
         public UserController(SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager, ILogger<HomeController> logger)
         {
             _pmuserRepo = pmuserRepo;

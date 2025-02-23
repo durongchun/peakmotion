@@ -10,13 +10,21 @@ namespace peakmotion.Repositories
     {
         private readonly PeakmotionContext _db;
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<PmuserRepo> _logger;
 
-        public PmuserRepo(PeakmotionContext db, ApplicationDbContext context)
+        public PmuserRepo(ILogger<PmuserRepo> logger, PeakmotionContext db, ApplicationDbContext context,
+        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
+            _logger = logger;
             _db = db;
+            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
+            _httpContextAccessor = httpContextAccessor;
         }
-
         public int? GetUserIdByUserEmail(string email)
         {
             var userId = _db.Pmusers
@@ -28,6 +36,14 @@ namespace peakmotion.Repositories
             return userId;
         }
 
+        public IdentityUser? GetUserByUserEmail(string email)
+        {
+            var user = _context.Users
+                .Where(u => u.Email == email)
+                .FirstOrDefault();
+            return user;
+        }
+
         public List<UserVM> GetAllEmployees()
         {
             List<UserVM> identityUsers = (from u in _context.Users
@@ -35,7 +51,7 @@ namespace peakmotion.Repositories
                                           from ur in mUser.DefaultIfEmpty()
                                           join r in _context.Roles on ur.RoleId equals r.Id into mRole
                                           from r in mRole.DefaultIfEmpty()
-                                          where r.Name == "Employee" || r.Name == "Admin"
+                                          where r.Name == "Employee" || r.Name == "Admin" || r.Name == "Customer"
                                           select new UserVM
                                           {
                                               Email = u.Email,
@@ -70,6 +86,40 @@ namespace peakmotion.Repositories
                 .ToList();
 
             return new SelectList(roles, "Value", "Text");
+        }
+
+        async public Task<bool> EditUserRole(string roleName)
+        {
+            // Check the role and user exists
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            var roleExists = await _roleManager.RoleExistsAsync(roleName);
+            if ((identityUser != null) && roleExists)
+            {
+                // get the IdentityUser type
+                IdentityUser? currentUser = await _userManager.GetUserAsync(identityUser);
+                if (currentUser != null)
+                {
+                    // get the current role string
+                    var currentRoles = await _userManager.GetRolesAsync(currentUser);
+                    var currentRole = currentRoles.FirstOrDefault();
+                    if (currentRole != null && currentRole.Count() > 0)
+                    {
+                        // update the identity role
+                        var deleted = await _userManager.RemoveFromRoleAsync(currentUser, currentRole);
+                        if (deleted.Succeeded)
+                        {
+                            var updated = await _userManager.AddToRoleAsync(currentUser, roleName);
+                            if (updated.Succeeded)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return false;
         }
     }
 }

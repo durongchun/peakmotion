@@ -25,11 +25,19 @@
                 <td>@user.FullName</td>
                 <td>@user.Email</td>
                 <td>
-                    <select asp-for="@user.RoleName" 
+                    @using (Html.BeginForm("EditEmployeeRole", "Admin", FormMethod.Post, new { id = "updateUserRoleForm" }))
+                    {
+                        <select 
+                            name="newRole"
+                            class="form-select"
+                            onchange="submitForm()"
+                            asp-for="@user.RoleName" 
                             asp-items="ViewBag.RoleSelectList" 
-                            class="form-select">
-                        <option value="">Select Role</option>
-                    </select>
+                            >
+                            <option value="">Select Role</option>
+                        </select>
+                    }
+                   
                 </td>
                 <td>
                     <a asp-action="Delete" asp-route-id="@user.Email">Delete</a>
@@ -38,3 +46,10 @@
         }
     </tbody>
 </table>
+
+<script>
+    function submitForm() {
+        const select = document.getElementById('updateUserRoleForm')
+        select.submit();
+    }
+</script>
