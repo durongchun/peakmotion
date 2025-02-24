@@ -1,5 +1,7 @@
-
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using peakmotion.Models;
 using peakmotion.Models;
 
 namespace peakmotion.ViewModels
@@ -48,6 +50,29 @@ namespace peakmotion.ViewModels
 
                 [Display(Name = "Main Image")]
                 public ProductImage? PrimaryImage { get; set; }
+
+                public int? Pkdiscountid { get; set; }  // Nullable in case there's no discount applied
+
+
+                public List<string> Colors { get; set; }  // List of available colors
+                public List<string> Sizes { get; set; }   // List of available sizes
+
+                public List<string> Types { get; set; }   // List of available sizes
+                public List<string> Properties { get; set; }   // List of available sizes
+
+                [BindNever, ValidateNever]
+                public List<Category> ColorDropdown { get; set; } = new List<Category>();
+
+                [BindNever, ValidateNever]
+                public List<Category> SizeDropdown { get; set; } = new List<Category>();
+
+                [BindNever, ValidateNever]
+                public List<Category> TypeDropdown { get; set; } = new List<Category>();
+
+                [BindNever, ValidateNever]
+                public List<Category> PropertyDropdown { get; set; } = new List<Category>();
+
+                public string? photoName { get; set; } //alttage
 
         }
 }

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using peakmotion.Data;
 using peakmotion.Models;
 using Newtonsoft.Json;
+using peakmotion.ViewModels;
 
 namespace peakmotion.Repositories
 {
@@ -16,13 +17,13 @@ namespace peakmotion.Repositories
             _httpContext = _httpContextAccessor.HttpContext;  // Store the HttpContext once
         }
 
-        public void SetProductDataToSession()
+        public void SetProductDataToCookie(ProductDetailVM productDetailViewModel)
         {
             if (_httpContext?.Request.HasFormContentType == true)
             {
                 // Retrieve form values
-                var productId = _httpContext.Request.Form["ProductId"];
-                var productName = _httpContext.Request.Form["ProductName"];
+                var productId = productDetailViewModel.Pkproductid;
+                var productName = productDetailViewModel.Productname;
                 var productPrice = _httpContext.Request.Form["ProductPrice"];
                 var quantity = _httpContext.Request.Form["Quantity"];
 
@@ -68,7 +69,6 @@ namespace peakmotion.Repositories
                 });
             }
         }
-
         public List<string> GetUserChosenProductInfoFromCookies()
         {
             var productData = new List<string>();
