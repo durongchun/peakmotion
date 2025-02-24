@@ -88,36 +88,62 @@ namespace peakmotion.Repositories
             return new SelectList(roles, "Value", "Text");
         }
 
-        async public Task<bool> EditUserRole(string roleName)
+        async public Task<bool> EditUserRole(string roleName, string userEmail)
         {
-            // Check the role and user exists
-            var identityUser = _httpContextAccessor.HttpContext?.User;
+            // Check the current role exists
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
-            if ((identityUser != null) && roleExists)
-            {
-                // get the IdentityUser type
-                IdentityUser? currentUser = await _userManager.GetUserAsync(identityUser);
-                if (currentUser != null)
-                {
-                    // get the current role string
-                    var currentRoles = await _userManager.GetRolesAsync(currentUser);
-                    var currentRole = currentRoles.FirstOrDefault();
-                    if (currentRole != null && currentRole.Count() > 0)
-                    {
-                        // update the identity role
-                        var deleted = await _userManager.RemoveFromRoleAsync(currentUser, currentRole);
-                        if (deleted.Succeeded)
-                        {
-                            var updated = await _userManager.AddToRoleAsync(currentUser, roleName);
-                            if (updated.Succeeded)
-                            {
-                                return true;
-                            }
-                        }
-                    }
+            if (!roleExists) return false; // Role does not exist
 
+            // Check the current user exists
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            IdentityUser? currentUser;
+            if (identityUser != null)
+            {
+                currentUser = await _userManager.GetUserAsync(identityUser);
+                if (currentUser == null) return false; // Get the IdentityUser version - for email
+            }
+            else
+            {
+                return false;
+            }
+
+            // Business Logic: Do not allow the current user to update themselves
+            IdentityUser? updatingUser;
+            if (userEmail.Equals(currentUser.Email))
+            {
+                Console.WriteLine("Permission Denied: Cannot update own role");
+                return false;
+            }
+            else
+            {
+                updatingUser = GetUserByUserEmail(userEmail);
+                if (updatingUser == null) return false; // Get the IdentityUser version - update role
+            }
+
+            // Get the current role string
+            var currentRoles = await _userManager.GetRolesAsync(updatingUser);
+            string? currentRole;
+            if (currentRoles.Count() > 0)
+            {
+                currentRole = currentRoles.FirstOrDefault();
+                if (currentRole == null) return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            // update the identity role
+            var deleted = await _userManager.RemoveFromRoleAsync(updatingUser, currentRole);
+            if (deleted.Succeeded)
+            {
+                var updated = await _userManager.AddToRoleAsync(updatingUser, roleName);
+                if (updated.Succeeded)
+                {
+                    return true;
                 }
             }
+
 
             return false;
         }

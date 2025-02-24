@@ -113,10 +113,11 @@ public class AdminController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditEmployeeRole(string newRole)
+    public async Task<IActionResult> EditEmployeeRole(string newRole, string userEmail)
     {
         Console.WriteLine($"role: {newRole}");
-        var result = await _pmuserRepo.EditUserRole(newRole);
+        Console.WriteLine($"user: {userEmail}");
+        var result = await _pmuserRepo.EditUserRole(newRole, userEmail);
         if (!result) ViewBag.Message = "Unable to update the user's role";
         return RedirectToAction("Employees", new { message = "Successfully updated role" });
     }

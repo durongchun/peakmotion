@@ -26,6 +26,11 @@
                 <td>
                     @using (Html.BeginForm("EditEmployeeRole", "Admin", FormMethod.Post, new { id = "updateUserRoleForm" }))
                     {
+                        <input 
+                            name="userEmail"
+                            type="hidden" 
+                            value="@user.Email"
+                        />
                         <select 
                             name="newRole"
                             class="form-select"
