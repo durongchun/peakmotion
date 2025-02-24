@@ -3,10 +3,7 @@
 @{ ViewData["Title"] = "Employees";}
 <h1 class="mb-4">Employees</h1>
 
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <div class="alert alert-info">@ViewBag.Message</div>
-}
+<div class="alert alert-info" id="admin-userRole-response"></div>
 
 <table class="table">
     <thead>
@@ -26,22 +23,17 @@
                 <td>
                     @using (Html.BeginForm("EditEmployeeRole", "Admin", FormMethod.Post, new { id = "updateUserRoleForm" }))
                     {
-                        <input 
-                            name="userEmail"
-                            type="hidden" 
-                            value="@user.Email"
-                        />
                         <select 
                             name="newRole"
                             class="form-select"
-                            onchange="submitForm()"
+                            onchange="submitForm(this)"
+                            data-user-id="@user.Email"
                             asp-for="@user.RoleName" 
                             asp-items="ViewBag.RoleSelectList" 
                             >
                             <option value="">Select Role</option>
                         </select>
                     }
-                   
                 </td>
                 <td>
                     <a asp-action="Delete" asp-route-id="@user.Email">Delete</a>
@@ -51,9 +43,34 @@
     </tbody>
 </table>
 
+
 <script>
-    function submitForm() {
-        const select = document.getElementById('updateUserRoleForm')
-        select.submit();
+    function submitForm(e) {
+        @* Retrieve the values *@
+        var newRole = e.value;
+        var userEmail = e.getAttribute('data-user-id');
+        console.log(`'${newRole}' for ${userEmail}`);
+
+        @* For outputting response message *@
+        const messageContainer = document.querySelector("#admin-userRole-response");
+
+        @* Call endpoint to update role *@
+        $.ajax({
+            url: '@Url.Action("EditEmployeeRole", "Admin")',
+            type: 'POST',
+            data: { newRole, userEmail },
+            success: function (response) {
+                messageContainer.textContent = response || "Success";
+            },
+            error: function (xhr, status, error) {
+                messageContainer.textContent = xhr?.responseText || "Error";
+            }
+        });
     }
 </script>
+
+<style>
+#admin-userRole-response:empty {
+    display: none;
+}
+</style>
