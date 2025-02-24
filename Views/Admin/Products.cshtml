@@ -4,92 +4,87 @@
     ViewData["Title"] = "Products";
 }
 
-<main class="">
-    <h1>Product List</h1>
-    <p>
-        @* <a asp-action="Create">Create New</a> *@
-    </p>
-    <table class="table">
-        <thead>
+<h1 class="mb-4">Product List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th class="show-on-sm">
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th class="show-on-sm">
+                @Html.DisplayNameFor(model => model.DiscountLabel)
+            </th>
+            <th class="show-on-lg">
+                @Html.DisplayNameFor(model => model.Categories)
+            </th>
+            <th class="show-on-xlg">
+                @Html.DisplayNameFor(model => model.IsFeatured)
+            </th>
+            <th class="show-on-xlg">
+                @Html.DisplayNameFor(model => model.IsMembershipProduct)
+            </th>
+            <th class="show-on-sm">
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
             <tr>
-                <th class="show-on-sm">
-                    @Html.DisplayNameFor(model => model.ID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ProductName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Price)
-                </th>
-                <th class="show-on-sm">
-                    @Html.DisplayNameFor(model => model.DiscountLabel)
-                </th>
-                <th class="show-on-lg">
-                    @Html.DisplayNameFor(model => model.Categories)
-                </th>
-                <th class="show-on-xlg">
-                    @Html.DisplayNameFor(model => model.IsFeatured)
-                </th>
-                <th class="show-on-xlg">
-                    @Html.DisplayNameFor(model => model.IsMembershipProduct)
-                </th>
-                <th class="show-on-sm">
-                    @Html.DisplayNameFor(model => model.Quantity)
-                </th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
+                <td class="show-on-sm">
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                @if (item.DiscountLabel != null) {
                     <td class="show-on-sm">
-                        @Html.DisplayFor(modelItem => item.ID)
+                        <p class="list-item-tag">
+                        @Html.DisplayFor(modelItem => item.DiscountLabel)
+                        </p>
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProductName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    @if (item.DiscountLabel != null) {
-                        <td class="show-on-sm">
-                            <p class="list-item-tag">
-                            @Html.DisplayFor(modelItem => item.DiscountLabel)
-                            </p>
-                        </td>
-                    } else { <td class="show-on-sm"></td>}
-                    @{
-                        var featuredLabel = item.IsFeatured ? "Featured" : "No";
-                        var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
+                } else { <td class="show-on-sm"></td>}
+                @{
+                    var featuredLabel = item.IsFeatured ? "Featured" : "No";
+                    var memberLabel = item.IsMembershipProduct ? "Membership" : "Any";
+                }
+                <td class="show-on-lg">
+                    <div class="category-col">
+                    @foreach (var cat in item.Categories)
+                    {
+                        <p class="list-item-tag">@cat.Categoryname</p>
                     }
-                    <td class="show-on-lg">
-                        <div class="category-col">
-                        @foreach (var cat in item.Categories)
-                        {
-                            <p class="list-item-tag">@cat.Categoryname</p>
-                        }
-                        </div>
-                    </td>
-                    <td class="show-on-xlg">
-                        <p class="list-item-tag">@featuredLabel</p>
-                    </td>
-                    <td class="show-on-xlg">
-                        <p class="list-item-tag">@memberLabel</p>
-                    </td>
-                    <td class="show-on-sm">
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</main>
+                    </div>
+                </td>
+                <td class="show-on-xlg">
+                    <p class="list-item-tag">@featuredLabel</p>
+                </td>
+                <td class="show-on-xlg">
+                    <p class="list-item-tag">@memberLabel</p>
+                </td>
+                <td class="show-on-sm">
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    <a asp-action="ProductEdit" asp-route-id="@item.ID">Edit</a> |
+                    <a asp-action="ProductDelete" asp-route-id="@item.ID">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 
 @{ var messageText = string.Empty;

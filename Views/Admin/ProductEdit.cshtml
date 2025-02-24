@@ -1,0 +1,339 @@
+@model peakmotion.ViewModels.ProductVM
+
+@{
+    ViewData["Title"] = "Product Edit";
+}
+
+<link rel="stylesheet" href="~/css/productEdit.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+<main id="container">
+    <H2>Product Edit</H2>
+    <section >
+        <form class="product-form" action="/Product/Edit" method="POST" enctype="multipart/form-data">
+            <div id="productDetail">
+                <div >
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="name">Name</label>
+                        @Html.TextBoxFor(m => m.ProductName, new { @id = "name", @placeholder = "", @class = "form-control" })
+                    </div>
+                    <div class="price-qty">
+                        <div class="form-group d-flex flex-column mb-3 ">
+                            <label for="price">Price</label>
+                            @Html.TextBoxFor(m => m.Price, new { @id = "price", @placeholder = "", @class = "form-control" })
+                        </div>
+                        <div class="form-group d-flex flex-column mb-3 ">
+                            <label for="quantity">Quantity</label>
+                            @Html.TextBoxFor(m => m.Quantity, new { @id = "quantity", @placeholder = "", @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="description">Description</label>
+                        @Html.TextBoxFor(m => m.Description, new { @id = "description", @placeholder = "", @class = "form-control" })
+                    </div>
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="discount">Discount (%)</label>
+                        @Html.TextBoxFor(m => m.Discount, new { @id = "discount", @placeholder = "", @class = "form-control" })
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="colour">Colour</label>
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="colorContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Colors != null)
+                                {
+                                    @foreach (var color in Model.Colors)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 color-badge">
+                                            @color <span class="ms-1 text-white remove-color" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="colorDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a color</option>
+                                @foreach (var color in Model.ColorDropdown)
+                                {
+                                    <option value="@color.Categoryname">@color.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                       
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="size">Size</label>
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="sizeContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Sizes != null)
+                                {
+                                    @foreach (var size in Model.Sizes)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 size-badge">
+                                            @size <span class="ms-1 text-white remove-size" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="sizeDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a size</option>
+                                @foreach (var size in Model.SizeDropdown)
+                                {
+                                    <option value="@size.Categoryname">@size.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label for="category">Category</label>
+                        <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Color Badges Container -->
+                            <div id="categoryContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Types != null)
+                                {
+                                    @foreach (var category in Model.Types)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 category-badge">
+                                            @category <span class="ms-1 text-white remove-category" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="categoryDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a category</option>
+                                @foreach (var category in Model.TypeDropdown)
+                                {
+                                    <option value="@category.Categoryname">@category.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group d-flex flex-column mb-3">
+                        <label for="properties">Properties</label>
+                          <div class="d-flex align-items-center border rounded p-2 position-relative">
+                            <!-- Property Badges Container -->
+                            <div id="propertyContainer" class="d-flex flex-wrap flex-grow-1">
+                                @if (Model.Types != null)
+                                {
+                                    @foreach (var property in Model.Properties)
+                                    {
+                                        <span class="badge bg-secondary text-white me-2 p-2 property-badge">
+                                            @property <span class="ms-1 text-white remove-property" style="cursor:pointer;">&times;</span>
+                                        </span>
+                                    }
+                                }
+                            </div>
+                            
+                            <!-- Dropdown fixed on the right side -->
+                            <select id="propertyDropdown" class="form-select border-0" 
+                                    style="width: auto; min-width: 100px; flex-shrink: 0;">
+                                <option value="">Select a property</option>
+                                @foreach (var property in Model.PropertyDropdown)
+                                {
+                                    <option value="@property.Categoryname">@property.Categoryname</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Hidden input to store selected values -->
+                        <input type="hidden" id="Colors" name="Colors" value="@(Model.Colors != null ? string.Join(", ", Model.Colors) : "")" />
+                        <input type="hidden" id="Sizes" name="Sizes" value="@(Model.Sizes != null ? string.Join(", ", Model.Sizes) : "")">
+                        <input type="hidden" id="Types" name="Types" value="@(Model.Types != null ? string.Join(", ", Model.Types) : "")">
+                        <input type="hidden" id="Properties" name="Properties" value="@(Model.Properties != null ? string.Join(", ", Model.Properties) : "")">
+                        <input type="hidden" name="ID" value="@Model.ID" />
+
+                    </div>
+
+                </div>
+                <div id="primaryImage">
+                    <img src="https://picsum.photos/500/700?random=1" alt="primary image">
+                </div>
+            </div>
+              <!-- Image Upload Section -->
+            <section id="images" class="pt-5">
+                <h3>IMAGES</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Path</th>
+                            <th scope="col">Is Primary?</th>
+                            <th scope="col">Sort Order No.</th>
+                            <th scope="col">Thumbnail</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="imageTableBody">
+                        @foreach (var image in Model.Images)
+                        {
+                            <tr>
+                                <td>@image.Alttag</td>
+                                <td>@image.Url</td>
+                                <td>@(image.Isprimary ? "Yes" : "No")</td>
+                                <td></td>
+                                <td><img src="@image.Url" alt="" width="50" /></td>
+                                <td class="deleteButt">
+                                    <i class="fas fa-trash-alt deletePhoto"></i>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                    <!-- Editable Input Row -->
+                    <tfoot>
+                        <tr id="addPhotoRow" style="display: none;">
+                            <td><input type="text" id="photoName" name="photoName" placeholder="Enter Name" class="form-control" /></td>
+                            <td><input type="file" id="imageFile" name="NewImages" class="form-control" multiple/></td>
+                            <td><input type="checkbox" id="isPrimary" name="isPrimary" /></td>
+                            <td><input type="number" id="sortOrder" name="sortOrder" placeholder="Sort Order" class="form-control" /></td>
+                            <td><span id="thumbnailPreview"></span></td>
+                            <td class="deleteButt"><i class="fas fa-trash-alt deletePhoto"></i></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <input type="hidden" name="productId" value="@Model.ID" />
+                <button type="button" id="addPhotoBtn" class="">ADD NEW PHOTO</button>
+            </section>
+
+            <!-- SAVE & DELETE Buttons -->
+            <div id="saveDelete">
+                <button type="submit" class="">SAVE PRODUCT</button>
+            </div>
+        </form>
+        
+        <!-- Separate Delete Form -->
+        <form action="/Product/Delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
+            <input type="hidden" name="productId" value="@Model.ID" />
+            <div class="deleteProductButt">
+                <button type="submit" id="deleteProduct" >DELETE PRODUCT</button>
+            </div>
+            
+        </form>
+   
+    </section>
+   
+    
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageTableBody = document.getElementById("imageTableBody");
+        const addPhotoRow = document.getElementById("addPhotoRow");
+        const addPhotoBtn = document.getElementById("addPhotoBtn");
+
+        // Handle delete for existing and newly added rows
+        imageTableBody.addEventListener("click", function (event) {
+            if (event.target.classList.contains("deletePhoto")) {
+                const row = event.target.closest("tr");
+                if (row) {
+                    row.remove();
+                }
+            }
+        });
+
+        // Handle adding new photo row
+        if (addPhotoBtn && addPhotoRow) {
+            addPhotoBtn.addEventListener("click", function () {
+                const newRow = addPhotoRow.cloneNode(true); // Clone the row
+                newRow.style.display = "table-row"; // Ensure it's visible
+                newRow.removeAttribute("id"); // Remove ID to avoid duplicates
+
+                // Reset input values in the cloned row
+                newRow.querySelectorAll("input").forEach(input => {
+                    if (input.type === "checkbox") {
+                        input.checked = false;
+                    } else {
+                        input.value = "";
+                    }
+                });
+
+                // Append the new row to the table body
+                imageTableBody.appendChild(newRow);
+            });
+        }
+
+        // Function to remove selected item (color, size, category, property)
+        function removeItem(event, inputElement, containerElement) {
+            const badge = event.target.closest(".badge");
+            if (badge) {
+                const itemName = badge.innerText.trim().replace(" ×", "");
+                let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
+
+                // Remove item from the list
+                existingItems = existingItems.filter(item => item !== itemName);
+                inputElement.value = existingItems.join(", ");
+                
+                // Remove badge from UI
+                badge.remove();
+            }
+        }
+
+        // Function to handle dropdown selection (color, size, category, property)
+        function handleSelection(event, inputElement, containerElement, dropdownElement) {
+            const selectedItem = event.target.value;
+            if (selectedItem) {
+                let existingItems = inputElement.value ? inputElement.value.split(", ") : [];
+
+                // Check if item is already added
+                if (!existingItems.includes(selectedItem)) {
+                    existingItems.push(selectedItem);
+
+                    // Create new badge
+                    const badge = document.createElement("span");
+                    badge.className = "badge bg-secondary text-white me-2 p-2";
+                    badge.innerHTML = `${selectedItem} <span class="ms-1 text-white" style="cursor:pointer;">&times;</span>`;
+
+                    // Append badge & update hidden input
+                    containerElement.appendChild(badge);
+                    inputElement.value = existingItems.join(", ");
+
+                    // Add event listener for removal
+                    badge.querySelector("span").addEventListener("click", (e) => removeItem(e, inputElement, containerElement));
+                }
+
+                dropdownElement.value = ""; // Reset dropdown
+            }
+        }
+
+        // Attach event listeners to existing color, size, category, and property badges
+        document.querySelectorAll(".remove-color").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Colors"), document.getElementById("colorContainer")));
+        });
+
+        document.querySelectorAll(".remove-size").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Sizes"), document.getElementById("sizeContainer")));
+        });
+
+        document.querySelectorAll(".remove-category").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Types"), document.getElementById("categoryContainer")));
+        });
+
+        document.querySelectorAll(".remove-property").forEach(btn => {
+            btn.addEventListener("click", (e) => removeItem(e, document.getElementById("Properties"), document.getElementById("propertyContainer")));
+        });
+
+        // Handle dropdown selection for color, size, category, property
+        document.getElementById("colorDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Colors"), document.getElementById("colorContainer"), e.target));
+        document.getElementById("sizeDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Sizes"), document.getElementById("sizeContainer"), e.target));
+        document.getElementById("categoryDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Types"), document.getElementById("categoryContainer"), e.target));
+        document.getElementById("propertyDropdown").addEventListener("change", (e) => handleSelection(e, document.getElementById("Properties"), document.getElementById("propertyContainer"), e.target));
+    });
+
+</script>

@@ -4,3 +4,4 @@ bin/*
 .vscode/
 .vs/*
 secrets.json
+.DS_Store
