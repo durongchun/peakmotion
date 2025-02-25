@@ -3,17 +3,26 @@
 <link rel="stylesheet" href="~/css/cart.css" />
 
 @{
-    // Calculate order summary dynamically
+    // Calculate order summary
     decimal subtotal = Model.Sum(x => x.Price * x.CartQuantity);
-    decimal shipping = 0; // if there's a shipping fee, set it here
-    decimal tax = 0;      // if there's a tax calculation, set it here
+    decimal shipping = 0; // If there is a shipping fee
+    decimal tax = 0;      // If there is a tax calculation
     decimal total = subtotal + shipping + tax;
+}
+
+// Show TempData message if it exists
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-warning" style="color:red;">
+        @ViewBag.ErrorMessage
+    </div>
 }
 
 <div class="cart-page mx-7 my-5">
     <div class="cart-items">
         <h2>MY CART</h2>
         @Html.Partial("_CartItems", Model)
+
         <p class="cart-save-later">
             Do you want to save it for later?<br />
             Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!

@@ -18,7 +18,7 @@ namespace peakmotion.Controllers
             _productRepo = productRepo;
         }
 
-        // Displays the cart contents
+        // Display the cart contents
         public IActionResult Index()
         {
             var encodedCartString = _cookieRepo.GetCookie("cart");
@@ -39,25 +39,30 @@ namespace peakmotion.Controllers
                         var product = _productRepo.GetProduct(productID);
                         if (product != null)
                         {
-                            var cartItem = new CartItemVM
+                            cartItems.Add(new CartItemVM
                             {
                                 ProductID = product.ID,
                                 ProductName = product.ProductName,
                                 Price = product.Price,
-                                CartQuantity = qty
-                            };
-
-                            cartItems.Add(cartItem);
+                                CartQuantity = qty,
+                                MaxQuantity = product.Quantity // Set stock quantity
+                            });
                         }
                     }
                 }
             }
 
+            // Pass TempData message to the view (if any)
+            if (TempData["Message"] != null)
+            {
+                ViewBag.ErrorMessage = TempData["Message"];
+            }
+
             return View(cartItems);
         }
 
-        // Adds a new product to the cart if it does not exist.
-        // If the product exists, redirects to UpdateCartItem instead.
+        // Add a new product to the cart if it doesn't exist
+        // If the product already exists, merge quantity by redirecting to Update
         [HttpPost]
         public IActionResult Add(int productID, int qty = 1)
         {
@@ -68,6 +73,14 @@ namespace peakmotion.Controllers
                 return RedirectToAction("Index");
             }
 
+            // If the product is out of stock
+            if (product.Quantity == 0)
+            {
+                TempData["Message"] = "This product is out of stock.";
+                return RedirectToAction("Index");
+            }
+
+            // If requested quantity is more than available stock
             if (product.Quantity < qty)
             {
                 TempData["Message"] = "Not enough inventory.";
@@ -101,14 +114,14 @@ namespace peakmotion.Controllers
                             var existingProduct = _productRepo.GetProduct(currentProductID);
                             if (existingProduct != null)
                             {
-                                var cartItem = new CartItemVM
+                                cartItems.Add(new CartItemVM
                                 {
                                     ProductID = existingProduct.ID,
                                     ProductName = existingProduct.ProductName,
                                     Price = existingProduct.Price,
-                                    CartQuantity = currentQty
-                                };
-                                cartItems.Add(cartItem);
+                                    CartQuantity = currentQty,
+                                    MaxQuantity = existingProduct.Quantity
+                                });
                             }
                         }
                     }
@@ -118,20 +131,30 @@ namespace peakmotion.Controllers
             if (productFoundInCart)
             {
                 int newQty = existingQty + qty;
-                return RedirectToAction("UpdateCartItem", new { productID, newQty });
+
+                // If newQty exceeds the stock, handle it here
+                if (newQty > product.Quantity)
+                {
+                    TempData["Message"] = "Not enough inventory.";
+                    newQty = product.Quantity;
+                }
+
+                // Redirect to Update to merge the new quantity
+                return RedirectToAction("Update", new { productID, newQty });
             }
             else
             {
-                var newProductItem = new CartItemVM
+                cartItems.Add(new CartItemVM
                 {
                     ProductID = product.ID,
                     ProductName = product.ProductName,
                     Price = product.Price,
-                    CartQuantity = qty
-                };
-                cartItems.Add(newProductItem);
+                    CartQuantity = qty,
+                    MaxQuantity = product.Quantity
+                });
             }
 
+            // Update the cart string
             var updatedCartList = new List<string>();
             foreach (var item in cartItems)
             {
@@ -146,7 +169,7 @@ namespace peakmotion.Controllers
             return RedirectToAction("Index");
         }
 
-        // Updates the quantity of an existing product in the cart
+        // Update the quantity of an existing product in the cart
         [HttpPost]
         public IActionResult Update(int productID, int newQty)
         {
@@ -157,11 +180,13 @@ namespace peakmotion.Controllers
                 return RedirectToAction("Index");
             }
 
+            // If newQty is less than 1, treat it as a delete
             if (newQty < 1)
             {
-                return RedirectToAction("DeleteCartItem", new { productID });
+                return RedirectToAction("Delete", new { productID });
             }
 
+            // If newQty is more than the available stock
             if (newQty > product.Quantity)
             {
                 TempData["Message"] = "Not enough inventory.";
@@ -189,12 +214,14 @@ namespace peakmotion.Controllers
                         {
                             if (currentProductID == productID)
                             {
+                                // Update the quantity here
                                 cartItems.Add(new CartItemVM
                                 {
                                     ProductID = existingProduct.ID,
                                     ProductName = existingProduct.ProductName,
                                     Price = existingProduct.Price,
-                                    CartQuantity = newQty
+                                    CartQuantity = newQty,
+                                    MaxQuantity = existingProduct.Quantity
                                 });
                                 updated = true;
                             }
@@ -205,7 +232,8 @@ namespace peakmotion.Controllers
                                     ProductID = existingProduct.ID,
                                     ProductName = existingProduct.ProductName,
                                     Price = existingProduct.Price,
-                                    CartQuantity = currentQty
+                                    CartQuantity = currentQty,
+                                    MaxQuantity = existingProduct.Quantity
                                 });
                             }
                         }
@@ -219,6 +247,7 @@ namespace peakmotion.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Rebuild the cart string
             var updatedCartList = new List<string>();
             foreach (var item in cartItems)
             {
@@ -250,25 +279,27 @@ namespace peakmotion.Controllers
                         int currentProductID = int.Parse(arrIDAndQty[0]);
                         int currentQty = int.Parse(arrIDAndQty[1]);
 
+                        // Add all items except the one to be deleted
                         if (currentProductID != productID)
                         {
                             var productObj = _productRepo.GetProduct(currentProductID);
                             if (productObj != null)
                             {
-                                var cartItem = new CartItemVM
+                                cartItems.Add(new CartItemVM
                                 {
                                     ProductID = productObj.ID,
                                     ProductName = productObj.ProductName,
                                     Price = productObj.Price,
-                                    CartQuantity = currentQty
-                                };
-                                cartItems.Add(cartItem);
+                                    CartQuantity = currentQty,
+                                    MaxQuantity = productObj.Quantity
+                                });
                             }
                         }
                     }
                 }
             }
 
+            // Rebuild the cart string after removal
             var updatedCartList = new List<string>();
             foreach (var item in cartItems)
             {

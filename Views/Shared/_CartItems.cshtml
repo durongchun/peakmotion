@@ -20,19 +20,37 @@
                 <p>Blue Linen/White</p>
                 <p>Size: M</p>
                 <p>Item Price: @string.Format("{0:C}", item.Price)</p>
-                <p>
-                    Quantity:
-                    <select>
-                        <option selected>@item.CartQuantity</option>
-                        <option>1</option>
-                        <option>2</option>
+
+                <!-- Quantity update form -->
+                <form asp-action="Update" method="post" style="margin-bottom:0.5rem;">
+                    <input type="hidden" name="productID" value="@item.ProductID" />
+                    <label for="newQty">Quantity:</label>
+                    <select id="newQty" name="newQty">
+                        @for (int i = 1; i <= Math.Min(item.MaxQuantity, 10); i++)
+                        {
+                            if (i == item.CartQuantity)
+                            {
+                                <option value="@i" selected="selected">@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        }
                     </select>
-                </p>
+                    <button type="submit">Edit</button>
+                </form>
+
                 <p>Total Price: @string.Format("{0:C}", item.Price * item.CartQuantity)</p>
+
                 <div class="cart-item-actions">
-                    <a>Edit</a>
+                    <a>Edit</a> <!-- Optional additional Edit link -->
                     <a>Save for Later</a>
-                    <a asp-action="DeleteCartItem" asp-route-productId="@item.ProductID">Remove</a>
+                    <!-- Remove form -->
+                    <form asp-action="Delete" method="post" style="display:inline;">
+                        <input type="hidden" name="productID" value="@item.ProductID" />
+                        <button type="submit">Remove</button>
+                    </form>
                 </div>
             </div>
         </div>
