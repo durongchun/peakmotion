@@ -33,8 +33,20 @@
                         @Html.TextBoxFor(m => m.Description, new { @id = "description", @placeholder = "", @class = "form-control" })
                     </div>
                     <div class="form-group d-flex flex-column mb-3">
-                        <label for="discount">Discount (%)</label>
-                        @Html.TextBoxFor(m => m.Discount, new { @id = "discount", @placeholder = "", @class = "form-control" })
+                        <label for="discount">Discount</label>
+                        
+                        <!-- Display the currently selected discount -->
+                        @if (!string.IsNullOrEmpty(Model.SelectedDiscountDescription))
+                        {
+                            <div class="mb-2">
+                                <strong>Current Discount:</strong> @Model.SelectedDiscountDescription
+                            </div>
+                        }
+
+                        <!-- Dropdown to select a new discount -->
+                        <select asp-for="SelectedDiscountId" asp-items="@(new SelectList(Model.DiscountDropdown, "Pkdiscountid", "Description"))" class="form-control">
+                            <option value="">-- Select a Discount --</option>
+                        </select>
                     </div>
                     <div class="form-group mb-3">
                         <label for="colour">Colour</label>
@@ -183,7 +195,7 @@
                     <tbody id="imageTableBody">
                         @foreach (var image in Model.Images)
                         {
-                            <tr>
+                            <tr data-image-id="@image.Pkimageid ">
                                 <td>@image.Alttag</td>
                                 <td>@image.Url</td>
                                 <td>@(image.Isprimary ? "Yes" : "No")</td>
@@ -208,6 +220,7 @@
                         </tr>
                     </tfoot>
                 </table>
+                <input type="hidden" id="ImagesToDelete" name="ImagesToDelete" value="" />
                 <input type="hidden" name="productId" value="@Model.ID" />
                 <button type="button" id="addPhotoBtn" class="">ADD NEW PHOTO</button>
             </section>
@@ -218,14 +231,10 @@
             </div>
         </form>
         
-        <!-- Separate Delete Form -->
-        <form action="/Product/Delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
-            <input type="hidden" name="productId" value="@Model.ID" />
-            <div class="deleteProductButt">
-                <button type="submit" id="deleteProduct" >DELETE PRODUCT</button>
-            </div>
-            
-        </form>
+        <!-- Delete Button -->
+        <div class="deleteProductButt">
+            <a asp-action="ProductDelete" asp-route-id="@Model.ID" id="deleteProduct">DELETE PRODUCT</a>
+        </div>
    
     </section>
    
@@ -238,11 +247,27 @@
         const addPhotoRow = document.getElementById("addPhotoRow");
         const addPhotoBtn = document.getElementById("addPhotoBtn");
 
+      
+    
+        // Create array to store image IDs to delete
+        const deletedImageIds = [];
+        
         // Handle delete for existing and newly added rows
         imageTableBody.addEventListener("click", function (event) {
             if (event.target.classList.contains("deletePhoto")) {
                 const row = event.target.closest("tr");
                 if (row) {
+                    // Get the image ID if it exists (for existing images)
+                    const imageId = row.getAttribute("data-image-id");
+                    if (imageId) {
+                        // Add to the array of images to delete
+                        deletedImageIds.push(imageId);
+                        
+                        // Update the hidden input field with comma-separated IDs
+                        document.getElementById("ImagesToDelete").value = deletedImageIds.join(",");
+                    }
+                    
+                    // Remove the row from the table
                     row.remove();
                 }
             }

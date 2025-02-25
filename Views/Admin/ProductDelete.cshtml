@@ -1,12 +1,12 @@
 @model peakmotion.ViewModels.ProductVM
 
-<link rel="stylesheet" href="~/css/productDelete.css">
-
 @{
-    ViewData["Title"] = "Product Delete";
+    ViewData["Title"] = "Delete Product";
 }
 
-<h3>Delete</h3>
+<link rel="stylesheet" href="~/css/productDelete.css">
+
+<h3>Delete Product</h3>
 
 <h4>Are you sure you want to delete this product?</h4>
 <div>
@@ -25,9 +25,9 @@
             @Html.DisplayFor(model => model.ProductName)
         </dd>
     </dl>
-    <form asp-action="Delete">
-        
+    <form asp-action="ProductDelete" method="post">
+        <input type="hidden" name="id" value="@Model.ID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Products">Back to List</a>
+        <a asp-action="Products" class="btn btn-secondary">Back to List</a>
     </form>
 </div>
