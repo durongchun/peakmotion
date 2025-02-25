@@ -1,32 +1,58 @@
 document.addEventListener('DOMContentLoaded', function () {
-  //   const searchToggle = document.getElementById('searchToggle');
-  //   const searchForm = document.getElementById('searchForm');
-
   const searchToggle = document.getElementById('searchToggle');
-  console.log('Search toggle found:', !!searchToggle);
   const searchForm = document.getElementById('searchForm');
-  console.log('Search form found:', !!searchForm);
+  const navbar = document.querySelector('.navbar');
+  const searchClose = document.getElementById('searchClose');
 
-  searchToggle.addEventListener('click', function () {
-    searchForm.classList.toggle('expanded');
-    if (searchForm.classList.contains('expanded')) {
-      searchForm.querySelector('input').focus();
-    }
+  // Open search
+  searchToggle.addEventListener('click', () => {
+    // First fade out the search icon
+    searchToggle.classList.add('hide');
+
+    // Then expand the navbar
+    navbar.classList.add('expanded');
+
+    // Finally show the search form
+    setTimeout(() => {
+      searchForm.classList.add('expanded');
+      searchForm.querySelector('input');
+    }, 200);
   });
-  searchForm.querySelector('input').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      searchForm.submit();
-    }
-  });
-  // Close search when clicking outside
-  document.addEventListener('click', function (event) {
+
+  // Close search function
+  const closeSearch = () => {
+    // First hide the search form
+    searchForm.classList.remove('expanded');
+
+    // Then collapse the navbar after the form animation is done
+    setTimeout(() => {
+      navbar.classList.remove('expanded');
+    }, 200);
+
+    // Finally show the icon again
+    setTimeout(() => {
+      searchToggle.classList.remove('hide');
+    }, 400);
+  };
+
+  // Close on click outside
+  document.addEventListener('click', (e) => {
     if (
-      !searchForm.contains(event.target) &&
-      !searchToggle.contains(event.target) &&
+      !searchForm.contains(e.target) &&
+      !searchToggle.contains(e.target) &&
       searchForm.classList.contains('expanded')
     ) {
-      searchForm.classList.remove('expanded');
+      closeSearch();
     }
+  });
+
+  // Close on X button click
+  if (searchClose) {
+    searchClose.addEventListener('click', closeSearch);
+  }
+
+  // Close on form submit
+  searchForm.addEventListener('submit', () => {
+    closeSearch();
   });
 });

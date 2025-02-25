@@ -1,22 +1,98 @@
-.material-icons {
-  font-size: 32px !important;
-  vertical-align: middle;
-  z-index: 2;
+/* Base navbar styles */
+.navbar {
+  background-color: #3a5249;
+  transition: height 0.3s ease-in-out;
+  height: 90px;
 }
-.search-form {
-  /* position: absolute; */
-  left: 40px; /* adjust based on your icon size */
-  width: 0;
-  overflow: hidden;
-  transition: width 0.3s ease-in-out;
+
+/* Expanded navbar state */
+.navbar.expanded {
+  height: 160px;
 }
-.search-form.expanded {
-  width: 200px; /* adjust width as needed */
-}
-.search-form input {
-  width: 200px; /* should match the expanded width */
-  height: 32px; /* match your icon height */
-}
-.cursor-pointer {
+
+/* Search toggle icon */
+#searchToggle {
   cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+}
+
+#searchToggle.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Search form styling */
+.search-form {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  opacity: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+
+.search-form.expanded {
+  padding-top: 23px;
+  width: 60%;
+  opacity: 1;
+}
+
+/* Search input styling */
+.search-form input {
+  width: 100%;
+  background-color: transparent !important;
+  border: none;
+  border-bottom: 1px solid white;
+  color: white !important;
+  padding: 8px 0;
+  padding-left: 40px;
+  font-size: 16px;
+}
+
+.search-form input::placeholder {
+  color: #e0e0e0;
+}
+
+/* Search icon inside input */
+.search-form::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 67%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background-image: url('../images/search.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* Close button */
+.search-close {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-size: 20px;
+}
+
+.search-form input:focus,
+.search-form input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.search-form input:focus {
+  border-bottom: 1px solid white;
 }
