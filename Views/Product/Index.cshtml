@@ -1,16 +1,30 @@
-﻿<div class="product-list-header">
+﻿@using System.Globalization
+@model peakmotion.ViewModels.CategoriesProductsVM
+
+<div class="product-list-header">
     <div class="product-list-header-overlay px-7">
         <p>Home / Womens</p>
         <h2>Women's Apparel</h2>
     </div>
 </div>
 <div class="product-list-summary mx-7">
-    <div>
-        <p>112 results</p>
-        <p>Sorted by Price </p>
+    <div class="product-count-line">
+        <p>@Model.Products.Count() results</p>
+        @* todo: diff options *@
+        <div class="sortedby-container">
+            <p>Sorted by @ViewBag.SortedBy</p>
+            <button class="pIcon">
+                <img src="~/images/chevron-down.svg" 
+                    alt="Expand Sorted-by Options"
+                    width="24"
+                    height="24"
+                    />
+            </button>
+        </div>
     </div>
-    <div>
+    <div class="product-filter-active">
         @{
+            @* todo *@
             var filter = new List<string> { "Women", "Tops" };
         }
         @foreach (var item in filter)
@@ -30,29 +44,154 @@
 </div>
 <section class="product-container mx-7">
     <aside class="product-filters">
-        <div class="product-filter-group">
-            <h5>Category</h5>
-            <div>
-                <input type="checkbox" id="top" name="top" />
-                <label for="top">Tops</label>
+        @foreach (var filterType in Model.Filters)
+        {
+            <div class="product-filter-group">
+                @{
+                    TextInfo myTI = new CultureInfo("en-US",false).TextInfo;
+                    string name = myTI.ToTitleCase(filterType.Key);
+                }
+                <div class="product-filter-key">
+                    <h5>@name</h5>
+                    @* todo: toggle *@
+                    <button class="pIcon">
+                        <img src="~/images/minus.svg" 
+                            alt="Condense Filter Options for @name"
+                            width="24"
+                            height="24"
+                            />
+                    </button>
+                </div>
+                @foreach (var filterValue in filterType.Value)
+                {
+                    <div class="product-filter-values">
+                        @{
+                            string value = myTI.ToTitleCase(filterValue.Categoryname);
+                        }
+                        @* todo: filter *@
+                        <input type="checkbox" name="@filterType.Key-@filterValue" />
+                        <label for="@filterType.Key-@filterValue">@value</label>
+                    </div>
+                }
             </div>
-            <div>
-                <input type="checkbox" id="bottom" name="bottom" />
-                <label for="bottom">Bottoms</label>
-            </div>
-        </div>
+        }
     </aside>
     <section class="product-grid">
-        @foreach (var saleItem in Model)
+        @foreach (var saleItem in Model.Products)
         {
             <partial name="Product/_ProductCard" for="@saleItem" />
         }
     </section>
 </section>
 <style>
+    
+    .product-count-line {
+        align-items: center;
+    }
+
     p {
         margin: 0;
     }
+
+    .pIcon {
+        border: none;
+        background-color: transparent;
+    }
+
+    .pIcon:hover {
+        opacity: 0.8;
+    }
+
+    @* 
+    ==================================================================
+    SORTED BY
+    ==================================================================
+    *@
+
+    .sortedby-container {
+        display: flex;
+        align-items: center;
+        p {
+            margin: 0;
+        }     
+        button {
+            padding-right: 0;
+        }  
+    }
+
+
+    @* 
+    ==================================================================
+    FILTERS
+    ==================================================================
+    *@
+    
+    .filter-clear:hover {
+        opacity: 0.5;
+    }
+
+    .filter-clear {
+        padding: 0.25rem;
+        margin-bottom: 0;
+        font-size: 0.7rem;
+        font-weight: 500;
+        line-clamp: 1;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        text-decoration: underline;
+        text-transform: uppercase;
+        border: none;
+        background-color: transparent;
+    }
+
+    .product-filters {
+        width: 200px;
+    }
+
+    .product-filter-group {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 1.5rem;
+        margin-bottom: 1rem;
+        gap: 0.25rem;
+        border-bottom: 0.5px solid rgba(0,0,0,0.3);
+    }
+
+    .product-filter-group:last-of-type {
+        border-bottom: none;
+    }
+
+    .product-filter-key {
+        display: flex;
+        justify-content: space-between;
+        align-items: center ;
+        margin-bottom: 0.5rem;
+        h5 {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+    }
+
+    .product-filter-values {
+        display: flex;
+        gap: 0.5rem;
+
+        input:hover {
+            cursor: pointer;
+        }
+    }
+
+    .product-filter-active {
+        display: flex;
+        gap: 1rem;
+    }
+
+    @* 
+    ==================================================================
+    PRODUCT LIST 
+    ==================================================================
+    *@
 
     .product-list-header {
         width: 100%;
@@ -79,35 +218,24 @@
     .product-list-summary {
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 1.5rem;
         padding: 1rem 0rem;
 
         div:first-child {
             display: flex;
             justify-content: space-between;
             gap: 1rem;
-            border-bottom: 1px solid black;
+            border-bottom: 1px solid rgba(0,0,0,0.3);;
         }
 
-        div:nth-child(2) {
-            display: flex;
-            gap: 1rem;
-        }
     }
 
     .product-container {
         padding: 1rem 0rem;
         display: flex;
+        gap: 1rem;
     }
 
-    .product-filters {
-        width: 200px;
-    }
-
-    .product-filter-group {
-        display: flex;
-        flex-direction: column;
-    }
 
     .product-grid {
         width: 100%;
@@ -116,23 +244,5 @@
         row-gap: 1rem;
     }
 
-    .filter-clear:hover {
-        opacity: 0.5;
-    }
-
-    .filter-clear {
-        padding: 0.25rem;
-        margin-bottom: 0;
-        font-size: 0.7rem;
-        font-weight: 500;
-        line-clamp: 1;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        text-decoration: underline;
-        text-transform: uppercase;
-        border: none;
-        background-color: transparent;
-    }
 
     </styles>

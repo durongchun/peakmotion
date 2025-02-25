@@ -23,16 +23,39 @@ public class ProductController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IActionResult Index(string searchString = null)
+    public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
     {
+        // Find all the category types the product can be filtered by
+        var genderChoices = _productRepo.FetchCategoryDropdown("gender");
+        var colorChoices = _productRepo.FetchCategoryDropdown("color");
+        var sizeChoices = _productRepo.FetchCategoryDropdown("size");
+        var categoryChoices = _productRepo.FetchCategoryDropdown("category");
+        var propertyChoices = _productRepo.FetchCategoryDropdown("property");
+        Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
+        {
+            { "category", categoryChoices },
+            { "property", propertyChoices },
+            { "gender", genderChoices },
+            { "color", colorChoices },
+            { "size", sizeChoices }
+        };
+
+        // Find all the products
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
         }
 
+        // Build the response
         ViewBag.SearchString = searchString;
-        return View(products);
+        ViewBag.SortedBy = sortedByString;
+        CategoriesProductsVM data = new CategoriesProductsVM
+        {
+            Products = products,
+            Filters = filterTypes
+        };
+        return View(data);
     }
 
     // GET: /Product/Details/5
