@@ -118,6 +118,8 @@ namespace peakmotion.Repositories
                     .Where(img => img.Fkproductid == id)
                     .Select(img => new ProductImage
                     {
+                        Pkimageid = img.Pkimageid,
+                        Fkproductid = id,
                         Url = img.Url,
                         Isprimary = img.Isprimary,
                         Alttag = img.Alttag,
