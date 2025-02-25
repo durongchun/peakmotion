@@ -139,7 +139,95 @@ public class AdminController : Controller
 
         return View(OrderVM);
     }
+[HttpPost]
 
+    public async Task<IActionResult> UpdateShippingStatus(int orderId, string status)
+
+    {
+
+        try
+
+        {
+
+            Console.WriteLine($"Received request to update status for Order ID: {orderId} to {status}");
+
+
+
+            // Find the order by its ID
+
+            var order = await _orderRepo.GetOrderById(orderId);
+
+            if (order == null)
+
+            {
+
+                return NotFound();
+
+            }
+
+
+
+            // Update the shipping status for this order
+
+            var currentStatus = order.OrderStatuses.LastOrDefault();
+
+            if (currentStatus != null)
+
+            {
+
+                currentStatus.Orderstate = status;  // Update the existing status
+
+            }
+
+            else
+
+            {
+
+                // If no previous status exists, create a new status entry
+
+                order.OrderStatuses.Add(new OrderStatus
+
+                {
+
+                    Orderstate = status,
+
+                    Fkorderid = order.Pkorderid
+
+                });
+
+            }
+
+
+
+            // Save changes to the database
+
+            await _context.SaveChangesAsync();
+
+
+
+            // Log successful status update
+
+            Console.WriteLine($"Successfully updated status for Order ID: {orderId} to {status}");
+
+
+
+            return RedirectToAction("Orders");  // Redirect back to the orders page
+
+        }
+
+        catch (Exception ex)
+
+        {
+
+            // Log the exception for debugging
+
+            Console.WriteLine($"Error updating status for Order ID {orderId}: {ex.Message}");
+
+            return StatusCode(500, "Internal server error");
+
+        }
+
+    }
     // Create Order View
     public IActionResult Create()
     {
@@ -176,6 +264,8 @@ public class AdminController : Controller
         }
         return View(orderVM);
     }
+
+    
 
     // Edit Order View
     public async Task<IActionResult> Edit(int id)
@@ -246,39 +336,5 @@ public class AdminController : Controller
         return RedirectToAction("Index");
     }
 
-    // Update Shipping Status Logic
-    [HttpPost]
-    public async Task<IActionResult> UpdateShippingStatus(int orderId, string status)
-    {
-        try
-        {
-            var order = await _orderRepo.GetOrderById(orderId);
-            if (order == null)
-            {
-                return NotFound();
-            }
-
-            var currentStatus = order.OrderStatuses.LastOrDefault();
-            if (currentStatus != null)
-            {
-                currentStatus.Orderstate = status;
-            }
-            else
-            {
-                order.OrderStatuses.Add(new OrderStatus
-                {
-                    Orderstate = status,
-                    Fkorderid = order.Pkorderid
-                });
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Orders");
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, "Internal server error");
-        }
-    }
 }
 
