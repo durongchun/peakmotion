@@ -35,6 +35,11 @@ namespace peakmotion.Repositories
             var categorydropdown = FetchCategoryDropdown("category");
             var propertydropdown = FetchCategoryDropdown("property");
             var productimages = GetProductImage(id);
+            var discountDropdown = _context.Discounts.ToList();
+            // Find the selected discount's description
+            var selectedDiscountDescription = discountDropdown
+                .FirstOrDefault(d => d.Pkdiscountid == product.Fkdiscountid)?.Description;
+
 
 
 
@@ -58,6 +63,9 @@ namespace peakmotion.Repositories
                 TypeDropdown = categorydropdown,
                 PropertyDropdown = propertydropdown,
                 Images = productimages,
+                SelectedDiscountId = product.Fkdiscountid,
+                DiscountDropdown = discountDropdown,
+                SelectedDiscountDescription = selectedDiscountDescription,
 
 
             };
@@ -110,6 +118,8 @@ namespace peakmotion.Repositories
                     .Where(img => img.Fkproductid == id)
                     .Select(img => new ProductImage
                     {
+                        Pkimageid = img.Pkimageid,
+                        Fkproductid = id,
                         Url = img.Url,
                         Isprimary = img.Isprimary,
                         Alttag = img.Alttag,
@@ -130,34 +140,16 @@ namespace peakmotion.Repositories
             return new List<string>();
         }
 
-        public String RemoveProduct(int id)
-        {
-            Product? product = _context.Products
-                                .Where(i => i.Pkproductid == id)
-                                .FirstOrDefault();
-
-            if (product == null)
-            {
-                return $"warning,Unable to find product ID: {id}";
-            }
-
-            try
-            {
-                _context.Products.Remove(product);
-                _context.SaveChanges();
-
-                return $"success,Successfully deleted product ID: {id}";
-            }
-            catch (Exception ex)
-            {
-                return $"error,Product could not be deleted: {ex.Message}";
-            }
-        }
-
         public async Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages)
         {
             try
             {
+                // Delete images if any are marked for deletion from page
+                if (!string.IsNullOrEmpty(model.ImagesToDelete))
+                {
+                    await DeleteProductImages(model.ID, model.ImagesToDelete);
+                }
+
                 if (NewImages?.Any() != true) return;
 
                 // Create directory if it doesn't exist
@@ -224,7 +216,7 @@ namespace peakmotion.Repositories
             product.Qtyinstock = model.Quantity;
             product.Isfeatured = model.IsFeatured ? 1 : 0;
             product.Ismembershipproduct = model.IsMembershipProduct ? 1 : 0;
-            product.Fkdiscountid = 1;
+            product.Fkdiscountid = model.SelectedDiscountId;
 
             // Save changes
             await _context.SaveChangesAsync(); // ✅ Await the async method
@@ -297,7 +289,119 @@ namespace peakmotion.Repositories
             }
         }
 
+        public async Task DeleteProductImages(int productId, string imageIdsToDelete)
+        {
+            if (string.IsNullOrEmpty(imageIdsToDelete))
+                return;
 
+            // Parse the comma-separated IDs
+            var imageIds = imageIdsToDelete.Split(',')
+                .Where(id => !string.IsNullOrWhiteSpace(id))
+                .Select(id => int.Parse(id))
+                .ToList();
+
+            if (!imageIds.Any())
+                return;
+
+
+            // Get images to delete
+            var imagesToDelete = await _context.ProductImages
+                .Where(img => img.Fkproductid == productId && imageIds.Contains(img.Pkimageid))
+                .ToListAsync();
+
+            if (!imagesToDelete.Any())
+                return;
+
+            // Get file paths to delete from disk
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+            var filesToDelete = imagesToDelete
+                .Select(img => Path.Combine(uploadPath, img.Url.TrimStart('/')))
+                .Where(path => File.Exists(path))
+                .ToList();
+
+            // Remove from database
+            _context.ProductImages.RemoveRange(imagesToDelete);
+            await _context.SaveChangesAsync();
+
+            // Delete physical files
+            foreach (var filePath in filesToDelete)
+            {
+                try
+                {
+                    File.Delete(filePath);
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine($"Error deleting file {filePath}: {ex.Message}");
+                }
+            }
+        }
+
+        public string RemoveProduct(int id)
+        {
+            try
+            {
+                // Fetch the product from the database
+                var product = _context.Products
+                    .Include(p => p.ProductImages) // Include related images
+                    .Include(p => p.ProductCategories) // Include related categories
+                    .Include(p => p.OrderProducts) // Include related order products
+                    .Include(p => p.Wishlists) // Include related wishlists
+                    .FirstOrDefault(p => p.Pkproductid == id);
+
+                if (product == null)
+                {
+                    return "Product not found.";
+                }
+
+                // Delete associated images (if any)
+                if (product.ProductImages != null && product.ProductImages.Any())
+                {
+                    var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    foreach (var image in product.ProductImages)
+                    {
+                        var filePath = Path.Combine(uploadPath, image.Url.TrimStart('/'));
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            // Delete the physical file
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
+
+                    // Delete images from the database
+                    _context.ProductImages.RemoveRange(product.ProductImages);
+                }
+
+                // Delete associated categories (if any)
+                if (product.ProductCategories != null && product.ProductCategories.Any())
+                {
+                    _context.ProductCategories.RemoveRange(product.ProductCategories);
+                }
+
+                // Delete associated order products (if any)
+                if (product.OrderProducts != null && product.OrderProducts.Any())
+                {
+                    _context.OrderProducts.RemoveRange(product.OrderProducts);
+                }
+
+                // Delete associated wishlists (if any)
+                if (product.Wishlists != null && product.Wishlists.Any())
+                {
+                    _context.Wishlists.RemoveRange(product.Wishlists);
+                }
+
+                _context.Products.Remove(product);
+                _context.SaveChanges();
+
+                return "Product deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting product: {ex.Message}");
+                return "An error occurred while deleting the product.";
+            }
+        }
 
 
 

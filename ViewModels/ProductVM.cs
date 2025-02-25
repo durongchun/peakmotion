@@ -72,7 +72,16 @@ namespace peakmotion.ViewModels
                 [BindNever, ValidateNever]
                 public List<Category> PropertyDropdown { get; set; } = new List<Category>();
 
+                [Display(Name = "Discount")]
+                public int? SelectedDiscountId { get; set; }
+
+                public string? SelectedDiscountDescription { get; set; } // Description of the selected discount
+
+                [BindNever, ValidateNever]
+                public List<Discount> DiscountDropdown { get; set; } = new List<Discount>();
                 public string? photoName { get; set; } //alttage
+                public string? ImagesToDelete { get; set; }
+
 
         }
 }
