@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Models;
 using peakmotion.Repositories;
@@ -16,13 +17,16 @@ public class AdminController : Controller
     private readonly ProductRepo _productRepo;
     private readonly OrderRepo _orderRepo;
     private readonly PmuserRepo _pmuserRepo;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public AdminController(PeakmotionContext context, ProductRepo productRepo, OrderRepo orderRepo, PmuserRepo pmuserRepo)
+    public AdminController(PeakmotionContext context, ProductRepo productRepo,
+    OrderRepo orderRepo, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager)
     {
         _context = context;
         _productRepo = productRepo;
         _orderRepo = orderRepo;
         _pmuserRepo = pmuserRepo;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
@@ -106,6 +110,15 @@ public class AdminController : Controller
         IEnumerable<UserVM> employees = _pmuserRepo.GetAllEmployees();
         ViewBag.RoleSelectList = _pmuserRepo.GetRoleSelectList();
         return View(employees);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditEmployeeRole(string newRole, string userEmail)
+    {
+        Console.WriteLine($"role: {newRole}, user: {userEmail}");
+        var result = await _pmuserRepo.EditUserRole(newRole, userEmail);
+        if (result) return Ok($"Successfully updated {userEmail} to {newRole}");
+        return BadRequest($"Could not update role for {userEmail}");
     }
 
     // Orders View
@@ -268,3 +281,4 @@ public class AdminController : Controller
         }
     }
 }
+

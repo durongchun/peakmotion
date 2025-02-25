@@ -10,6 +10,7 @@ namespace peakmotion.ViewModels
         public string Email { get; set; } = string.Empty;
 
         [Required]
+        [Display(Name = "Role")]
         public string RoleName { get; set; } = string.Empty;
 
         [Display(Name = "First Name")]
