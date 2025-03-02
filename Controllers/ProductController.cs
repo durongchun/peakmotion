@@ -25,6 +25,9 @@ public class ProductController : Controller
 
     public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
     {
+        Console.WriteLine($"Filtering products: {searchString}");
+        Console.WriteLine($"Sorting products: {sortedByString}");
+
         // Find all the category types the product can be filtered by
         var genderChoices = _productRepo.FetchCategoryDropdown("gender");
         var colorChoices = _productRepo.FetchCategoryDropdown("color");
@@ -40,8 +43,20 @@ public class ProductController : Controller
             { "size", sizeChoices }
         };
 
+        // Display the options for sorting the products
+        List<string> sortByOptions = new List<string> { "Featured", "A-Z", "Z-A", "Price: High to Low", "Price: Low to High" };
+        string sortByChoice = sortByOptions[0];
+        if (!String.IsNullOrEmpty(sortedByString) && sortByOptions.Contains(sortedByString))
+        {
+            // Check the sort by option is valid before querying with it
+            sortByChoice = sortedByString;
+        }
+        ViewBag.SortOptions = _productRepo.GetSortBySelectList(sortByOptions);
+
+        Console.WriteLine(ViewBag.SortOptions);
+
         // Find all the products
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortByChoice);
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
@@ -49,11 +64,11 @@ public class ProductController : Controller
 
         // Build the response
         ViewBag.SearchString = searchString;
-        ViewBag.SortedBy = sortedByString;
         CategoriesProductsVM data = new CategoriesProductsVM
         {
             Products = products,
-            Filters = filterTypes
+            Filters = filterTypes,
+            SortByChoice = sortByChoice
         };
         return View(data);
     }
@@ -89,4 +104,6 @@ public class ProductController : Controller
         // Return the view with the view model
         return View(productDetailViewModel);
     }
+
+
 }

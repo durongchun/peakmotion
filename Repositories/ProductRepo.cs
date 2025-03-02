@@ -2,6 +2,7 @@
 using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace peakmotion.Repositories
 {
@@ -403,11 +404,36 @@ namespace peakmotion.Repositories
             }
         }
 
-
+        public IEnumerable<ProductVM> sortProducts(IEnumerable<ProductVM> products, string? sortBy = "")
+        {
+            Console.WriteLine($"Sorting results by {sortBy}");
+            IEnumerable<ProductVM> sortedProducts = products;
+            switch (sortBy)
+            {
+                case "Featured":
+                    sortedProducts = products.OrderBy(p => p.IsFeatured).ToList();
+                    break;
+                case "A-Z":
+                    sortedProducts = products.OrderBy(p => p.ProductName).ToList();
+                    break;
+                case "Z-A":
+                    sortedProducts = products.OrderByDescending(p => p.ProductName).ToList();
+                    break;
+                case "Price: High to Low":
+                    sortedProducts = products.OrderByDescending(p => p.Price).ToList();
+                    break;
+                case "Price: Low to High":
+                    sortedProducts = products.OrderBy(p => p.Price).ToList();
+                    break;
+            }
+            return sortedProducts;
+        }
 
         // Get all products in the database.
-        public IEnumerable<ProductVM> GetAllProducts()
+        public IEnumerable<ProductVM> GetAllProducts(string? sortBy = "")
         {
+
+
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
                                               from pi in pImageGroup.DefaultIfEmpty()
@@ -438,9 +464,21 @@ namespace peakmotion.Repositories
                                                         .FirstOrDefault()
                                               };
             Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
-            return products;
+            // Check if products should be sorted
+            if (String.IsNullOrEmpty(sortBy)) return products;
+            return sortProducts(products, sortBy);
         }
 
+        public SelectList GetSortBySelectList(List<string> sortByOptions)
+        {
+            List<SelectListItem> result = sortByOptions.Select(x => new SelectListItem
+            {
+                Value = x,
+                Text = x
+            }).ToList();
+
+            return new SelectList(result, "Value", "Text");
+        }
     }
 }
 
