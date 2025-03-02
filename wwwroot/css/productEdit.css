@@ -1,6 +1,5 @@
 #container {
   display: grid;
-  /* grid-template-rows: 0.5 3fr 1fr 2fr 1fr; */
   grid-template-rows: repeat(auto-fit, minmax(100px, auto));
   align-items: center;
   margin: 0 6rem;
@@ -36,7 +35,7 @@
   gap: 2rem;
 }
 
-#saveDelete {
+#save {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
@@ -72,13 +71,6 @@ button:hover {
   background-color: #0056b3;
 }
 
-.deleteButt {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 1rem;
-  background-color: none;
-}
-
 .deleteProductButt {
   display: flex;
   margin-top: 1rem;
@@ -98,4 +90,7 @@ button:hover {
 
 .deletePhoto:hover {
   color: darkred;
+}
+#imageTableBody img {
+  max-height: 1.5rem;
 }
