@@ -104,21 +104,46 @@ public class AdminController : Controller
 
     }
 
-    // Employees View
-    public IActionResult Employees()
+    /// <summary>
+    ///     List All Users (Employee, Customers, Admin)
+    /// </summary>
+    /// <returns></returns>
+    public IActionResult Employees(string message = "")
     {
         IEnumerable<UserVM> employees = _pmuserRepo.GetAllEmployees();
         ViewBag.RoleSelectList = _pmuserRepo.GetRoleSelectList();
+        ViewBag.Message = message;
         return View(employees);
     }
 
-    [HttpPost]
+    /// <summary>
+    ///     Edit a user's role
+    /// </summary>
+    /// <param name="newRole"></param>
+    /// <param name="userEmail"></param>
+    /// <returns></returns>
+    [HttpPost, ActionName("EditEmployeeRole")]
     public async Task<IActionResult> EditEmployeeRole(string newRole, string userEmail)
     {
-        Console.WriteLine($"role: {newRole}, user: {userEmail}");
-        var result = await _pmuserRepo.EditUserRole(newRole, userEmail);
-        if (result) return Ok($"Successfully updated {userEmail} to {newRole}");
-        return BadRequest($"Could not update role for {userEmail}");
+        Console.WriteLine($"UPDATING - role: {newRole}, user: {userEmail}");
+        (bool result, string returnMessage) = await _pmuserRepo.EditUserRole(newRole, userEmail);
+        ViewBag.Message = returnMessage;
+        if (result) return Ok(returnMessage);
+        return BadRequest(returnMessage);
+    }
+
+    /// <summary>
+    ///     Delete the user's role
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPost, ActionName("DeleteUserRole")]
+    public async Task<IActionResult> DeleteUserRole(string newRole, string userEmail)
+    {
+        Console.WriteLine($"DELETING - role: {newRole}, user: {userEmail}");
+        (bool result, string returnMessage) = await _pmuserRepo.DeleteUserRole(newRole, userEmail);
+
+        return RedirectToAction("Employees", new { message = returnMessage });
     }
 
     // Orders View
@@ -139,7 +164,7 @@ public class AdminController : Controller
 
         return View(OrderVM);
     }
-[HttpPost]
+    [HttpPost]
 
     public async Task<IActionResult> UpdateShippingStatus(int orderId, string status)
 
@@ -265,7 +290,7 @@ public class AdminController : Controller
         return View(orderVM);
     }
 
-    
+
 
     // Edit Order View
     public async Task<IActionResult> Edit(int id)

@@ -44,6 +44,10 @@ namespace peakmotion.Repositories
             return user;
         }
 
+        /// <summary>
+        ///     Get all the user's (should only have roles Employee, Admin, Customer)
+        /// </summary>
+        /// <returns></returns>
         public List<UserVM> GetAllEmployees()
         {
             List<UserVM> identityUsers = (from u in _context.Users
@@ -56,8 +60,8 @@ namespace peakmotion.Repositories
                                           {
                                               Email = u.Email,
                                               RoleName = r.Name ?? "No Role",
-                                              FirstName = "", // fill later
-                                              LastName = ""   // fill later
+                                              FirstName = "",
+                                              LastName = ""
                                           }).ToList();
 
             // Filter out the PMUsers that match the same emails with the target role
@@ -88,11 +92,39 @@ namespace peakmotion.Repositories
             return new SelectList(roles, "Value", "Text");
         }
 
-        async public Task<bool> EditUserRole(string roleName, string userEmail)
+        /// <summary>
+        ///     Update a user's role
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
+        async public Task<(bool, string)> EditUserRole(string roleName, string userEmail)
+        {
+            (bool deleteRoleResult, string deleteRoleMsg) = await DeleteUserRole(roleName, userEmail);
+            if (deleteRoleResult)
+            {
+                // Get the IdentityUser version - to update role
+                IdentityUser? updatingUser = GetUserByUserEmail(userEmail);
+                if (updatingUser == null) return (false, "error, Error updating the user's role");
+                // Add the new role
+                var updated = await _userManager.AddToRoleAsync(updatingUser, roleName);
+                if (updated.Succeeded) return (true, $"success, Successfully updated the user's role: {userEmail} to '{roleName}'");
+                return (false, $"error, Error updating the user's role: {userEmail} to '{roleName}'");
+            }
+            return (false, deleteRoleMsg);
+        }
+
+        /// <summary>
+        ///     Delete a user's role
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
+        async public Task<(bool, string)> DeleteUserRole(string roleName, string userEmail)
         {
             // Check the current role exists
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
-            if (!roleExists) return false; // Role does not exist
+            if (!roleExists) return (false, "error, Error finding the current user's role"); // Role does not exist
 
             // Check the current user exists
             var identityUser = _httpContextAccessor.HttpContext?.User;
@@ -100,24 +132,24 @@ namespace peakmotion.Repositories
             if (identityUser != null)
             {
                 currentUser = await _userManager.GetUserAsync(identityUser);
-                if (currentUser == null) return false; // Get the IdentityUser version - for email
+                if (currentUser == null) return (false, "error, Error finding the current user"); // Get the IdentityUser version - for email
             }
             else
             {
-                return false;
+                return (false, "error, Error finding the current user context"); ;
             }
 
             // Business Logic: Do not allow the current user to update themselves
             IdentityUser? updatingUser;
             if (userEmail.Equals(currentUser.Email))
             {
-                Console.WriteLine("Permission Denied: Cannot update own role");
-                return false;
+                Console.WriteLine("warning, Permission Denied: Cannot update your own role");
+                return (false, "warning, Permission Denied: Cannot update your own role");
             }
             else
             {
                 updatingUser = GetUserByUserEmail(userEmail);
-                if (updatingUser == null) return false; // Get the IdentityUser version - update role
+                if (updatingUser == null) return (false, "error, Error finding the updated user"); // Get the IdentityUser version - update role
             }
 
             // Get the current role string
@@ -126,26 +158,16 @@ namespace peakmotion.Repositories
             if (currentRoles.Count() > 0)
             {
                 currentRole = currentRoles.FirstOrDefault();
-                if (currentRole == null) return false;
+                if (currentRole == null) return (false, "Error finding the updating user's role");
             }
             else
             {
-                return false;
+                return (false, "error, Error the updating user seems to have no role");
             }
 
             // update the identity role
             var deleted = await _userManager.RemoveFromRoleAsync(updatingUser, currentRole);
-            if (deleted.Succeeded)
-            {
-                var updated = await _userManager.AddToRoleAsync(updatingUser, roleName);
-                if (updated.Succeeded)
-                {
-                    return true;
-                }
-            }
-
-
-            return false;
+            return (deleted.Succeeded, $"success, Successfully deleted the role '{roleName}' for {userEmail}");
         }
 
         public Pmuser? GetPmuserByEmail(string email)
