@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using peakmotion.Models;
-using peakmotion.Models;
 
 namespace peakmotion.ViewModels
 {
