@@ -566,13 +566,12 @@ namespace peakmotion.Repositories
         // Specifically for the Product Top bar filter
         public List<int>? GetFilterCategoryId(string name)
         {
-
-            // Verify the name is allowed
-            string[] allowedFilters = ["Male", "Female", "Gear"];
+            string[] allowedFilters = ["Men", "Women", "Equipment"]; // Verify the name is allowed
             List<int> selectedId = [];
             if (allowedFilters.Contains(name))
             {
                 int? id = GetCategoryIdByName(name);
+                if (name == "Equipment") id = GetCategoryIdByName("Gear"); // quick workaround to match db entry
                 if (id != null) selectedId.Add((int)id);
                 return selectedId;
             }
