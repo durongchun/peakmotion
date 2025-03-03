@@ -42,3 +42,17 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+.saveAddress {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.saveAddress input {
+  min-width: 30px;
+  height: 18px;
+  border-radius: 4px;
+}
