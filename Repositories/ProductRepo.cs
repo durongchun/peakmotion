@@ -456,7 +456,7 @@ namespace peakmotion.Repositories
         }
 
         // Get all products in the database.
-        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "", int[]? categoryIds = null)
+        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", int[]? categoryIds = null)
         {
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
@@ -488,19 +488,15 @@ namespace peakmotion.Repositories
                                                         .FirstOrDefault()
                                               };
 
-            // Check if products should be sorted
-            IEnumerable<ProductVM> sortedProducts = Enumerable.Empty<ProductVM>();
-            if (!String.IsNullOrEmpty(sortBy))
-            {
-                sortedProducts = sortProducts(products, sortBy);
-            }
+            // Sort products
+            IEnumerable<ProductVM> sortedProducts = sortedProducts = sortProducts(products, sortBy);
 
             // Check if products need to be filtered
             if (categoryIds != null && categoryIds.Count() > 0) return filterProducts(sortedProducts, categoryIds);
 
             // Return all the products
-            Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
-            return products;
+            Console.WriteLine($"DEBUG: Product Count: {sortedProducts.Count()}");
+            return sortedProducts;
         }
 
         public SelectList GetSortBySelectList(List<string> sortByOptions)
