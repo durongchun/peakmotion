@@ -6,6 +6,7 @@ using peakmotion.Models;
 
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace peakmotion.Controllers;
@@ -24,16 +25,19 @@ public class ProductController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
+    /// <summary>
+    ///     This is used to get all products and for the search results
+    ///     Note: 
+    ///         - 0 parameters - use both default values
+    ///         - 1 parameter - values goes to searchString
+    /// </summary>
+    /// <param name="searchString">This is a nullable default parameter</param>
+    /// <param name="sortedByString">This is an default parameter</param>
+    /// <returns></returns>
+    public IActionResult Index(string? searchString = null, string sortedByString = "A-Z")
     {
-        Console.WriteLine($"Searching products: {searchString}");
-        Console.WriteLine($"Sorting products: {sortedByString}");
-
-        // Find all the category types the product can be filtered by
-        Dictionary<string, List<Category>> filterTypes = _productRepo.CreateDictionaryOfCategories();
-
-        // Display the options for sorting the products
-        ViewBag.SortOptions = _productRepo.GetSortBySelectList();
+        Console.WriteLine($"DEBUG: PRODUCT LIST (search: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {searchString})");
 
         // Find all the products (assuming sort by is valid)
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
@@ -49,14 +53,45 @@ public class ProductController : Controller
         CategoriesProductsVM data = new CategoriesProductsVM
         {
             Products = products,
-            Filters = filterTypes,
-            SortByChoice = sortedByString
+            Filters = _productRepo.CreateDictionaryOfCategories(),
+            SortOptions = _productRepo.GetSortBySelectList(),
+            SortByChoice = sortedByString // if doesn't match in the list - default to A-Z on frontend
         };
         ViewBag.PageTitle = "All Products";
         return View(data);
     }
 
-    // For sorting and rendering partial view for new product order
+    /// <summary>
+    ///     This is used from the topbar
+    /// </summary>
+    /// <param name="topBarFilter"></param>
+    /// <returns></returns>
+    [HttpGet("/Product/{topBarFilter}")]
+    public IActionResult Index(string topBarFilter)
+    {
+        Console.WriteLine($"DEBUG: PRODUCT LIST (filter: {topBarFilter})");
+
+        // Filter product
+        List<int>? selectedId = _productRepo.GetFilterCategoryId(topBarFilter);
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts("A-Z", selectedId);
+
+        // Build response
+        CategoriesProductsVM data = new CategoriesProductsVM
+        {
+            Products = products,
+            Filters = _productRepo.CreateDictionaryOfCategories(),
+            SortOptions = _productRepo.GetSortBySelectList(),
+            SortByChoice = "A-Z"
+        };
+        ViewBag.PageTitle = topBarFilter;
+        return View(data);
+    }
+
+    /// <summary>
+    ///     For sorting and rendering partial view for new product order
+    /// </summary>
+    /// <param name="sortedByString"></param>
+    /// <returns></returns>
     public ActionResult SortProducts(string sortedByString = "A-Z")
     {
         Console.WriteLine($"Sorting products: {sortedByString}");
@@ -65,7 +100,12 @@ public class ProductController : Controller
         return PartialView("Product/_ProductList", products);
     }
 
-    // For sorting and rendering partial view for new product order
+    /// <summary>
+    ///     For filtering and rendering partial view for new product order
+    /// </summary>
+    /// <param name="sortedByString"></param>
+    /// <param name="numbers"></param>
+    /// <returns></returns>
     public ActionResult FilterProducts(string sortedByString, string numbers)
     {
         Console.WriteLine($"Sorting products: {sortedByString}");
@@ -76,42 +116,12 @@ public class ProductController : Controller
         return PartialView("Product/_ProductList", products);
     }
 
-    [HttpGet("/Product/{topBarFilter}")]
-    // This is used from the topbar
-    public IActionResult Index(string topBarFilter)
-    {
-        Console.WriteLine($"Products from topbar: {topBarFilter}");
-
-        // Verify the name is allowed
-        string[] allowedFilters = ["Male", "Female", "Gear"];
-        List<int> selectedId = [];
-        if (allowedFilters.Contains(topBarFilter))
-        {
-            int? id = _productRepo.GetCategoryIdByName(topBarFilter);
-            if (id != null) selectedId.Add((int)id);
-        }
-
-        // Find all the category types the product can be filtered by
-        Dictionary<string, List<Category>> filterTypes = _productRepo.CreateDictionaryOfCategories();
-
-        // Display the options for sorting the products
-        ViewBag.SortOptions = _productRepo.GetSortBySelectList();
-
-        // Filter product
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts("A-Z", selectedId);
-
-        // Build response
-        CategoriesProductsVM data = new CategoriesProductsVM
-        {
-            Products = products,
-            Filters = filterTypes,
-            SortByChoice = "A-Z"
-        };
-        ViewBag.PageTitle = topBarFilter;
-        return View(data);
-    }
-
-    // GET: /Product/Details/5
+    /// <summary>
+    ///     Products details
+    ///     ie. GET: /Product/Details/5
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IActionResult> Details(int id)
     {
         // Fetch the product with the given ID from the database
@@ -142,6 +152,4 @@ public class ProductController : Controller
         // Return the view with the view model
         return View(productDetailViewModel);
     }
-
-
 }

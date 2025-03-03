@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
 using peakmotion.Models;
 
 namespace peakmotion.ViewModels
@@ -10,6 +11,9 @@ namespace peakmotion.ViewModels
 
         // Category list and values
         public Dictionary<string, List<Category>> Filters { get; set; } = new Dictionary<string, List<Category>>();
+
+        // Sort Options
+        public SelectList SortOptions { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
 
         // default is featured
         public string SortByChoice { get; set; } = "Featured";

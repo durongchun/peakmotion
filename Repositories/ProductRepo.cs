@@ -562,6 +562,22 @@ namespace peakmotion.Repositories
 
             return new SelectList(result, "Value", "Text");
         }
+
+        // Specifically for the Product Top bar filter
+        public List<int>? GetFilterCategoryId(string name)
+        {
+
+            // Verify the name is allowed
+            string[] allowedFilters = ["Male", "Female", "Gear"];
+            List<int> selectedId = [];
+            if (allowedFilters.Contains(name))
+            {
+                int? id = GetCategoryIdByName(name);
+                if (id != null) selectedId.Add((int)id);
+                return selectedId;
+            }
+            return null;
+        }
     }
 }
 

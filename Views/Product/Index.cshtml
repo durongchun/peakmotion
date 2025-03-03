@@ -23,7 +23,7 @@
         <div class="sortedby-container">
             <p>Sorted by</p>
             <select id="product-list-sortby" name="sortBy" class="form-select" onchange="onChangeSortBy(this)"
-                asp-for="@Model.SortByChoice" asp-items="@ViewBag.SortOptions">
+                asp-for="@Model.SortByChoice" asp-items="@Model.SortOptions">
             </select>
         </div>
     </div>
