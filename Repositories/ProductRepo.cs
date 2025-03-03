@@ -407,6 +407,7 @@ namespace peakmotion.Repositories
         public IEnumerable<ProductVM> sortProducts(IEnumerable<ProductVM> products, string? sortBy = "")
         {
             Console.WriteLine($"Sorting results by {sortBy}");
+
             IEnumerable<ProductVM> sortedProducts = products;
             switch (sortBy)
             {
@@ -432,8 +433,6 @@ namespace peakmotion.Repositories
         // Get all products in the database.
         public IEnumerable<ProductVM> GetAllProducts(string? sortBy = "")
         {
-
-
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
                                               from pi in pImageGroup.DefaultIfEmpty()

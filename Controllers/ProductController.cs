@@ -53,8 +53,6 @@ public class ProductController : Controller
         }
         ViewBag.SortOptions = _productRepo.GetSortBySelectList(sortByOptions);
 
-        Console.WriteLine(ViewBag.SortOptions);
-
         // Find all the products
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortByChoice);
         if (!string.IsNullOrEmpty(searchString))
@@ -71,6 +69,15 @@ public class ProductController : Controller
             SortByChoice = sortByChoice
         };
         return View(data);
+    }
+
+    // For sorting and rendering partial view for new product order
+    public ActionResult SortProducts(string? sortedByString = "A-Z")
+    {
+        Console.WriteLine($"Sorting products: {sortedByString}");
+
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
+        return PartialView("Product/_ProductList", products);
     }
 
     // GET: /Product/Details/5

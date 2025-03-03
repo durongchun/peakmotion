@@ -67,25 +67,25 @@
         </div>
         }
     </aside>
-    <section class="product-grid">
-        @foreach (var saleItem in Model.Products)
-        {
-        <partial name="Product/_ProductCard" for="@saleItem" />
-        }
-    </section>
+
+    <div id="product-list-rerender">
+        <!-- For re-rendering the list -->
+        @Html.Partial("Product/_ProductList", Model.Products)
+        <!-- <partial name="Product/_ProductList" for="@Model.Products" /> -->
+    </div>
+
 </section>
 
 <script>
 
     function onChangeSortBy(e) {
         const selected = e.value;
-        console.log(e)
         $.ajax({
-            url: '@Url.Action("Index", "Product")',
-            type: 'POST',
+            url: '@Url.Action("SortProducts", "Product")',
+            type: 'GET',
             data: { sortedByString: selected },
             success: function (response) {
-                console.log(response);
+                $('#product-list-rerender').html(response);  // Update only the items list
             },
             error: function (xhr, status, error) {
                 console.log(xhr?.responseText);
@@ -124,6 +124,7 @@
         gap: 0.5rem;
         align-items: center;
         margin-bottom: 0.5rem;
+        white-space: nowrap;
 
         p {
             margin: 0;
