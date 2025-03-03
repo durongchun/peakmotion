@@ -73,7 +73,8 @@
                 isSelected = Model.FilterId.ToString() == filterValue.Pkcategoryid.ToString() ? "checked" : "";
                 }
                 }
-                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" @isSelected />
+                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" @isSelected
+                    onchange='@((isSelected != "") ? "resetToAllProducts(this)" : "")' />
                 <label for="@key:@value">@valueMod</label>
             </div>
             }
@@ -91,7 +92,11 @@
 
 <script>
 
-
+    function resetToAllProducts() {
+        console.log('Resetting to all products')
+        // Redirecting to another page
+        location.href = '/Product'
+    }
 
 
     function onChangeSortBy(e) {
