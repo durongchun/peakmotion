@@ -41,6 +41,7 @@ namespace peakmotion.Repositories
             // Find the selected discount's description
             var selectedDiscountDescription = discountDropdown
                 .FirstOrDefault(d => d.Pkdiscountid == product.Fkdiscountid)?.Description;
+            var PrimaryImageUrl = GetProductPrimaryImage(id);
 
 
 
@@ -68,6 +69,7 @@ namespace peakmotion.Repositories
                 SelectedDiscountId = product.Fkdiscountid,
                 DiscountDropdown = discountDropdown,
                 SelectedDiscountDescription = selectedDiscountDescription,
+                ImageUrl = PrimaryImageUrl,
 
 
             };
@@ -160,6 +162,23 @@ namespace peakmotion.Repositories
 
         }
 
+        public string GetProductPrimaryImage(int id)
+        {
+            var primaryImage = _context.ProductImages
+                                .Where(img => img.Fkproductid == id && img.Isprimary)
+                                .Select(img => new ProductImage
+                                {
+                                    Pkimageid = img.Pkimageid,
+                                    Fkproductid = id,
+                                    Url = img.Url,
+                                    Isprimary = img.Isprimary,
+                                    Alttag = img.Alttag,
+                                })
+                                .FirstOrDefault();
+
+            return primaryImage?.Url ?? "https://picsum.photos/500/700?random=1";
+        }
+
         public List<string> FormatDropdownSelectedValue(string key)
         {
             if (!string.IsNullOrEmpty(key))
@@ -217,7 +236,7 @@ namespace peakmotion.Repositories
                         Fkproductid = model.ID,
                         Url = $"/images/products/{fileName}",
                         Alttag = model.photoName,
-                        Isprimary = false,
+                        Isprimary = model.Isprimary,
                     };
 
                     newImageEntities.Add(newImage);
