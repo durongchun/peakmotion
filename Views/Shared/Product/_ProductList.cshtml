@@ -1,8 +1,6 @@
 @model IEnumerable<peakmotion.ViewModels.ProductVM>
 
-    <section class="product-grid">
-        @foreach (var saleItem in Model)
-        {
-        <partial name="Product/_ProductCard" for="@saleItem" />
-        }
-    </section>
+    @foreach (var saleItem in Model)
+    {
+    <partial name="Product/_ProductCard" for="@saleItem" />
+    }

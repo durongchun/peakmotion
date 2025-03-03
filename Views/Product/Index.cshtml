@@ -24,11 +24,16 @@
             }
             @foreach (var item in filter)
             {
-
-            <partial name="Filter/_FilteredButton" for="@item" />
+            <!-- <partial name="Filter/_FilteredButton" for="@item" /> -->
             }
 
-            <button class="filter-clear">Clear All</button>
+            <!-- <div class="product-filter-tags">
+                <button class="filter-tag" data-filter-name="" data-filter-property="">
+                    @Model<span id="">x</span>
+                </button>
+            </div> -->
+
+            <!-- <button class="filter-clear">Clear All</button> -->
             @if (!string.IsNullOrEmpty(ViewBag.SearchString))
             {
             <div class="">Search: @ViewBag.SearchString
@@ -68,11 +73,12 @@
         }
     </aside>
 
-    <div id="product-list-rerender">
+
+    <section class="product-grid" id="product-list-rerender">
         <!-- For re-rendering the list -->
         @Html.Partial("Product/_ProductList", Model.Products)
         <!-- <partial name="Product/_ProductList" for="@Model.Products" /> -->
-    </div>
+    </section>
 
 </section>
 
@@ -91,6 +97,11 @@
                 console.log(xhr?.responseText);
             }
         });
+    }
+
+    function onFilterProducts(e) {
+        const selected = e.value;
+
     }
 
 </script>
@@ -259,7 +270,8 @@
     .product-grid {
         width: 100%;
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        row-gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        column-gap: 1rem;
+        row-gap: 2rem;
     }
 </style>
