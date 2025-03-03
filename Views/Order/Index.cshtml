@@ -1,0 +1,20 @@
+@model IEnumerable<peakmotion.ViewModels.OrderVM>
+
+@{
+    ViewData["Title"] = "Orders Page";
+}
+<h1>Your Orders</h1>
+<table>
+    <tbody>
+        @foreach(var order in Model)
+        {
+            <tr>
+                <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
+                <td>@order.OrderId</td>
+                <td>
+                    <a href="@Url.Action("DetailsOrderId", "Order", new{id = order.OrderId})">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -51,5 +51,25 @@ namespace peakmotion.Repositories{
                   .Where(os => os.Fkorderid == orderId)
                   .ToListAsync();
         }
+
+
+         // Get all orders for a specific user
+    public async Task<List<Order>> GetOrdersByUserId(string userId)
+    {
+        return await _context.Orders
+            .Where(o => o.Fkpmuserid.ToString() == userId)           
+            .ToListAsync();
+    }
+
+    // Get a specific order for a user by order ID
+    public async Task<Order> GetOrderByIdForUser(int orderId, string userId)
+    {
+        return await _context.Orders
+            .Where(o => o.Fkpmuserid.ToString() == userId && o.Pkorderid == orderId)
+            .Include(o => o.OrderStatuses)
+            .Include(o => o.OrderProducts)
+            .ThenInclude(op => op.Fkproduct)
+            .FirstOrDefaultAsync();
+    }
     }
 }
