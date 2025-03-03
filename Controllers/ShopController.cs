@@ -5,6 +5,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using System;
 using System.Collections.Generic;
+using NuGet.Protocol;
 
 namespace peakmotion.Controllers
 {
@@ -57,46 +58,28 @@ namespace peakmotion.Controllers
 
 
         [HttpGet("Home/PayPalConfirmation")]
-        public IActionResult PayPalConfirmation(
-            string transactionId,
-            string amount,
-            string payerName,
-            string email,
-            string currency = "CAD")
+        public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
         {
-            // Safe conversion from string to decimal
-            if (!decimal.TryParse(amount, out decimal parsedAmount))
-            {
-                parsedAmount = 0; // Fallback in case of failure
-            }
-
-            if (!long.TryParse(transactionId, out long parsedTransactionId))
-            {
-                // Handle the case where parsing fails
-                parsedTransactionId = 0; // Or some default value
-            }
-
             // Save confirmation to the database
-            // var newPayPalConfirmation = new Order
-            // {
-            //     Pptransactionid = parsedTransactionId,
-            //     // Amount = parsedAmount,
-            //     // PayerName = payerName,
-            //     // Email = email,
-            //     Orderdate = DateOnly.FromDateTime(DateTime.UtcNow)
-            // };
+            var newPayPalConfirmation = new Order
+            {
+                Pptransactionid = model.TransactionId,
+                Orderdate = DateOnly.FromDateTime(DateTime.Now),
+                Fkpmuserid = 1,
 
-            // _context.Orders.Add(newPayPalConfirmation);
-            // _context.SaveChanges();
+            };
+
+            _context.Orders.Add(newPayPalConfirmation);
+            _context.SaveChanges();
 
             // Prepare ViewModel for the view
             var modelVM = new PayPalConfirmationVM
             {
-                TransactionId = transactionId,
-                Amount = parsedAmount,
-                PayerName = payerName,
-                Email = email,
-                Currency = currency
+                TransactionId = model.TransactionId,
+                Amount = model.Amount,
+                PayerName = model.PayerName,
+                Email = model.Email,
+                Currency = model.Currency,
             };
 
             _cookieRepo.RemoveCookie("ProductData");
