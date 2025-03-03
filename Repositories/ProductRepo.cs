@@ -3,7 +3,6 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Build.Exceptions;
 
 namespace peakmotion.Repositories
 {
@@ -88,9 +87,8 @@ namespace peakmotion.Repositories
         public int? GetCategoryIdByName(string name)
         {
             Category? category = _context.Categories
-                           .Where(c => c.Categoryname == name)
+                           .Where(c => c.Categoryname.ToLower() == name.ToLower())
                            .FirstOrDefault();
-
             return category?.Pkcategoryid;
         }
 
@@ -564,16 +562,21 @@ namespace peakmotion.Repositories
         }
 
         // Specifically for the Product Top bar filter
-        public List<int>? GetFilterCategoryId(string name)
+        public int? GetFilterCategoryId(string name)
         {
-            string[] allowedFilters = ["Men", "Women", "Equipment"]; // Verify the name is allowed
-            List<int> selectedId = [];
-            if (allowedFilters.Contains(name))
+            // update here if the DB values are different
+            Dictionary<string, string> allowedFilters = new Dictionary<string, string>
             {
-                int? id = GetCategoryIdByName(name);
-                if (name == "Equipment") id = GetCategoryIdByName("Gear"); // quick workaround to match db entry
-                if (id != null) selectedId.Add((int)id);
-                return selectedId;
+                {"Men", "male"},
+                {"Women", "female"},
+                {"Equipment", "gear"}
+            };
+            string? value;
+            if (allowedFilters.TryGetValue(name, out value))
+            {
+                Console.WriteLine($"DEBUG: Found category '{name}' with db value: {value}");
+                int? id = GetCategoryIdByName(value);
+                if (id != null) return id;
             }
             return null;
         }

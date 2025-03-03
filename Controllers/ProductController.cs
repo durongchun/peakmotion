@@ -42,8 +42,10 @@ public class ProductController : Controller
         Console.WriteLine($"DEBUG: PRODUCT LIST (category: {category})");
 
         // Filter by topbar selection + sort (assuming sortby is valid)
-        List<int>? selectedId = _productRepo.GetFilterCategoryId(category);
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedId);
+        int? categoryId = _productRepo.GetFilterCategoryId(category);
+        Console.WriteLine($"DEBUG: PRODUCT LIST (category id: {categoryId})");
+        List<int>? filterId = categoryId.HasValue ? new List<int> { (int)categoryId } : null;
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, filterId);
 
         // Filter by search query
         if (!string.IsNullOrEmpty(searchString))
@@ -57,7 +59,7 @@ public class ProductController : Controller
         {
             Products = products,
             Filters = _productRepo.CreateDictionaryOfCategories(),
-            FilterIds = selectedId,
+            FilterId = categoryId,
             SortOptions = _productRepo.GetSortBySelectList(),
             SortByChoice = sortedByString // if doesn't match in the list - default to A-Z on frontend
         };

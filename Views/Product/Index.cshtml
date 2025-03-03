@@ -67,8 +67,13 @@
                 string key = filterType.Key;
                 string value = filterValue.Categoryname;
                 string valueMod = myTI.ToTitleCase(value);
+
+                string isSelected = "";
+                if (Model.FilterId != null) {
+                isSelected = Model.FilterId.ToString() == filterValue.Pkcategoryid.ToString() ? "checked" : "";
                 }
-                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" />
+                }
+                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" @isSelected />
                 <label for="@key:@value">@valueMod</label>
             </div>
             }

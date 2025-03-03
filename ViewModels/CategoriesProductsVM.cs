@@ -12,7 +12,7 @@ namespace peakmotion.ViewModels
         // Category list and values
         public Dictionary<string, List<Category>> Filters { get; set; } = new Dictionary<string, List<Category>>();
 
-        public List<int>? FilterIds { get; set; }
+        public int? FilterId { get; set; }
 
         // Sort Options
         public SelectList SortOptions { get; set; } = new SelectList(Enumerable.Empty<SelectListItem>());
