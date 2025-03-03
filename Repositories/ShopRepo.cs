@@ -40,72 +40,52 @@ namespace peakmotion.Repositories
             return shippingInfo;
         }
 
-        public void SaveShippingInfo(String firstname, String lastname, String phone, String address, String city,
-                                                        String province, String postalcode, String country, String email)
+        public void SaveShippingInfo(ShippingVM model)
         {
-            var userShippingInfo = new Pmuser
+            var country = "CA";
+
+            var userShippingInfo = _context.Pmusers
+                .FirstOrDefault(u => u.Email == model.EmailAddress);
+
+            if (userShippingInfo != null)
             {
-                Firstname = firstname,
-                Lastname = lastname,
-                Phone = phone,
-                Address = address,
-                City = city,
-                Province = province,
-                Postalcode = postalcode,
-                Country = country,
-                Email = email,
+                // Update existing user properties
+                userShippingInfo.Firstname = model.FirstName;
+                userShippingInfo.Lastname = model.LastName;
+                userShippingInfo.Phone = model.PhoneNumber;
+                userShippingInfo.Address = model.Address;
+                userShippingInfo.City = model.City;
+                userShippingInfo.Province = model.Province;
+                userShippingInfo.Postalcode = model.PostalCode;
+                userShippingInfo.Country = country;
 
-            };
+                // Mark the entity as modified
+                _context.Entry(userShippingInfo).State = EntityState.Modified;
+            }
+            else
+            {
+                userShippingInfo = new Pmuser
+                {
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
+                    Phone = model.PhoneNumber,
+                    Address = model.Address,
+                    City = model.City,
+                    Province = model.Province,
+                    Postalcode = model.PostalCode,
+                    Country = country,
+                    Email = model.EmailAddress,
+                };
 
-            _context.Pmusers.Add(userShippingInfo);
+                _context.Pmusers.Add(userShippingInfo);
+            }
+
             _context.SaveChanges();
         }
 
 
     }
 
-    // Get specific product in the database.
-    // public ProductVM? GetProduct(int id)s
-    // {
-    //     ProductVM? product = _context.Products.Select(p => new ProductVM
-    //     {
-    //         ID = p.Pkproductid,
-    //         ProductName = p.Name,
-    //         Description = p.Description,
-    //         Price = p.Regularprice,
-    //         // Currency = p.Currency,
-    //         // Image = p.Image
-    //     }).FirstOrDefault(p => p.ID == id);
 
-    //     return product;
-    // }
-
-    // // Get all products in the database.
-    // public IEnumerable<ProductVM> GetAllProducts()
-    // {
-    //     IEnumerable<ProductVM> products = from p in _context.Products
-    //                                       join pc in _context.ProductCategories on p.Pkproductid equals pc.Fkproductid into pCatGroup
-    //                                       from pc in pCatGroup.DefaultIfEmpty()
-    //                                       join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
-    //                                       from pi in pImageGroup.DefaultIfEmpty()
-    //                                       join d in _context.Discounts on p.Fkdiscountid equals d.Pkdiscountid into productGroup
-    //                                       from d in productGroup.DefaultIfEmpty()
-    //                                       select new ProductVM
-    //                                       {
-    //                                           ID = p.Pkproductid,
-    //                                           ProductName = p.Name,
-    //                                           Description = p.Description,
-    //                                           Price = p.Regularprice,
-    //                                           Quantity = p.Qtyinstock,
-    //                                           IsFeatured = p.Isfeatured == 1 ? true : false,
-    //                                           IsMembershipProduct = p.Ismembershipproduct == 1 ? true : false,
-    //                                           Discount = p.Fkdiscount,
-    //                                           Categories = p.ProductCategories
-    //                                               .Where(pc => pc.Fkproductid == p.Pkproductid)
-    //                                               .Select(x => x.Fkcategory)
-    //                                               .ToList(),
-    //                                       };
-    //     return products;
-    // }
 }
 

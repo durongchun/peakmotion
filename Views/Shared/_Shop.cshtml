@@ -65,7 +65,7 @@
 
 <div class="shippingOrderSummary">
     <section>
-        <form class="shipping-form" action="/shipping" method="POST">
+        <form class="shipping-form" action="/Shipping/Edit" method="POST" enctype="multipart/form-data">
             <h3>Contact</h3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
@@ -114,10 +114,9 @@
                 </div>
             </div>
            <div class="saveAddress">
-                <input type="checkbox" id="save" name="save">
-                <label for="save">Save the above address to user profile</label>
+                <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress">
+                <label for="IsSaveAddress">Save the above address to user profile</label>
             </div>
-
         </form>
 
         <div class="mb-3 mt-3">
@@ -164,3 +163,10 @@
          <div><h1>Total: $@Math.Round(totalPrice, 2) CAD</h1></div>
     </section>
 </div>
+
+<script>
+    document.getElementById('IsSaveAddress').addEventListener('change', function() {
+        debugger;
+        document.querySelector('.shipping-form').submit();
+    });
+</script>

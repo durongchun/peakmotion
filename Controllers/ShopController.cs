@@ -33,27 +33,24 @@ namespace peakmotion.Controllers
             return View("Index", shippingInfo);
         }
 
-        [HttpPost]
-        public IActionResult Edit(string firstname, string lastname, string phone, string address, string city,
-                                    string province, string postalcode, string country, string email)
+        [HttpPost("Shipping/Edit")]
+        public IActionResult Edit(ShippingVM model)
         {
             string returnMessage = string.Empty;
 
             try
             {
-                // Save shipping information using the repository
-                _shopRepo.SaveShippingInfo(firstname, lastname, phone, address, city, province, postalcode, country, email);
-
-                // Success message
-                returnMessage = "Shipping information updated successfully!";
+                if (model.IsSaveAddress)
+                {
+                    _shopRepo.SaveShippingInfo(model);
+                    returnMessage = "Shipping information updated successfully!";
+                }
             }
             catch (Exception ex)
             {
-                // Handle any errors during saving
                 returnMessage = "An error occurred while updating the shipping information: " + ex.Message;
             }
 
-            // Redirect to the Index action with the return message as a query parameter
             return RedirectToAction("Index", new { message = returnMessage });
         }
 
