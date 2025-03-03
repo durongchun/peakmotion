@@ -1,6 +1,25 @@
 @model IEnumerable<peakmotion.ViewModels.ProductVM>
 
+    <div id="product-count-tracker" class="full-width">
+        @if (Model.Count() < 1) { <p>No matching products</p> }
+            else {
+            <p><span>@Model.Count()</span> results</p>
+            }
+    </div>
+
     @foreach (var saleItem in Model)
     {
     <partial name="Product/_ProductCard" for="@saleItem" />
     }
+
+
+    <style>
+        .full-width {
+            display: flex;
+            justify-content: end;
+            color: var(--color-text);
+            opacity: 0.7;
+            grid-column: 1 / -1;
+            margin-bottom: -2rem;
+        }
+    </style>

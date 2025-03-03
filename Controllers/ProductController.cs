@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Diagnostics;
+
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
 using peakmotion.Models;
-using peakmotion.Data;
+
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+
 
 namespace peakmotion.Controllers;
 public class ProductController : Controller
@@ -25,7 +26,7 @@ public class ProductController : Controller
 
     public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
     {
-        Console.WriteLine($"Filtering products: {searchString}");
+        Console.WriteLine($"Searching products: {searchString}");
         Console.WriteLine($"Sorting products: {sortedByString}");
 
         // Find all the category types the product can be filtered by
@@ -46,7 +47,7 @@ public class ProductController : Controller
         // Display the options for sorting the products
         List<string> sortByOptions = new List<string> { "Featured", "A-Z", "Z-A", "Price: High to Low", "Price: Low to High" };
         string sortByChoice = sortByOptions[0];
-        if (!String.IsNullOrEmpty(sortedByString) && sortByOptions.Contains(sortedByString))
+        if (!string.IsNullOrEmpty(sortedByString) && sortByOptions.Contains(sortedByString))
         {
             // Check the sort by option is valid before querying with it
             sortByChoice = sortedByString;
@@ -72,11 +73,22 @@ public class ProductController : Controller
     }
 
     // For sorting and rendering partial view for new product order
-    public ActionResult SortProducts(string? sortedByString = "A-Z")
+    public ActionResult SortProducts(string sortedByString = "A-Z")
     {
         Console.WriteLine($"Sorting products: {sortedByString}");
 
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
+        return PartialView("Product/_ProductList", products);
+    }
+
+    // For sorting and rendering partial view for new product order
+    public ActionResult FilterProducts(string sortedByString, string numbers)
+    {
+        Console.WriteLine($"Sorting products: {sortedByString}");
+        Console.WriteLine($"Filtering products by category id: {numbers}");
+
+        int[] selectedIds = JsonSerializer.Deserialize<int[]>(numbers);
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedIds);
         return PartialView("Product/_ProductList", products);
     }
 

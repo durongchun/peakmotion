@@ -9,41 +9,34 @@
 </div>
 <div class="product-list-summary mx-7">
     <div class="product-count-line">
-        <p>@Model.Products.Count() results</p>
+        <!-- <p><span>@Model.Products.Count()</span> results</p> -->
         <div class="sortedby-container">
             <p>Sorted by</p>
-            <select name="sortBy" class="form-select" onchange="onChangeSortBy(this)" asp-for="@Model.SortByChoice"
-                asp-items="@ViewBag.SortOptions">
+            <select id="product-list-sortby" name="sortBy" class="form-select" onchange="onChangeSortBy(this)"
+                asp-for="@Model.SortByChoice" asp-items="@ViewBag.SortOptions">
             </select>
         </div>
     </div>
     <div class="product-filter-active">
-        @{
-        @* todo *@
-        var filter = new List<string> { "Women", "Tops" };
-            }
-            @foreach (var item in filter)
-            {
-            <!-- <partial name="Filter/_FilteredButton" for="@item" /> -->
-            }
 
-            <!-- <div class="product-filter-tags">
+        <!-- nice to have -->
+        <!-- <div class="product-filter-tags">
                 <button class="filter-tag" data-filter-name="" data-filter-property="">
                     @Model<span id="">x</span>
                 </button>
             </div> -->
+        <!-- <button class="filter-clear">Clear All</button> -->
 
-            <!-- <button class="filter-clear">Clear All</button> -->
-            @if (!string.IsNullOrEmpty(ViewBag.SearchString))
-            {
-            <div class="">Search: @ViewBag.SearchString
-                <a asp-controller="Product" asp-action="Index">X</a>
-            </div>
-            }
+        @if (!string.IsNullOrEmpty(ViewBag.SearchString))
+        {
+        <div class="">Search: @ViewBag.SearchString
+            <a asp-controller="Product" asp-action="Index">X</a>
+        </div>
+        }
     </div>
 </div>
 <section class="product-container mx-7">
-    <aside class="product-filters">
+    <form class="product-filters" id="product-filters-form">
         @foreach (var filterType in Model.Filters)
         {
         <div class="product-filter-group">
@@ -62,22 +55,22 @@
             {
             <div class="product-filter-values">
                 @{
-                string value = myTI.ToTitleCase(filterValue.Categoryname);
+                string key = filterType.Key;
+                string value = filterValue.Categoryname;
+                string valueMod = myTI.ToTitleCase(value);
                 }
-                @* todo: filter *@
-                <input type="checkbox" name="@filterType.Key-@filterValue" />
-                <label for="@filterType.Key-@filterValue">@value</label>
+                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" />
+                <label for="@key:@value">@valueMod</label>
             </div>
             }
         </div>
         }
-    </aside>
+    </form>
 
 
     <section class="product-grid" id="product-list-rerender">
         <!-- For re-rendering the list -->
         @Html.Partial("Product/_ProductList", Model.Products)
-        <!-- <partial name="Product/_ProductList" for="@Model.Products" /> -->
     </section>
 
 </section>
@@ -91,7 +84,7 @@
             type: 'GET',
             data: { sortedByString: selected },
             success: function (response) {
-                $('#product-list-rerender').html(response);  // Update only the items list
+                $('#product-list-rerender').html(response);
             },
             error: function (xhr, status, error) {
                 console.log(xhr?.responseText);
@@ -99,10 +92,52 @@
         });
     }
 
-    function onFilterProducts(e) {
-        const selected = e.value;
+    function onFilterSelected() {
+
+        const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
+        const allSelectedIds = [];
+        allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
+        // console.log(allSelectedIds);
+
+        const sortedBy = document.querySelector('#product-list-sortby')?.value;
+        // console.log(sortedBy)
+
+        $.ajax({
+            url: '@Url.Action("FilterProducts", "Product")',
+            type: 'GET',
+            data: {
+                sortedByString: sortedBy,
+                numbers: JSON.stringify(allSelectedIds)  // force to string type to detect on backend
+            },
+            success: function (response) {
+                $('#product-list-rerender').html(response);  // Update only the items list
+            },
+            error: function (xhr, status, error) {
+                console.log(xhr, status, error);
+            }
+        });
+    }
+
+    function listenForFilter() {
+        const checkboxes = document.querySelectorAll('#product-filters-form input[type="checkbox"]');
+
+        // Add an event listener for the 'change' event
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                // debugging 
+                const parts = this.name.split(":");
+                const category = parts[0];
+                const value = parts[1];
+                const categoryId = this.value;
+                console.log(`${category} - ${value} => ${this.checked} ... ${categoryId}`);
+                // calling api
+                onFilterSelected();
+            });
+        });
 
     }
+
+    listenForFilter()
 
 </script>
 
@@ -253,9 +288,9 @@
         gap: 1.5rem;
         padding: 1rem 0rem;
 
-        div:first-child {
+        &>div:first-child {
             display: flex;
-            justify-content: space-between;
+            justify-content: end;
             gap: 1rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.3);
         }

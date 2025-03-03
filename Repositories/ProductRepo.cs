@@ -427,11 +427,36 @@ namespace peakmotion.Repositories
                     sortedProducts = products.OrderBy(p => p.Price).ToList();
                     break;
             }
+            Console.WriteLine($"DEBUG: Sorted Product Count: {sortedProducts.Count()}");
             return sortedProducts;
         }
 
+        public IEnumerable<ProductVM> filterProducts(IEnumerable<ProductVM> products, int[] categoryIds)
+        {
+            foreach (var number in categoryIds) Console.WriteLine($"DEBUG: Filtering by category id: {number}");
+
+            IEnumerable<ProductVM> filteredProducts = products.Where(p =>
+            {
+                var catIDs = p.Categories.Select(c => c.Pkcategoryid);
+                var isInFilter = false;
+                foreach (var id in catIDs)
+                {
+                    if (categoryIds.Contains(id))
+                    {
+                        isInFilter = true;
+                        break;
+                    }
+                }
+                return isInFilter;
+            }
+            );
+
+            Console.WriteLine($"DEBUG: Filtered Product Count: {filteredProducts.Count()}");
+            return filteredProducts;
+        }
+
         // Get all products in the database.
-        public IEnumerable<ProductVM> GetAllProducts(string? sortBy = "")
+        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "", int[]? categoryIds = null)
         {
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
@@ -462,10 +487,20 @@ namespace peakmotion.Repositories
                                                         .Where(pi => pi.Fkproductid == p.Pkproductid && pi.Isprimary)
                                                         .FirstOrDefault()
                                               };
-            Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
+
             // Check if products should be sorted
-            if (String.IsNullOrEmpty(sortBy)) return products;
-            return sortProducts(products, sortBy);
+            IEnumerable<ProductVM> sortedProducts = Enumerable.Empty<ProductVM>();
+            if (!String.IsNullOrEmpty(sortBy))
+            {
+                sortedProducts = sortProducts(products, sortBy);
+            }
+
+            // Check if products need to be filtered
+            if (categoryIds != null && categoryIds.Count() > 0) return filterProducts(sortedProducts, categoryIds);
+
+            // Return all the products
+            Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
+            return products;
         }
 
         public SelectList GetSortBySelectList(List<string> sortByOptions)
