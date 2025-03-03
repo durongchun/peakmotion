@@ -83,8 +83,66 @@ namespace peakmotion.Repositories
             _context.SaveChanges();
         }
 
+        public void SaveOrderInfo(PayPalConfirmationVM model)
+        {
+            // Save confirmation to the database
+            var newOrder = new Order
+            {
+                Pptransactionid = model.TransactionId,
+                Orderdate = DateOnly.FromDateTime(DateTime.Now),
+                Fkpmuserid = 1,
+
+            };
+
+            _context.Orders.Add(newOrder);
+            _context.SaveChanges();
+
+        }
+
+        public void SaveOrderStatus(PayPalConfirmationVM model)
+        {
+            var orderStatus = "Pending";
+            var orderId = GetOrderId(model);
+
+            var newOrderStatus = new OrderStatus
+            {
+                Orderstate = orderStatus,
+                Fkorderid = orderId,
+
+            };
+
+            _context.OrderStatuses.Add(newOrderStatus);
+            _context.SaveChanges();
+
+        }
+
+        public void SaveOrderProduct(PayPalConfirmationVM model)
+        {
+            var newOrderProduct = new OrderProduct
+            {
+                Qty = 1,
+                Unitprice = 40.00m,
+                Fkorderid = GetOrderId(model),
+                Fkproductid = 1,
+
+            };
+
+            _context.OrderProducts.Add(newOrderProduct);
+            _context.SaveChanges();
+
+        }
+
+        public int GetOrderId(PayPalConfirmationVM model)
+        {
+            return _context.Orders
+                        .Where(order => order.Pptransactionid == model.TransactionId)
+                        .Select(order => order.Pkorderid)
+                        .FirstOrDefault();
+        }
 
     }
+
+
 
 
 }

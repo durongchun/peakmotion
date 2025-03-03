@@ -60,19 +60,6 @@ namespace peakmotion.Controllers
         [HttpGet("Home/PayPalConfirmation")]
         public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
         {
-            // Save confirmation to the database
-            var newPayPalConfirmation = new Order
-            {
-                Pptransactionid = model.TransactionId,
-                Orderdate = DateOnly.FromDateTime(DateTime.Now),
-                Fkpmuserid = 1,
-
-            };
-
-            _context.Orders.Add(newPayPalConfirmation);
-            _context.SaveChanges();
-
-            // Prepare ViewModel for the view
             var modelVM = new PayPalConfirmationVM
             {
                 TransactionId = model.TransactionId,
@@ -81,6 +68,10 @@ namespace peakmotion.Controllers
                 Email = model.Email,
                 Currency = model.Currency,
             };
+
+            _shopRepo.SaveOrderInfo(model);
+            _shopRepo.SaveOrderStatus(model);
+            _shopRepo.SaveOrderProduct(model);
 
             _cookieRepo.RemoveCookie("ProductData");
 
