@@ -34,13 +34,15 @@ public class ProductController : Controller
     /// <param name="searchString">This is a nullable default parameter</param>
     /// <param name="sortedByString">This is an default parameter</param>
     /// <returns></returns>
-    public IActionResult Index(string? searchString = null, string sortedByString = "A-Z")
+    public IActionResult Index(string? searchString = null, string sortedByString = "A-Z", string topbarFilter = "")
     {
         Console.WriteLine($"DEBUG: PRODUCT LIST (search: {searchString})");
         Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (filter: {topbarFilter})");
 
-        // Find all the products (assuming sort by is valid)
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
+        // Filter by topbar selection + sort (assuming sortby is valid)
+        List<int>? selectedId = _productRepo.GetFilterCategoryId(topbarFilter);
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedId);
 
         // Filter by search query
         if (!string.IsNullOrEmpty(searchString))
@@ -57,62 +59,43 @@ public class ProductController : Controller
             SortOptions = _productRepo.GetSortBySelectList(),
             SortByChoice = sortedByString // if doesn't match in the list - default to A-Z on frontend
         };
-        ViewBag.PageTitle = "All Products";
-        return View(data);
-    }
-
-    /// <summary>
-    ///     This is used from the topbar
-    /// </summary>
-    /// <param name="topBarFilter"></param>
-    /// <returns></returns>
-    [HttpGet("/Product/{topBarFilter}")]
-    public IActionResult Index(string topBarFilter)
-    {
-        Console.WriteLine($"DEBUG: PRODUCT LIST (filter: {topBarFilter})");
-
-        // Filter product
-        List<int>? selectedId = _productRepo.GetFilterCategoryId(topBarFilter);
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts("A-Z", selectedId);
-
-        // Build response
-        CategoriesProductsVM data = new CategoriesProductsVM
+        // Set the page title/breadcrum
+        switch (topbarFilter)
         {
-            Products = products,
-            Filters = _productRepo.CreateDictionaryOfCategories(),
-            SortOptions = _productRepo.GetSortBySelectList(),
-            SortByChoice = "A-Z"
-        };
-        ViewBag.PageTitle = topBarFilter;
+            case "Men": ViewBag.PageTitle = "Men"; break;
+            case "Women": ViewBag.PageTitle = "Women"; break;
+            case "Equipment": ViewBag.PageTitle = "Equipment"; break;
+            default: ViewBag.PageTitle = "All Products"; break;
+        }
         return View(data);
     }
 
     /// <summary>
-    ///     For sorting and rendering partial view for new product order
-    /// </summary>
-    /// <param name="sortedByString"></param>
-    /// <returns></returns>
-    public ActionResult SortProducts(string sortedByString = "A-Z")
-    {
-        Console.WriteLine($"Sorting products: {sortedByString}");
-
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
-        return PartialView("Product/_ProductList", products);
-    }
-
-    /// <summary>
-    ///     For filtering and rendering partial view for new product order
+    ///     For PARTIAL RELOADS
+    ///         - sorting 
+    ///         - filtering
+    ///         - rendering partial view for new product order
     /// </summary>
     /// <param name="sortedByString"></param>
     /// <param name="numbers"></param>
     /// <returns></returns>
-    public ActionResult FilterProducts(string sortedByString, string numbers)
+    public ActionResult FilterAndSort(string sortedBy, string numbers)
     {
-        Console.WriteLine($"Sorting products: {sortedByString}");
+        Console.WriteLine($"Sorting products: {sortedBy}");
         Console.WriteLine($"Filtering products by category id: {numbers}");
 
-        List<int> selectedIds = JsonSerializer.Deserialize<List<int>>(numbers);
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedIds);
+        List<int> selectedIds = new List<int>();
+        try
+        {
+            selectedIds = JsonSerializer.Deserialize<List<int>>(numbers);
+            Console.WriteLine($"Filtering products by category id: {string.Join(", ", selectedIds)}");
+        }
+        catch (System.Exception)
+        {
+            Console.WriteLine($"JSON ERROR: Could not convert filter id to string: {numbers}");
+        }
+
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedBy, selectedIds);
         return PartialView("Product/_ProductList", products);
     }
 

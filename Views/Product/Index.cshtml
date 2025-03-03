@@ -1,17 +1,16 @@
 ﻿@using System.Globalization
 @model peakmotion.ViewModels.CategoriesProductsVM
 
+
 <div class="product-list-header">
     <div class="product-list-header-overlay px-7">
 
         @{
         var breadcrumb = @ViewBag.PageTitle;
         var title = @ViewBag.PageTitle;
-        if (@ViewBag.PageTitle == "Male" || @ViewBag.PageTitle == "Female") {
-        title += " Apparel";
-        } else if (@ViewBag.PageTitle == "Gear")
-        title = "Equipment";
-        breadcrumb = "Equipment";
+        if (@ViewBag.PageTitle == "Men" || @ViewBag.PageTitle == "Women") {
+        title += "'s Apparel";
+        }
         }
         <p>Home / @breadcrumb</p>
         <h2>@title</h2>
@@ -87,12 +86,23 @@
 
 <script>
 
+
+
+
     function onChangeSortBy(e) {
-        const selected = e.value;
+        // filter
+        const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
+        const allSelectedIds = [];
+        allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
+        // sort
+        const sortedBy = e.value;
         $.ajax({
-            url: '@Url.Action("SortProducts", "Product")',
+            url: '@Url.RouteUrl("FilterSortProductRoute")',
             type: 'GET',
-            data: { sortedByString: selected },
+            data: {
+                sortedBy: sortedBy,
+                numbers: JSON.stringify(allSelectedIds)  // force to string type to detect on backend
+            },
             success: function (response) {
                 $('#product-list-rerender').html(response);
             },
@@ -103,20 +113,18 @@
     }
 
     function onFilterSelected() {
-
+        // filter
         const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
         const allSelectedIds = [];
         allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
-        // console.log(allSelectedIds);
 
+        // sort
         const sortedBy = document.querySelector('#product-list-sortby')?.value;
-        // console.log(sortedBy)
-
         $.ajax({
-            url: '@Url.Action("FilterProducts", "Product")',
+            url: '@Url.RouteUrl("FilterSortProductRoute")',
             type: 'GET',
             data: {
-                sortedByString: sortedBy,
+                sortedBy: sortedBy,
                 numbers: JSON.stringify(allSelectedIds)  // force to string type to detect on backend
             },
             success: function (response) {
