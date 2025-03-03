@@ -3,31 +3,25 @@
 <div class="product">
 
     <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
-
-
         <img src="images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image" width="200">
         <p class="product-name">@Model.ProductName</p>
-    </a>
-    <p class="product-desc">@Model.Description</p>
-    @{
+        <p class="product-desc">@Model.Description</p>
+        @{
         var hasDiscount = @Model.Discount != null && @Model.Discount.Description != "free shipping";
         var newPrice = @Model.Discount?.Amount / 100 * @Model.Price;
         var newPriceStr = newPrice?.ToString("C");
-    }
-    @if (@hasDiscount)
-    {
+        }
+        @if (@hasDiscount)
+        {
         <p class="product-price">
             <span class="product-discounted">@Model.Price</span>
             @newPriceStr
         </p>
-    }
-    else
-    {
+        }
+        else
+        {
         <p class="product-price">@Model.Price.ToString("C")</p>
-    }
-
-    <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
-
+        }
     </a>
     </br>
 
@@ -47,20 +41,30 @@
 </div>
 
 <style>
+    a {
+        text-decoration: none;
+        color: var(--colour-text)
+    }
+
     .product:hover {
         opacity: 0.8;
     }
 
+
+
     .product {
+        display: flex;
+        flex-direction: column;
         padding: 0.25rem;
-        width: 200px;
         overflow: hidden;
 
         img {
-            width: 200px;
+            width: 100%;
             height: 300px;
             padding-bottom: 0.5rem;
+            object-fit: cover;
         }
+
 
         p {
             margin: 0%;
@@ -93,5 +97,9 @@
             text-decoration: line-through;
             opacity: 0.5;
         }
+    }
+
+    .product>a {
+        flex: 1
     }
 </style>

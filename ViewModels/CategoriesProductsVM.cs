@@ -11,6 +11,9 @@ namespace peakmotion.ViewModels
         // Category list and values
         public Dictionary<string, List<Category>> Filters { get; set; } = new Dictionary<string, List<Category>>();
 
+        // default is featured
+        public string SortByChoice { get; set; } = "Featured";
+
     }
 }
 

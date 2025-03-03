@@ -2,6 +2,7 @@
 using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace peakmotion.Repositories
 {
@@ -422,10 +423,59 @@ namespace peakmotion.Repositories
             }
         }
 
+        public IEnumerable<ProductVM> sortProducts(IEnumerable<ProductVM> products, string? sortBy = "")
+        {
+            Console.WriteLine($"Sorting results by {sortBy}");
 
+            IEnumerable<ProductVM> sortedProducts = products;
+            switch (sortBy)
+            {
+                case "Featured":
+                    sortedProducts = products.OrderBy(p => p.IsFeatured).ToList();
+                    break;
+                case "A-Z":
+                    sortedProducts = products.OrderBy(p => p.ProductName).ToList();
+                    break;
+                case "Z-A":
+                    sortedProducts = products.OrderByDescending(p => p.ProductName).ToList();
+                    break;
+                case "Price: High to Low":
+                    sortedProducts = products.OrderByDescending(p => p.Price).ToList();
+                    break;
+                case "Price: Low to High":
+                    sortedProducts = products.OrderBy(p => p.Price).ToList();
+                    break;
+            }
+            Console.WriteLine($"DEBUG: Sorted Product Count: {sortedProducts.Count()}");
+            return sortedProducts;
+        }
+
+        public IEnumerable<ProductVM> filterProducts(IEnumerable<ProductVM> products, int[] categoryIds)
+        {
+            foreach (var number in categoryIds) Console.WriteLine($"DEBUG: Filtering by category id: {number}");
+
+            IEnumerable<ProductVM> filteredProducts = products.Where(p =>
+            {
+                var catIDs = p.Categories.Select(c => c.Pkcategoryid);
+                var isInFilter = false;
+                foreach (var id in catIDs)
+                {
+                    if (categoryIds.Contains(id))
+                    {
+                        isInFilter = true;
+                        break;
+                    }
+                }
+                return isInFilter;
+            }
+            );
+
+            Console.WriteLine($"DEBUG: Filtered Product Count: {filteredProducts.Count()}");
+            return filteredProducts;
+        }
 
         // Get all products in the database.
-        public IEnumerable<ProductVM> GetAllProducts()
+        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", int[]? categoryIds = null)
         {
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
@@ -456,10 +506,28 @@ namespace peakmotion.Repositories
                                                         .Where(pi => pi.Fkproductid == p.Pkproductid && pi.Isprimary)
                                                         .FirstOrDefault()
                                               };
-            Console.WriteLine($"DEBUG: Product Count: {products.Count()}");
-            return products;
+
+            // Sort products
+            IEnumerable<ProductVM> sortedProducts = sortedProducts = sortProducts(products, sortBy);
+
+            // Check if products need to be filtered
+            if (categoryIds != null && categoryIds.Count() > 0) return filterProducts(sortedProducts, categoryIds);
+
+            // Return all the products
+            Console.WriteLine($"DEBUG: Product Count: {sortedProducts.Count()}");
+            return sortedProducts;
         }
 
+        public SelectList GetSortBySelectList(List<string> sortByOptions)
+        {
+            List<SelectListItem> result = sortByOptions.Select(x => new SelectListItem
+            {
+                Value = x,
+                Text = x
+            }).ToList();
+
+            return new SelectList(result, "Value", "Text");
+        }
     }
 }
 
