@@ -3,99 +3,22 @@
 @using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
 
-<head>
-    <link rel="stylesheet" href="~/css/search.css" />
-</head>
+    <head>
+        <link rel="stylesheet" href="~/css/search.css" />
+    </head>
 
-@* Left Side *@
-@* <ul class="navbar-nav flex-grow-1">
-    @if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") ||
+    @* Left Side *@
+    <ul class="navbar-nav d-flex align-items-center w-100 justify-content-between">
+        @if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") ||
         User.IsInRole("Employee")))
-    {
+        {
         <h2 class="text-header pl-4 text-light">Employee Portal</h2>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment Page</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="PayPalConfirmation">Order
-                Confirmation Page</a>
-        </li>
+        }
+        else
+        {
 
-        
-        <li class="nav-item">
-            <a class="btn-image" id="searchToggle">
-                <img src="~/images/search.svg" alt="Search Button" width="32" height="32">
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <form asp-controller="Product" asp-action="Index" method="get" class="search-form" id="searchForm">
-                <input type="text" name="searchString" placeholder="Search Here" class="form-control"
-                    value="@ViewBag.SearchFilter" />
-                <button type="button" class="search-close" id="searchClose">×</button>
-            </form>
-        </li>
-    }
-</ul> *@
-
-@* sort of works *@
-@* <ul class="navbar-nav flex-grow-1 d-flex align-items-center">
-    @if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") ||
-        User.IsInRole("Employee")))
-    {
-        <h2 class="text-header pl-4 text-light">Employee Portal</h2>
-    }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment Page</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="PayPalConfirmation">Order
-                Confirmation Page</a>
-        </li>
-
-        
-<div class="d-flex ms-auto align-items-center">
-    <li class="nav-item">
-        <a class="btn-image" id="searchToggle">
-            <img src="~/images/search.svg" alt="Search Button" width="32" height="32">
-        </a>
-    </li>
-    <li class="nav-item">
-        <form asp-controller="Product" asp-action="Index" method="get" class="search-form" id="searchForm">
-            <input type="text" name="searchString" placeholder="Search Here" class="form-control"
-                value="@ViewBag.SearchFilter" />
-            <button type="button" class="search-close" id="searchClose">×</button>
-        </form>
-    </li>
-</div>
-}
-</ul> *@
-
-<ul class="navbar-nav d-flex align-items-center w-100 justify-content-between">
-    @if (SignInManager.IsSignedIn(User) && @Model.OnAdminPortal == true && (User.IsInRole("Admin") ||
-        User.IsInRole("Employee")))
-    {
-        <h2 class="text-header pl-4 text-light">Employee Portal</h2>
-    }
-    else
-    {
-        @* Wrap menu links in a single `<li>` to prevent Razor errors *@
         <li class="d-flex align-items-center gap-3">
             <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="Index">Payment Page</a>
-            <a class="nav-link text-light" asp-area="" asp-controller="Shop" asp-action="PayPalConfirmation">Order
-                Confirmation Page</a>
         </li>
 
         @* Search button aligned to the right *@
@@ -109,7 +32,7 @@
                 <button type="button" class="search-close" id="searchClose">×</button>
             </form>
         </li>
-    }
-</ul>
+        }
+    </ul>
 
-<script src="~/js/search.js"></script>
+    <script src="~/js/search.js"></script>
