@@ -3,6 +3,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Build.Exceptions;
 
 namespace peakmotion.Repositories
 {
@@ -80,6 +81,35 @@ namespace peakmotion.Repositories
             return _context.Categories
                            .Where(c => c.Categorygroup == categoryGroup)
                            .ToList();
+        }
+
+        public int? GetCategoryIdByName(string name)
+        {
+            Category? category = _context.Categories
+                           .Where(c => c.Categoryname == name)
+                           .FirstOrDefault();
+
+            return category?.Pkcategoryid;
+        }
+
+        public Dictionary<string, List<Category>> CreateDictionaryOfCategories()
+        {
+            // Find all the category types the product can be filtered by
+            var genderChoices = FetchCategoryDropdown("gender");
+            var colorChoices = FetchCategoryDropdown("color");
+            var sizeChoices = FetchCategoryDropdown("size");
+            var categoryChoices = FetchCategoryDropdown("category");
+            var propertyChoices = FetchCategoryDropdown("property");
+            Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
+            {
+                { "category", categoryChoices },
+                { "property", propertyChoices },
+                { "gender", genderChoices },
+                { "color", colorChoices },
+                { "size", sizeChoices }
+            };
+
+            return filterTypes;
         }
 
         public Product? FetchProductFromDb(int id)
@@ -426,12 +456,15 @@ namespace peakmotion.Repositories
                 case "Price: Low to High":
                     sortedProducts = products.OrderBy(p => p.Price).ToList();
                     break;
+                default:
+                    sortedProducts = products.OrderBy(p => p.ProductName).ToList();
+                    break;
             }
             Console.WriteLine($"DEBUG: Sorted Product Count: {sortedProducts.Count()}");
             return sortedProducts;
         }
 
-        public IEnumerable<ProductVM> filterProducts(IEnumerable<ProductVM> products, int[] categoryIds)
+        public IEnumerable<ProductVM> filterProducts(IEnumerable<ProductVM> products, List<int> categoryIds)
         {
             foreach (var number in categoryIds) Console.WriteLine($"DEBUG: Filtering by category id: {number}");
 
@@ -456,7 +489,7 @@ namespace peakmotion.Repositories
         }
 
         // Get all products in the database.
-        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", int[]? categoryIds = null)
+        public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", List<int>? categoryIds = null)
         {
             IEnumerable<ProductVM> products = from p in _context.Products
                                               join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
@@ -499,8 +532,9 @@ namespace peakmotion.Repositories
             return sortedProducts;
         }
 
-        public SelectList GetSortBySelectList(List<string> sortByOptions)
+        public SelectList GetSortBySelectList()
         {
+            List<string> sortByOptions = new List<string> { "Featured", "A-Z", "Z-A", "Price: High to Low", "Price: Low to High" };
             List<SelectListItem> result = sortByOptions.Select(x => new SelectListItem
             {
                 Value = x,

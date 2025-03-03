@@ -30,45 +30,29 @@ public class ProductController : Controller
         Console.WriteLine($"Sorting products: {sortedByString}");
 
         // Find all the category types the product can be filtered by
-        var genderChoices = _productRepo.FetchCategoryDropdown("gender");
-        var colorChoices = _productRepo.FetchCategoryDropdown("color");
-        var sizeChoices = _productRepo.FetchCategoryDropdown("size");
-        var categoryChoices = _productRepo.FetchCategoryDropdown("category");
-        var propertyChoices = _productRepo.FetchCategoryDropdown("property");
-        Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
-        {
-            { "category", categoryChoices },
-            { "property", propertyChoices },
-            { "gender", genderChoices },
-            { "color", colorChoices },
-            { "size", sizeChoices }
-        };
+        Dictionary<string, List<Category>> filterTypes = _productRepo.CreateDictionaryOfCategories();
 
         // Display the options for sorting the products
-        List<string> sortByOptions = new List<string> { "Featured", "A-Z", "Z-A", "Price: High to Low", "Price: Low to High" };
-        string sortByChoice = sortByOptions[0];
-        if (!string.IsNullOrEmpty(sortedByString) && sortByOptions.Contains(sortedByString))
-        {
-            // Check the sort by option is valid before querying with it
-            sortByChoice = sortedByString;
-        }
-        ViewBag.SortOptions = _productRepo.GetSortBySelectList(sortByOptions);
+        ViewBag.SortOptions = _productRepo.GetSortBySelectList();
 
-        // Find all the products
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortByChoice);
+        // Find all the products (assuming sort by is valid)
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
+
+        // Filter by search query
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
         }
+        ViewBag.SearchString = searchString;
 
         // Build the response
-        ViewBag.SearchString = searchString;
         CategoriesProductsVM data = new CategoriesProductsVM
         {
             Products = products,
             Filters = filterTypes,
-            SortByChoice = sortByChoice
+            SortByChoice = sortedByString
         };
+        ViewBag.PageTitle = "All Products";
         return View(data);
     }
 
@@ -87,9 +71,44 @@ public class ProductController : Controller
         Console.WriteLine($"Sorting products: {sortedByString}");
         Console.WriteLine($"Filtering products by category id: {numbers}");
 
-        int[] selectedIds = JsonSerializer.Deserialize<int[]>(numbers);
+        List<int> selectedIds = JsonSerializer.Deserialize<List<int>>(numbers);
         IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedIds);
         return PartialView("Product/_ProductList", products);
+    }
+
+    [HttpGet("/Product/{topBarFilter}")]
+    // This is used from the topbar
+    public IActionResult Index(string topBarFilter)
+    {
+        Console.WriteLine($"Products from topbar: {topBarFilter}");
+
+        // Verify the name is allowed
+        string[] allowedFilters = ["Male", "Female", "Gear"];
+        List<int> selectedId = [];
+        if (allowedFilters.Contains(topBarFilter))
+        {
+            int? id = _productRepo.GetCategoryIdByName(topBarFilter);
+            if (id != null) selectedId.Add((int)id);
+        }
+
+        // Find all the category types the product can be filtered by
+        Dictionary<string, List<Category>> filterTypes = _productRepo.CreateDictionaryOfCategories();
+
+        // Display the options for sorting the products
+        ViewBag.SortOptions = _productRepo.GetSortBySelectList();
+
+        // Filter product
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts("A-Z", selectedId);
+
+        // Build response
+        CategoriesProductsVM data = new CategoriesProductsVM
+        {
+            Products = products,
+            Filters = filterTypes,
+            SortByChoice = "A-Z"
+        };
+        ViewBag.PageTitle = topBarFilter;
+        return View(data);
     }
 
     // GET: /Product/Details/5

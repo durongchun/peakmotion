@@ -18,7 +18,20 @@
         {
 
         <li class="d-flex align-items-center gap-3">
-            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-topBarFilter="">Products</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-topBarFilter="Male">Male</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-topBarFilter="Female">Female</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-topBarFilter="Gear">Equipment</a>
         </li>
 
         @* Search button aligned to the right *@
