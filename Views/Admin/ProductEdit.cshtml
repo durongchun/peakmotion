@@ -175,7 +175,7 @@
 
                 </div>
                 <div id="primaryImage">
-                    <img src="https://picsum.photos/500/700?random=1" alt="primary image">
+                    <img src="@Model.ImageUrl" alt="primary image">
                 </div>
             </div>
               <!-- Image Upload Section -->
@@ -187,7 +187,6 @@
                             <th scope="col">Name</th>
                             <th scope="col">Path</th>
                             <th scope="col">Is Primary?</th>
-                            <th scope="col">Sort Order No.</th>
                             <th scope="col">Thumbnail</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -199,7 +198,6 @@
                                 <td>@image.Alttag</td>
                                 <td>@image.Url</td>
                                 <td>@(image.Isprimary ? "Yes" : "No")</td>
-                                <td></td>
                                 <td><img src="@image.Url" alt="" width="50" /></td>
                                 <td class="deleteButt">
                                     <i class="fas fa-trash-alt deletePhoto"></i>
@@ -211,10 +209,9 @@
                     <!-- Editable Input Row -->
                     <tfoot>
                         <tr id="addPhotoRow" style="display: none;">
-                            <td><input type="text" id="photoName" name="photoName" placeholder="Enter Name" class="form-control" /></td>
+                            <td><input type="text" id="photoName" name="PhotoName" placeholder="Enter Name" class="form-control" /></td>
                             <td><input type="file" id="imageFile" name="NewImages" class="form-control" multiple/></td>
-                            <td><input type="checkbox" id="isPrimary" name="isPrimary" /></td>
-                            <td><input type="number" id="sortOrder" name="sortOrder" placeholder="Sort Order" class="form-control" /></td>
+                            <td><input type="checkbox" id="isPrimary" asp-for="Isprimary" /></td>
                             <td><span id="thumbnailPreview"></span></td>
                             <td class="deleteButt"><i class="fas fa-trash-alt deletePhoto"></i></td>
                         </tr>
@@ -226,7 +223,7 @@
             </section>
 
             <!-- SAVE & DELETE Buttons -->
-            <div id="saveDelete">
+            <div id="save">
                 <button type="submit" class="">SAVE PRODUCT</button>
             </div>
         </form>
