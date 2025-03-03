@@ -2,12 +2,14 @@ using peakmotion.Data;
 using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
-namespace peakmotion.Repositories{
-    public class OrderRepo{
-         private readonly PeakmotionContext _context;
+namespace peakmotion.Repositories
+{
+    public class OrderRepo
+    {
+        private readonly PeakmotionContext _context;
         public OrderRepo(PeakmotionContext context)
         {
-        _context = context;
+            _context = context;
         }
         public async Task<Order> CreateOrder(Order order)
         {
@@ -32,7 +34,7 @@ namespace peakmotion.Repositories{
         public async Task DeleteOrder(int orderId)
         {
             var order = await GetOrderById(orderId);
-            if(order != null)
+            if (order != null)
             {
                 _context.Orders.Remove(order);
                 await _context.SaveChangesAsync();
@@ -53,23 +55,23 @@ namespace peakmotion.Repositories{
         }
 
 
-         // Get all orders for a specific user
-    public async Task<List<Order>> GetOrdersByUserId(string userId)
-    {
-        return await _context.Orders
-            .Where(o => o.Fkpmuserid.ToString() == userId)           
-            .ToListAsync();
-    }
+        // Get all orders for a specific user
+        public async Task<List<Order>> GetOrdersByUserId(int userId)
+        {
+            return await _context.Orders
+                .Where(o => o.Fkpmuserid == userId)
+                .ToListAsync();
+        }
 
-    // Get a specific order for a user by order ID
-    public async Task<Order> GetOrderByIdForUser(int orderId, string userId)
-    {
-        return await _context.Orders
-            .Where(o => o.Fkpmuserid.ToString() == userId && o.Pkorderid == orderId)
-            .Include(o => o.OrderStatuses)
-            .Include(o => o.OrderProducts)
-            .ThenInclude(op => op.Fkproduct)
-            .FirstOrDefaultAsync();
-    }
+        // Get a specific order for a user by order ID
+        public async Task<Order> GetOrderByIdForUser(int orderId, string userId)
+        {
+            return await _context.Orders
+                .Where(o => o.Fkpmuserid.ToString() == userId && o.Pkorderid == orderId)
+                .Include(o => o.OrderStatuses)
+                .Include(o => o.OrderProducts)
+                .ThenInclude(op => op.Fkproduct)
+                .FirstOrDefaultAsync();
+        }
     }
 }

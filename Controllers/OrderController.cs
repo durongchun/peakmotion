@@ -26,27 +26,27 @@ public class OrderController : Controller
     }
 
     public async Task<IActionResult> Index()
-{
-    var userId = _userManager.GetUserId(User);
-    var orders = await _orderRepo.GetOrdersByUserId(userId);
-
-    // Map Order models to OrderVM
-    var orderVM = orders.Select(order => new OrderVM
     {
-        OrderDate = order.Orderdate,  
-        OrderId = order.Pkorderid,   
-    }).ToList();
+        var userId = 1;
+        var orders = await _orderRepo.GetOrdersByUserId(userId);
 
-    return View(orderVM);  // Pass the OrderVM list to the view
-}
-
-
-   public async Task<IActionResult> DetailsOrderId(int id)
+        // Map Order models to OrderVM
+        var orderVM = orders.Select(order => new OrderVM
         {
-            var userId = _userManager.GetUserId(User);
-            var order = await _orderRepo.GetOrderByIdForUser(id, userId);
+            OrderDate = order.Orderdate,
+            OrderId = order.Pkorderid,
+        }).ToList();
 
-            if (order == null)
+        return View(orderVM);  // Pass the OrderVM list to the view
+    }
+
+
+    public async Task<IActionResult> DetailsOrderId(int id)
+    {
+        var userId = _userManager.GetUserId(User);
+        var order = await _orderRepo.GetOrderByIdForUser(id, userId);
+
+        if (order == null)
         {
             return NotFound();
         }

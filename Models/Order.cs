@@ -13,7 +13,7 @@ public partial class Order
 
     public DateOnly? Deliverydate { get; set; }
 
-    public long Pptransactionid { get; set; }
+    public string Pptransactionid { get; set; }
 
     public int? Fkpmuserid { get; set; }
 
