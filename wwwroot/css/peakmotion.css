@@ -57,6 +57,16 @@ body {
   gap: 1.5rem;
 }
 
+footer {
+  background-color: #354952;
+  color: white;
+}
+
+footer .container {
+  max-width: 960px;
+  margin: 1rem auto;
+}
+
 button.btn,
 a.btn {
   font-size: 1rem;

@@ -2,12 +2,14 @@
   background-color: #3f6c29;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem;
   font-family: 'Montserrat', serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
   text-align: center;
+  white-space: nowrap;
+  width: min-content;
 }
 
 .home-btn-dark-green {
@@ -20,6 +22,7 @@
   font-weight: 500;
   font-style: normal;
   text-align: center;
+  white-space: nowrap;
 }
 
 .home-btn-outline {
@@ -32,8 +35,9 @@
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-  width: 100%;
   text-align: center;
+  white-space: nowrap;
+  width: 100%;
 }
 
 .homepageheader {
@@ -43,10 +47,12 @@
   object-fit: cover;
 }
 
-.container {
+.home-container {
   display: flex;
   flex-direction: column;
   gap: 5rem;
+  max-width: 960px;
+  margin: auto;
 }
 
 .bestseller {
@@ -68,6 +74,7 @@
 }
 
 .bestseller button {
+  width: 100%;
 }
 
 .home-categories {
@@ -107,7 +114,13 @@
 .shopwear {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4rem;
+  gap: 2rem;
+}
+
+.shopwear > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .shopwear img {
@@ -119,6 +132,10 @@
 }
 
 .shopwear button {
+}
+
+.instagram {
+  margin-bottom: 5rem;
 }
 
 .popular,
