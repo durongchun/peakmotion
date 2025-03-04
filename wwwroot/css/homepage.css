@@ -10,12 +10,18 @@
   text-align: center;
   white-space: nowrap;
   width: min-content;
+  transition: all 0.25s ease;
+}
+
+.home-btn:hover {
+  background-color: #183227;
+  transition: all 0.25s ease;
 }
 
 .home-btn-dark-green {
   background-color: #183227;
+  border: solid 2dvh #183227;
   color: white;
-  border: none;
   padding: 0.5rem 1rem;
   font-family: 'Montserrat', serif;
   font-optical-sizing: auto;
@@ -23,6 +29,13 @@
   font-style: normal;
   text-align: center;
   white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.home-btn-dark-green:hover {
+  background-color: transparent;
+  border: solid 2px white;
+  transition: all 0.25s ease;
 }
 
 .home-btn-outline {
@@ -38,6 +51,14 @@
   text-align: center;
   white-space: nowrap;
   width: 100%;
+  transition: all 0.25s ease;
+}
+
+.home-btn-outline:hover {
+  background-color: white;
+  border: solid 3px #183227;
+  color: #183227;
+  transition: all 0.25s ease;
 }
 
 .homepageheader {
@@ -88,6 +109,20 @@
   flex-direction: column;
   gap: 1rem;
   justify-content: space-between;
+  border: 1px solid white;
+  transition: all 0.25s ease;
+  padding: 0.25rem;
+}
+
+.home-categories > div:hover {
+  opacity: 0.8;
+  border: 1px solid grey;
+  transition: all 0.25s ease;
+}
+
+.shopwear a > img:hover {
+  opacity: 0.8;
+  transition: all 0.25s ease;
 }
 
 .home-categories a {
@@ -155,6 +190,7 @@
   object-fit: cover;
   object-position: top;
   max-height: 500px;
+  transition: all 0.25s ease;
 }
 
 .shopwear div:nth-of-type(2) img {
