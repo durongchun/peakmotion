@@ -6,6 +6,7 @@ using peakmotion.Models;
 
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace peakmotion.Controllers;
@@ -24,75 +25,90 @@ public class ProductController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
+    /// <summary>
+    ///     This is used to get all products and for the search results
+    ///     Note: 
+    ///         - 0 parameters - use both default values
+    ///         - 1 parameter - values goes to searchString
+    /// </summary>
+    /// <param name="searchString">This is a nullable default parameter</param>
+    /// <param name="sortedByString">This is an default parameter</param>
+    /// <param name="category">This is a value from the topbar</param>
+    /// <returns></returns>
+    public IActionResult Index(string? searchString = null, string sortedByString = "A-Z", string category = "")
     {
-        Console.WriteLine($"Searching products: {searchString}");
-        Console.WriteLine($"Sorting products: {sortedByString}");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (search: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (category: {category})");
 
-        // Find all the category types the product can be filtered by
-        var genderChoices = _productRepo.FetchCategoryDropdown("gender");
-        var colorChoices = _productRepo.FetchCategoryDropdown("color");
-        var sizeChoices = _productRepo.FetchCategoryDropdown("size");
-        var categoryChoices = _productRepo.FetchCategoryDropdown("category");
-        var propertyChoices = _productRepo.FetchCategoryDropdown("property");
-        Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
-        {
-            { "category", categoryChoices },
-            { "property", propertyChoices },
-            { "gender", genderChoices },
-            { "color", colorChoices },
-            { "size", sizeChoices }
-        };
+        // Filter by topbar selection + sort (assuming sortby is valid)
+        int? categoryId = _productRepo.GetFilterCategoryId(category);
+        Console.WriteLine($"DEBUG: PRODUCT LIST (category id: {categoryId})");
+        List<int>? filterId = categoryId.HasValue ? new List<int> { (int)categoryId } : null;
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, filterId);
 
-        // Display the options for sorting the products
-        List<string> sortByOptions = new List<string> { "Featured", "A-Z", "Z-A", "Price: High to Low", "Price: Low to High" };
-        string sortByChoice = sortByOptions[0];
-        if (!string.IsNullOrEmpty(sortedByString) && sortByOptions.Contains(sortedByString))
-        {
-            // Check the sort by option is valid before querying with it
-            sortByChoice = sortedByString;
-        }
-        ViewBag.SortOptions = _productRepo.GetSortBySelectList(sortByOptions);
-
-        // Find all the products
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortByChoice);
+        // Filter by search query
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
         }
+        ViewBag.SearchString = searchString;
 
         // Build the response
-        ViewBag.SearchString = searchString;
         CategoriesProductsVM data = new CategoriesProductsVM
         {
             Products = products,
-            Filters = filterTypes,
-            SortByChoice = sortByChoice
+            Filters = _productRepo.CreateDictionaryOfCategories(),
+            FilterId = categoryId,
+            SortOptions = _productRepo.GetSortBySelectList(),
+            SortByChoice = sortedByString // if doesn't match in the list - default to A-Z on frontend
         };
+        // Set the page title/breadcrum
+        switch (category)
+        {
+            case "Men": ViewBag.PageTitle = "Men"; break;
+            case "Women": ViewBag.PageTitle = "Women"; break;
+            case "Equipment": ViewBag.PageTitle = "Equipment"; break;
+            default: ViewBag.PageTitle = "All Products"; break;
+        }
         return View(data);
     }
 
-    // For sorting and rendering partial view for new product order
-    public ActionResult SortProducts(string sortedByString = "A-Z")
+    /// <summary>
+    ///     For PARTIAL RELOADS
+    ///         - sorting 
+    ///         - filtering
+    ///         - rendering partial view for new product order
+    /// </summary>
+    /// <param name="sortedByString"></param>
+    /// <param name="numbers"></param>
+    /// <returns></returns>
+    public ActionResult FilterAndSort(string sortedBy, string numbers)
     {
-        Console.WriteLine($"Sorting products: {sortedByString}");
-
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString);
-        return PartialView("Product/_ProductList", products);
-    }
-
-    // For sorting and rendering partial view for new product order
-    public ActionResult FilterProducts(string sortedByString, string numbers)
-    {
-        Console.WriteLine($"Sorting products: {sortedByString}");
+        Console.WriteLine($"Sorting products: {sortedBy}");
         Console.WriteLine($"Filtering products by category id: {numbers}");
 
-        int[] selectedIds = JsonSerializer.Deserialize<int[]>(numbers);
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, selectedIds);
+        List<int> selectedIds = new List<int>();
+        try
+        {
+            selectedIds = JsonSerializer.Deserialize<List<int>>(numbers);
+            Console.WriteLine($"Filtering products by category id: {string.Join(", ", selectedIds)}");
+        }
+        catch (System.Exception)
+        {
+            Console.WriteLine($"JSON ERROR: Could not convert filter id to string: {numbers}");
+        }
+
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedBy, selectedIds);
         return PartialView("Product/_ProductList", products);
     }
 
-    // GET: /Product/Details/5
+    /// <summary>
+    ///     Products details
+    ///     ie. GET: /Product/Details/5
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IActionResult> Details(int id)
     {
         // Fetch the product with the given ID from the database
@@ -123,6 +139,4 @@ public class ProductController : Controller
         // Return the view with the view model
         return View(productDetailViewModel);
     }
-
-
 }

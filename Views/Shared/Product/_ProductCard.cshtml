@@ -2,8 +2,8 @@
 
 <div class="product">
 
-    <a asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
-        <img src="images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image" width="200">
+    <a class="product-link" asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
+        <img class="product-image" src="/images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image">
         <p class="product-name">@Model.ProductName</p>
         <p class="product-desc">@Model.Description</p>
         @{
@@ -23,24 +23,46 @@
         <p class="product-price">@Model.Price.ToString("C")</p>
         }
     </a>
-    </br>
-
-    <!-- for wishlist btn  -->
-    <form asp-controller="Wishlist" asp-action="Add" method="post">
-        <input type="hidden" name="productId" value="@Model.ID" />
-        <button type="submit" class="add-to-wishlist-btn">Add to Wishlist</button>
-    </form>
-
-
-    <!-- for cart btn  -->
-    <form asp-controller="Cart" asp-action="Add" method="post">
-        <input type="hidden" name="productId" value="@Model.ID" />
-        <button type="submit" class="add-to-wishlist-btn">Add to Cart</button>
-    </form>
+    <div class="product-actions">
+        <!-- for wishlist btn  -->
+        <form asp-controller="Wishlist" asp-action="Add" method="post">
+            <input type="hidden" name="productId" value="@Model.ID" />
+            <button type="submit" class="add-to-wishlist-btn btn-image"><img src="~/images/heart_colour.svg"
+                    alt="Wishlist Button" width="32" height="32"></button>
+        </form>
+        <!-- for cart btn  -->
+        <form asp-controller="Cart" asp-action="Add" method="post">
+            <input type="hidden" name="productId" value="@Model.ID" />
+            <button type="submit" class="add-to-wishlist-btn btn-image"><img src="~/images/cart_colour.svg"
+                    alt="Checkout Button" width="32" height="32"></button>
+        </form>
+    </div>
 
 </div>
 
-<style>
+<style scoped>
+    .product-link {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-actions {
+        display: flex;
+        justify-content: right;
+    }
+
+    .btn-image {
+        border: none;
+        background: transparent;
+        opacity: 1;
+        transition: all 0.25s ease;
+    }
+
+    .btn-image:hover {
+        opacity: 0.5;
+        transition: all 0.25s ease;
+    }
+
     a {
         text-decoration: none;
         color: var(--colour-text)
@@ -48,23 +70,24 @@
 
     .product:hover {
         opacity: 0.8;
+        border: 1px solid grey;
+        transition: all 0.25s ease;
     }
-
-
 
     .product {
         display: flex;
         flex-direction: column;
         padding: 0.25rem;
         overflow: hidden;
+        border: 1px solid white;
+        transition: all 0.25s ease;
 
-        img {
+        .product-image {
             width: 100%;
             height: 300px;
             padding-bottom: 0.5rem;
             object-fit: cover;
         }
-
 
         p {
             margin: 0%;
@@ -73,29 +96,39 @@
         .product-name {
             font-size: 1rem;
             font-weight: 700;
-            line-clamp: 2;
-            text-overflow: ellipsis;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .product-desc {
             font-size: 0.8rem;
             opacity: 0.7;
-            line-clamp: 2;
-            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .product-price {
-            margin-top: 0.25rem;
+            display: flex;
+            flex: 1;
+            justify-content: end;
+            align-items: end;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
             text-align: right;
-            font-size: 0.8rem;
-            opacity: 0.7;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            color: var(--colour-primary);
         }
 
         .product-discounted {
             text-decoration: line-through;
             opacity: 0.5;
+            margin-right: 0.25rem;
         }
     }
 
