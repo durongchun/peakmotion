@@ -50,28 +50,23 @@
                     <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Equipment"
                         class="home-btn-outline">EQUIPMENT</a>
                 </div>
-
             </div>
 
-            <div class="bg-dark">
-                <p>Mar 14-21</p>
-                <div class="d-flex flex-row align-items-center gap-3">
-                    <h1 class="discount">25</h1>
-                    <div class="d-flex flex-column">
-                        <h3>%</h3>
-                        <h3>OFF</h3>
-                    </div>
-
+            <div class="home-sale">
+                <div class="bg-dark">
+                    <p class="sale-date">Mar 14-21</p>
+                    <img src="~/images/home/sale-desc.png" alt="">
                 </div>
-
-                <h1>EQUIPMENT</h1>
+                <div>
+                    <img src="~/images/home/sale-equipment.jpg" alt="">
+                </div>
             </div>
 
             <div class="shopwear">
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Men">
-                        <img src="~/images/menwear.jpg" alt="">
+                        <img src="~/images/home/menswear.jpg" alt="">
                     </a>
                     <a asp-controller="Product" asp-action="Index" asp-route-category="Men" class="home-btn">SHOP
                         MENSWEAR</a>
@@ -79,7 +74,7 @@
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Women">
-                        <img src="~/images/womenwear.jpg" alt="">
+                        <img src="~/images/home/womenswear.jpg" alt="">
                     </a>
                     <button asp-controller="Product" asp-action="Index" asp-route-category="Women" class="home-btn">SHOP
                         WOMENSWEAR</button>
