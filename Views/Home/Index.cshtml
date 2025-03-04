@@ -10,7 +10,7 @@
         <div class="container">
 
             <div class="bestseller">
-                <h2 class="text-center">GEAR UP. <br> ADVENTRURE AWAITS!</h2>
+                <h2 class="text-center">GEAR UP.<br> ADVENTURE AWAITS!</h2>
                 <button class="home-btn">SHOP BEST SELLERS</button>
             </div>
 
@@ -19,33 +19,36 @@
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Top">
                         <img src="~/images/tops.jpg" alt="">
-                        <button class="home-btn-outline">TOPS</button>
-                    </a>
 
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Top"
+                        class="home-btn-outline">TOPS</a>
                 </div>
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Bottom">
                         <img src="~/images/bottoms.jpg" alt="">
-                        <button class="home-btn-outline">BOTTOMS</button>
-                    </a>
 
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Bottom"
+                        class="home-btn-outline">BOTTOMS</a>
                 </div>
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Accessories">
                         <img src="~/images/accessories.jpg" alt="">
-                        <button class="home-btn-outline">ACCESSORIES</button>
-                    </a>
 
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Accessories"
+                        class="home-btn-outline">ACCESSORIES</a>
                 </div>
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Equipment">
                         <img src="~/images/equipments.jpg" alt="">
-                        <button class="home-btn-outline">EQUIPMENT</button>
                     </a>
-
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Equipment"
+                        class="home-btn-outline">EQUIPMENT</a>
                 </div>
 
             </div>
@@ -69,17 +72,17 @@
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Men">
                         <img src="~/images/menwear.jpg" alt="">
-                        <button class="home-btn">SHOP MENSWEAR</button>
                     </a>
-
+                    <a asp-controller="Product" asp-action="Index" asp-route-category="Men" class="home-btn">SHOP
+                        MENSWEAR</a>
                 </div>
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Women">
                         <img src="~/images/womenwear.jpg" alt="">
-                        <button class="home-btn">SHOP WOMENSWEAR</button>
                     </a>
-
+                    <button asp-controller="Product" asp-action="Index" asp-route-category="Women" class="home-btn">SHOP
+                        WOMENSWEAR</button>
                 </div>
             </div>
 
@@ -108,9 +111,9 @@
             </div>
 
 
-            <div>
+            <div class="instagram">
                 <h2 class="peak">#PEAKMOTION</h2>
-                <div class="peakmotion">
+                <div class="instagram-images">
                     <img src="~/images/instagram1.jpg" alt="">
                     <img src="~/images/instagram2.jpg" alt="">
                     <img src="~/images/instagram3.jpg" alt="">

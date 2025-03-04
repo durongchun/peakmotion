@@ -7,6 +7,7 @@
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
+  text-align: center;
 }
 
 .home-btn-outline {
@@ -19,6 +20,8 @@
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
+  width: 100%;
+  text-align: center;
 }
 
 .homepageheader {
@@ -62,12 +65,22 @@
 }
 
 .home-categories > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
 }
 
-.home-categories img,
-.popular img {
+.home-categories a {
+  max-width: 100%; /* Ensure that the subparent does not grow larger than the grid cell */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis;
+}
+
+.home-categories img {
   width: 100%;
-  height: 200px;
+  height: auto;
   object-fit: cover;
   object-position: top;
 }
@@ -97,11 +110,21 @@
 }
 
 .popular,
-.peakmotion {
+.instagram-images {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  overflow: hidden;
+  gap: 1rem;
 }
+
+.popular {
+  height: 480px; /* hide rows below the first */
+}
+
+.instagram-images {
+  height: calc(200px + 1rem); /* hide rows below the first */
+}
+
 .member img {
   width: 100%;
   max-height: 350px;
@@ -124,7 +147,7 @@
 .hidden {
   display: none !important;
 }
-.peakmotion img {
+.instagram-images img {
   width: 100%;
   aspect-ratio: 3 / 3;
   object-fit: cover;
