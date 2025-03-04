@@ -32,8 +32,9 @@
 .categories img,
 .popular img {
   width: 100%;
-  max-height: 200px;
+  max-height: 300px;
   object-fit: cover;
+  object-position: top;
 }
 
 .bg-dark {
@@ -49,14 +50,15 @@
 .shopwear {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 3rem;
+  gap: 4rem;
 }
 
-.shopwear img,
-.peakmotion img {
+.shopwear img {
   width: 100%;
-  max-height: 300px;
+  aspect-ratio: 2/3;
   object-fit: cover;
+  object-position: top;
+  max-height: 500px;
 }
 
 .shopwear button {
@@ -92,4 +94,12 @@
 }
 .hidden {
   display: none !important;
+}
+.peakmotion img {
+  width: 100%;
+  aspect-ratio: 3 / 3;
+  object-fit: cover;
+}
+.discount {
+  font-size: 100px;
 }
