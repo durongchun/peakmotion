@@ -3,17 +3,6 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     var quantities = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
-    decimal subtotal = 0;
-    foreach (var p in Model)
-    {
-        if (quantities.ContainsKey(p.ID))
-        {
-            subtotal += p.Price * quantities[p.ID];
-        }
-    }
-    decimal shipping = 0;
-    decimal tax = 0;
-    decimal total = subtotal + shipping + tax;
 }
 
 <link rel="stylesheet" href="~/css/cart.css" />
@@ -43,21 +32,17 @@
             </p>
         }
     </div>
+
     <div class="order-summary">
         <h3>ORDER SUMMARY</h3>
-        <div class="order-summary-row">
-            <span>Subtotal</span><span>@subtotal.ToString("C")</span>
-        </div>
-        <div class="order-summary-row">
-            <span>Shipping</span><span>@shipping.ToString("C")</span>
-        </div>
-        <div class="order-summary-row">
-            <span>Tax</span><span>@tax.ToString("C")</span>
-        </div>
-        <div class="order-summary-row order-summary-total">
-            <span>TOTAL</span><span>@total.ToString("C")</span>
-        </div>
-        <!-- Changed from a POST form to a link that goes to Shop/Index -->
-        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary">Proceed to Payment</a>
+
+        <!-- Show the order summary partial (list of products) -->
+        @Html.Partial("_OrderSummaryPartial")
+
+        <!-- Show the payment partial (subtotal, taxes, total) -->
+        @Html.Partial("_PaymentPartial")
+
+        <!-- Proceed to Payment Button: links to Shop/Index -->
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
     </div>
 </div>

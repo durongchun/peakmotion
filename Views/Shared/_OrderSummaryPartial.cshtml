@@ -1,0 +1,52 @@
+﻿@inject peakmotion.Repositories.CookieRepo CookieRepo
+@inject peakmotion.Repositories.ProductRepo ProductRepo
+
+@{
+    // Decode the cart cookie
+    var encodedCartString = CookieRepo.GetCookie("cart");
+    var cartDict = new Dictionary<int, int>();
+
+    if (!string.IsNullOrEmpty(encodedCartString))
+    {
+        var decoded = System.Net.WebUtility.UrlDecode(encodedCartString);
+        foreach (var segment in decoded.Split(","))
+        {
+            var parts = segment.Split(":");
+            if (parts.Length == 2)
+            {
+                if (int.TryParse(parts[0], out int productId) &&
+                    int.TryParse(parts[1], out int qty))
+                {
+                    cartDict[productId] = qty;
+                }
+            }
+        }
+    }
+}
+
+<div class="order-summary-list">
+    <h5>Items in Your Cart</h5>
+    <ul class="list-group">
+        @if (cartDict.Count == 0)
+        {
+            <li class="list-group-item">No items in cart.</li>
+        }
+        else
+        {
+            foreach (var kvp in cartDict)
+            {
+                var productId = kvp.Key;
+                var qty = kvp.Value;
+                var productVM = ProductRepo.GetProduct(productId);
+                if (productVM != null)
+                {
+                    var lineTotal = productVM.Price * qty;
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>@productVM.ProductName (Qty: @qty)</span>
+                        <span>@lineTotal.ToString("C")</span>
+                    </li>
+                }
+            }
+        }
+    </ul>
+</div>
