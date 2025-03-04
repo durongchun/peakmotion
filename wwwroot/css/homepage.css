@@ -17,6 +17,12 @@
   gap: 1rem;
   align-items: center;
   font-family: "Bebas Neue";
+  margin-top: -35px;
+  position: relative;
+  background: white;
+  padding: 20px;
+  left: 35%;
+  width: 20rem;
 }
 
 .bestseller button {
@@ -43,8 +49,9 @@
 
 .categories button {
   background-color: white;
-  border: solid 2px green;
+  border: solid 3px green;
   color: green;
+  font-weight: 600;
 }
 
 .shopwear {
