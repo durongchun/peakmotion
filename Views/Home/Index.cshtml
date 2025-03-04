@@ -11,38 +11,41 @@
 
             <div class="bestseller">
                 <h2 class="text-center">GEAR UP. <br> ADVENTRURE AWAITS!</h2>
-                <button>SHOP BEST SELLERS</button>
+                <button class="home-btn">SHOP BEST SELLERS</button>
             </div>
 
-            <div class="categories">
-                <div >
-                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Top">
+            <div class="home-categories">
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Top">
                         <img src="~/images/tops.jpg" alt="">
-                        <button>TOPS</button>
+                        <button class="home-btn-outline">TOPS</button>
                     </a>
-                    
+
                 </div>
                 <div>
-                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Bottom">
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Bottom">
                         <img src="~/images/bottoms.jpg" alt="">
-                        <button>BOTTOMS</button>
+                        <button class="home-btn-outline">BOTTOMS</button>
                     </a>
-                    
+
                 </div>
                 <div>
                     <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
                         asp-route-category="Accessories">
                         <img src="~/images/accessories.jpg" alt="">
-                        <button>ACCESSORIES</button>
+                        <button class="home-btn-outline">ACCESSORIES</button>
                     </a>
-                    
+
                 </div>
                 <div>
-                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Equipment">
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Equipment">
                         <img src="~/images/equipments.jpg" alt="">
-                        <button>EQUIPMENT</button>
+                        <button class="home-btn-outline">EQUIPMENT</button>
                     </a>
-                    
+
                 </div>
 
             </div>
@@ -55,26 +58,28 @@
                         <h3>%</h3>
                         <h3>OFF</h3>
                     </div>
-                    
+
                 </div>
-                
+
                 <h1>EQUIPMENT</h1>
             </div>
 
             <div class="shopwear">
                 <div>
-                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Men">
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Men">
                         <img src="~/images/menwear.jpg" alt="">
-                        <button>SHOP MENSWEAR</button>
+                        <button class="home-btn">SHOP MENSWEAR</button>
                     </a>
-                   
+
                 </div>
                 <div>
-                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Women">
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Women">
                         <img src="~/images/womenwear.jpg" alt="">
-                        <button>SHOP WOMENSWEAR</button>
+                        <button class="home-btn">SHOP WOMENSWEAR</button>
                     </a>
-                    
+
                 </div>
             </div>
 
@@ -85,16 +90,16 @@
                         <img src="~/images/left-arrow.svg" alt="prev">
                         <img src="~/images/right-arrow.svg" alt="next">
                     </div>
-                    
+
                 </div>
-               
+
                 <div class="popular">
-                     @foreach (var featuredItem in Model.Select((item, index) => new { item, index }))
-                        {
-                            <div class="product-card @(featuredItem.index >= 5 ? "d-none" : "")">
-                                <partial name="Product/_ProductCard" for="@featuredItem.item" />
-                            </div>
-                        }
+                    @foreach (var featuredItem in Model.Select((item, index) => new { item, index }))
+                    {
+                    <div class="product-card @(featuredItem.index >= 5 ? " d-none" : "" )">
+                        <partial name="Product/_ProductCard" for="@featuredItem.item" />
+                    </div>
+                    }
                 </div>
             </div>
 
@@ -119,59 +124,58 @@
 
     </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let currentIndex = 0;
-        const itemsPerPage = 5;
-        const productCards = document.querySelectorAll(".product-card");
-        const totalItems = productCards.length;
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let currentIndex = 0;
+            const itemsPerPage = 5;
+            const productCards = document.querySelectorAll(".product-card");
+            const totalItems = productCards.length;
 
-        const prevBtn = document.querySelector('img[alt="prev"]');
-        const nextBtn = document.querySelector('img[alt="next"]');
+            const prevBtn = document.querySelector('img[alt="prev"]');
+            const nextBtn = document.querySelector('img[alt="next"]');
 
-        function updateVisibility() {
-            productCards.forEach((product, index) => {
-                if (index >= currentIndex && index < currentIndex + itemsPerPage) {
-                    product.classList.remove("d-none"); // Show items
+            function updateVisibility() {
+                productCards.forEach((product, index) => {
+                    if (index >= currentIndex && index < currentIndex + itemsPerPage) {
+                        product.classList.remove("d-none"); // Show items
+                    } else {
+                        product.classList.add("d-none"); // Hide items
+                    }
+                });
+
+                // Disable prev button if at the beginning
+                if (currentIndex === 0) {
+                    prevBtn.style.opacity = "0.5"; // Grey out
+                    prevBtn.style.pointerEvents = "none"; // Disable click
                 } else {
-                    product.classList.add("d-none"); // Hide items
+                    prevBtn.style.opacity = "1";
+                    prevBtn.style.pointerEvents = "auto";
+                }
+
+                // Disable next button if at the end
+                if (currentIndex + itemsPerPage >= totalItems) {
+                    nextBtn.style.opacity = "0.5"; // Grey out
+                    nextBtn.style.pointerEvents = "none"; // Disable click
+                } else {
+                    nextBtn.style.opacity = "1";
+                    nextBtn.style.pointerEvents = "auto";
+                }
+            }
+
+            nextBtn.addEventListener("click", function () {
+                if (currentIndex + itemsPerPage < totalItems) {
+                    currentIndex += itemsPerPage;
+                    updateVisibility();
                 }
             });
 
-            // Disable prev button if at the beginning
-            if (currentIndex === 0) {
-                prevBtn.style.opacity = "0.5"; // Grey out
-                prevBtn.style.pointerEvents = "none"; // Disable click
-            } else {
-                prevBtn.style.opacity = "1";
-                prevBtn.style.pointerEvents = "auto";
-            }
+            prevBtn.addEventListener("click", function () {
+                if (currentIndex > 0) {
+                    currentIndex -= itemsPerPage;
+                    updateVisibility();
+                }
+            });
 
-            // Disable next button if at the end
-            if (currentIndex + itemsPerPage >= totalItems) {
-                nextBtn.style.opacity = "0.5"; // Grey out
-                nextBtn.style.pointerEvents = "none"; // Disable click
-            } else {
-                nextBtn.style.opacity = "1";
-                nextBtn.style.pointerEvents = "auto";
-            }
-        }
-
-        nextBtn.addEventListener("click", function () {
-            if (currentIndex + itemsPerPage < totalItems) {
-                currentIndex += itemsPerPage;
-                updateVisibility();
-            }
+            updateVisibility();
         });
-
-        prevBtn.addEventListener("click", function () {
-            if (currentIndex > 0) {
-                currentIndex -= itemsPerPage;
-                updateVisibility();
-            }
-        });
-
-        updateVisibility();
-    });
-</script>
-
+    </script>
