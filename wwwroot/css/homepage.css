@@ -207,13 +207,18 @@
 .popular,
 .instagram-images {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   overflow: hidden;
   gap: 1rem;
 }
 
 .popular {
-  height: 480px; /* hide rows below the first */
+  overflow: scroll;
+  grid-auto-flow: column;
+}
+
+.popular::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
 }
 
 .instagram-images {
