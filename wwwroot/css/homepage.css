@@ -42,6 +42,8 @@
 
 .categories button {
   background-color: white;
+  border: solid 2px green;
+  color: green;
 }
 
 .shopwear {
@@ -79,7 +81,15 @@
 .peak {
   font-family: "Bebas Neue";
 }
+.populartitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
 
-button {
-  border-radius: 5px;
+.populartitle img {
+  max-width: 2rem;
+}
+.hidden {
+  display: none !important;
 }
