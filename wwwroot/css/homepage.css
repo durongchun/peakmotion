@@ -19,7 +19,8 @@
   font-family: "Bebas Neue";
 }
 
-.bg-dark {
+.bestseller button {
+  background-color: green;
   color: white;
 }
 
@@ -33,6 +34,10 @@
   width: 100%;
   max-height: 200px;
   object-fit: cover;
+}
+
+.bg-dark {
+  color: white;
 }
 
 .categories button {
@@ -53,7 +58,7 @@
 }
 
 .shopwear button {
-  background-color: black;
+  background-color: green;
   color: white;
   width: 50%;
 }
@@ -68,6 +73,7 @@
   width: 100%;
   max-height: 350px;
   object-fit: cover;
+  background-color: green;
 }
 
 .peak {
