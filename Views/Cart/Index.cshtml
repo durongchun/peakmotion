@@ -57,8 +57,7 @@
         <div class="order-summary-row order-summary-total">
             <span>TOTAL</span><span>@total.ToString("C")</span>
         </div>
-        <form method="post" asp-controller="Shop" asp-action="Checkout">
-            <button type="submit" class="btn btn-primary">Proceed to Payment</button>
-        </form>
+        <!-- Changed from a POST form to a link that goes to Shop/Index -->
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary">Proceed to Payment</a>
     </div>
 </div>
