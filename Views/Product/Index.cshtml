@@ -1,10 +1,19 @@
 ﻿@using System.Globalization
 @model peakmotion.ViewModels.CategoriesProductsVM
 
+
 <div class="product-list-header">
     <div class="product-list-header-overlay px-7">
-        <p>Home / Womens</p>
-        <h2>Women's Apparel</h2>
+
+        @{
+        var breadcrumb = @ViewBag.PageTitle;
+        var title = @ViewBag.PageTitle;
+        if (@ViewBag.PageTitle == "Men" || @ViewBag.PageTitle == "Women") {
+        title += "'s Apparel";
+        }
+        }
+        <p>Home / @breadcrumb</p>
+        <h2>@title</h2>
     </div>
 </div>
 <div class="product-list-summary mx-7">
@@ -13,7 +22,7 @@
         <div class="sortedby-container">
             <p>Sorted by</p>
             <select id="product-list-sortby" name="sortBy" class="form-select" onchange="onChangeSortBy(this)"
-                asp-for="@Model.SortByChoice" asp-items="@ViewBag.SortOptions">
+                asp-for="@Model.SortByChoice" asp-items="@Model.SortOptions">
             </select>
         </div>
     </div>
@@ -54,8 +63,14 @@
                 string key = filterType.Key;
                 string value = filterValue.Categoryname;
                 string valueMod = myTI.ToTitleCase(value);
+
+                string isSelected = "";
+                if (Model.FilterId != null) {
+                isSelected = Model.FilterId.ToString() == filterValue.Pkcategoryid.ToString() ? "checked" : "";
                 }
-                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" />
+                }
+                <input type="checkbox" name="@key:@value" value="@filterValue.Pkcategoryid" @isSelected
+                    onchange='@((isSelected != "") ? "resetToAllProducts(this)" : "")' />
                 <label for="@key:@value">@valueMod</label>
             </div>
             }
@@ -73,12 +88,27 @@
 
 <script>
 
+    function resetToAllProducts() {
+        console.log('Resetting to all products')
+        // Redirecting to another page
+        location.href = '/Product'
+    }
+
+
     function onChangeSortBy(e) {
-        const selected = e.value;
+        // filter
+        const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
+        const allSelectedIds = [];
+        allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
+        // sort
+        const sortedBy = e.value;
         $.ajax({
-            url: '@Url.Action("SortProducts", "Product")',
+            url: '@Url.RouteUrl("FilterSortProductRoute")',
             type: 'GET',
-            data: { sortedByString: selected },
+            data: {
+                sortedBy: sortedBy,
+                numbers: JSON.stringify(allSelectedIds)  // force to string type to detect on backend
+            },
             success: function (response) {
                 $('#product-list-rerender').html(response);
             },
@@ -89,20 +119,17 @@
     }
 
     function onFilterSelected() {
-
+        // filter
         const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
         const allSelectedIds = [];
         allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
-        // console.log(allSelectedIds);
-
+        // sort
         const sortedBy = document.querySelector('#product-list-sortby')?.value;
-        // console.log(sortedBy)
-
         $.ajax({
-            url: '@Url.Action("FilterProducts", "Product")',
+            url: '@Url.RouteUrl("FilterSortProductRoute")',
             type: 'GET',
             data: {
-                sortedByString: sortedBy,
+                sortedBy: sortedBy,
                 numbers: JSON.stringify(allSelectedIds)  // force to string type to detect on backend
             },
             success: function (response) {
@@ -130,7 +157,6 @@
                 onFilterSelected();
             });
         });
-
     }
 
     listenForFilter()
@@ -259,7 +285,7 @@
     .product-list-header {
         width: 100%;
         height: 300px;
-        background-image: url("images/pexels-taryn-elliott-4840243.jpg");
+        background-image: url("/images/pexels-taryn-elliott-4840243.jpg");
         background-size: 100% auto;
         background-position: 0% 50%;
         overflow: hidden;
