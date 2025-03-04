@@ -505,6 +505,14 @@ namespace peakmotion.Repositories
             return filteredProducts;
         }
 
+        // Get the top featured products
+        public IEnumerable<ProductVM> GetTopFeaturedProductsBy(int count)
+        {
+            IEnumerable<ProductVM> products = GetAllProducts("A-Z");
+            IEnumerable<ProductVM> featuredProducts = products.Where(p => p.IsFeatured).Take(count);
+            return featuredProducts;
+        }
+
         // Get all products in the database.
         public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", List<int>? categoryIds = null)
         {
@@ -569,7 +577,10 @@ namespace peakmotion.Repositories
             {
                 {"Men", "male"},
                 {"Women", "female"},
-                {"Equipment", "gear"}
+                {"Equipment", "gear"},
+                {"Top", "top"},
+                {"Bottom", "bottom"},
+                {"Accessories", "accessories"}
             };
             string? value;
             if (allowedFilters.TryGetValue(name, out value))
