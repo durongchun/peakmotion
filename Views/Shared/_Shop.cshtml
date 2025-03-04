@@ -138,29 +138,16 @@
 
     </section>
     <section>
-        <h4>ORDER SUMMARY</h4>
-        @foreach (var product in products)
-        {
-            <div>@product</div>
-        }
-        <br>
-        <div id="giftApply">
-            <div class="d-flex flex-column mb-3">
-                <label for="code">Gift Card/Discount Code</label>
-                <input type="text" id="code" name="code" placeholder="Code">
-            </div>
-            <button id="apply">APPLY</button>
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
+
+            <!-- Show the order summary partial (list of products) -->
+            @Html.Partial("_OrderSummaryPartial")
+
+            <!-- Show the payment partial (subtotal, taxes, total) -->
+            @Html.Partial("_PaymentPartial")
+
         </div>
-         <hr style="border: 1px solid #ccc; margin: 20px 0;">
-            <div class="d-flex flex-column mb-3">
-                <p>Subtotal: $@Math.Round(subtotal, 2)</p>
-                <p>GST (5%): $@Math.Round(gstAmount, 2)</p>
-                <p>PST (7%): $@Math.Round(pstAmount, 2)</p>
-                <p>Shipping: Free</p>
-                <p>Tax: $@Math.Round(totalTax, 2)</p>
-            </div>
-         <hr style="border: 1px solid #ccc; margin: 20px 0;">
-         <div><h1>Total: $@Math.Round(totalPrice, 2) CAD</h1></div>
     </section>
 </div>
 
