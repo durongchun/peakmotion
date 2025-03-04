@@ -1,38 +1,48 @@
-@model IEnumerable<peakmotion.ViewModels.CartItemVM>
-
-<link rel="stylesheet" href="~/css/cart.css" />
+@model IEnumerable<peakmotion.ViewModels.ProductVM>
 
 @{
-    // Calculate order summary dynamically
-    decimal subtotal = Model.Sum(x => x.Price * x.CartQuantity);
-    decimal shipping = 0; // if there's a shipping fee, set it here
-    decimal tax = 0;      // if there's a tax calculation, set it here
-    decimal total = subtotal + shipping + tax;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var quantities = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
 }
+
+<link rel="stylesheet" href="~/css/cart.css" />
 
 <div class="cart-page mx-7 my-5">
     <div class="cart-items">
         <h2>MY CART</h2>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-warning">@ViewBag.ErrorMessage</div>
+        }
+
         @Html.Partial("_CartItems", Model)
-        <p class="cart-save-later">
-            Do you want to save it for later?<br />
-            Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!
-        </p>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <p class="cart-save-later">
+                Do you want to save it for later?<br />
+                Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!
+            </p>
+        }
+        else
+        {
+            <p class="cart-save-later">
+                You can save items to <a asp-controller="Wishlist" asp-action="Index">your wishlist</a>.
+            </p>
+        }
     </div>
+
     <div class="order-summary">
         <h3>ORDER SUMMARY</h3>
-        <div class="order-summary-row">
-            <span>Subtotal</span><span>@subtotal.ToString("C")</span>
-        </div>
-        <div class="order-summary-row">
-            <span>Shipping</span><span>@shipping.ToString("C")</span>
-        </div>
-        <div class="order-summary-row">
-            <span>Tax</span><span>@tax.ToString("C")</span>
-        </div>
-        <div class="order-summary-row order-summary-total">
-            <span>TOTAL</span><span>@total.ToString("C")</span>
-        </div>
-        <a href="#" class="checkout-button">CHECKOUT</a>
+
+        <!-- Show the order summary partial (list of products) -->
+        @Html.Partial("_OrderSummaryPartial")
+
+        <!-- Show the payment partial (subtotal, taxes, total) -->
+        @Html.Partial("_PaymentPartial")
+
+        <!-- Proceed to Payment Button: links to Shop/Index -->
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
     </div>
 </div>

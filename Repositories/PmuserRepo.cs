@@ -15,8 +15,13 @@ namespace peakmotion.Repositories
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<PmuserRepo> _logger;
 
-        public PmuserRepo(ILogger<PmuserRepo> logger, PeakmotionContext db, ApplicationDbContext context,
-        UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, IHttpContextAccessor httpContextAccessor)
+        public PmuserRepo(
+            ILogger<PmuserRepo> logger,
+            PeakmotionContext db,
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _db = db;
@@ -25,6 +30,7 @@ namespace peakmotion.Repositories
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
         }
+
         public int? GetUserIdByUserEmail(string email)
         {
             var userId = _db.Pmusers
@@ -98,7 +104,7 @@ namespace peakmotion.Repositories
         /// <param name="roleName"></param>
         /// <param name="userEmail"></param>
         /// <returns></returns>
-        async public Task<(bool, string)> EditUserRole(string roleName, string userEmail)
+        public async Task<(bool, string)> EditUserRole(string roleName, string userEmail)
         {
             (bool deleteRoleResult, string deleteRoleMsg) = await DeleteUserRole(roleName, userEmail);
             if (deleteRoleResult)
@@ -120,7 +126,7 @@ namespace peakmotion.Repositories
         /// <param name="roleName"></param>
         /// <param name="userEmail"></param>
         /// <returns></returns>
-        async public Task<(bool, string)> DeleteUserRole(string roleName, string userEmail)
+        public async Task<(bool, string)> DeleteUserRole(string roleName, string userEmail)
         {
             // Check the current role exists
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
@@ -136,7 +142,7 @@ namespace peakmotion.Repositories
             }
             else
             {
-                return (false, "error, Error finding the current user context"); ;
+                return (false, "error, Error finding the current user context");
             }
 
             // Business Logic: Do not allow the current user to update themselves
@@ -179,6 +185,16 @@ namespace peakmotion.Repositories
         {
             _db.Pmusers.Update(pmUser);
             _db.SaveChanges();
+        }
+
+        /// <summary>
+        ///     Get PMUser by primary key ID (Pkpmuserid)
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Pmuser? GetById(int id)
+        {
+            return _db.Pmusers.FirstOrDefault(pm => pm.Pkpmuserid == id);
         }
     }
 }
