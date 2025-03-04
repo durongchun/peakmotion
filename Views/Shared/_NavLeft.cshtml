@@ -17,7 +17,20 @@
         else
         {
         <li class="d-flex align-items-center gap-3">
-            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index">Products</a>
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-category="">Products</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-category="Men">Men</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-category="Women">Women</a>
+        </li>
+        <li class="d-flex align-items-center gap-3">
+            <a class="nav-link text-light" asp-area="" asp-controller="Product" asp-action="Index"
+                asp-route-category="Equipment">Equipment</a>
         </li>
 
         @* Search button aligned to the right *@
