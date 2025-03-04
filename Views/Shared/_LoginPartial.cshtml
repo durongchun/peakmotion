@@ -3,80 +3,57 @@
 @using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
 
-@if (SignInManager.IsSignedIn(User))
-{
+    @if (SignInManager.IsSignedIn(User))
+    {
     @* Profile and Dropdown *@
     <ul class="nav nav-link p-0">
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-light d-flex flex-row align-items-center gap-1 p-0" 
-                data-toggle="dropdown" 
-                data-bs-toggle="dropdown" 
-                role="button" 
-                aria-haspopup="true" 
-                aria-expanded="false"
-                >
-                <img src="~/images/profile_solid.svg" 
-                    alt="Profile Button"
-                    width="32"
-                    height="32"
-                    />
+            <a class="nav-link dropdown-toggle text-light d-flex flex-row align-items-center gap-1 p-0"
+                data-toggle="dropdown" data-bs-toggle="dropdown" role="button" aria-haspopup="true"
+                aria-expanded="false">
+                <img src="~/images/profile_solid.svg" alt="Profile Button" width="32" height="32" />
             </a>
             <ul class="dropdown-menu dropdown-menu-end my-3">
                 <li class="d-flex flex-column px-3">
                     <p class="m-0 fw-normal">@User.Identity?.Name</p>
                     <p class="m-0 fs-8 opacity-50">@Model.RoleName</p>
                 </li>
-                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item text-dark" 
-                    asp-area="Identity" 
-                    asp-page="/Account/Manage/Index" 
-                    title="Manage"
-                    >
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
                     Edit Profile
                 </a>
-                <a class="dropdown-item text-dark" 
-                    asp-area="" 
-                    asp-controller="User" 
-                    asp-action="Logout"
-                    >
+                <a class="dropdown-item text-dark" asp-area="" asp-controller="User" asp-action="Logout">
                     Logout
                 </a>
-                
-                @if (User.IsInRole("Admin") || User.IsInRole("Employee")) 
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                 {
-                    <div class="dropdown-divider"></div>
-                    @if (@Model.OnAdminPortal == true)
-                    {
-                        <a class="dropdown-item text-dark" 
-                            asp-area="" 
-                            asp-controller="Home" 
-                            asp-action="Index">
-                            Go Back To Main Site
-                        </a>
-                    }
-                    else 
-                    {
-                        <a class="dropdown-item text-dark" 
-                            asp-area="" 
-                            asp-controller="Admin" 
-                            asp-action="Index">
-                            Go Back To Employee Portal
-                        </a>
-                    }   
-                } 
+                <div class="dropdown-divider"></div>
+                @if (@Model.OnAdminPortal == true)
+                {
+                <a class="dropdown-item text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                    Go Back To Main Site
+                </a>
+                }
+                else
+                {
+                <a class="dropdown-item text-dark" asp-area="" asp-controller="Admin" asp-action="Index">
+                    Go Back To Employee Portal
+                </a>
+                }
+                }
             </ul>
         </li>
     </ul>
-    
-}
-else
-{
+
+    }
+    else
+    {
     <li class="nav-item border border-white px-2">
         <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item border border-white px-2">
         <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
     </li>
-}
-</ul>
-
+    }
+    </ul>
