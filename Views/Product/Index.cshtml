@@ -55,10 +55,6 @@
             }
             <div class="product-filter-key">
                 <h5>@name</h5>
-                @* todo: toggle *@
-                <button id="filter-@name" class="pIcon">
-                    <img src="~/images/minus.svg" alt="Condense Filter Options for @name" width="24" height="24" />
-                </button>
             </div>
             @foreach (var filterValue in filterType.Value)
             {
@@ -296,6 +292,7 @@
 
         p,
         h2 {
+            padding-top: 0.25rem;
             color: white;
         }
     }
