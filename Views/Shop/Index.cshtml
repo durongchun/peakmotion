@@ -8,11 +8,8 @@
 
 
 @{
-  
     var totalAmount = ViewData["TotalAmount"] as decimal?;
-
     var formattedTotalAmount = totalAmount.HasValue ? totalAmount.Value.ToString("F2") : "0.00";
-    
 }
 
 

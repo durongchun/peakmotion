@@ -22,15 +22,16 @@ namespace peakmotion.Controllers
             _context = context;
         }
 
-        // Action for displaying products
+
         public IActionResult Index()
         {
             IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
             var shippingInfo = shippings.FirstOrDefault();
 
-            var totalAmount = _shopRepo.getTotalAmount();
+            var totalAmount = _shopRepo.GetTotalAmount();
 
             var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
+
             ViewData["ProductData"] = productData;
             ViewData["TotalAmount"] = totalAmount;
 
@@ -75,9 +76,11 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderInfo(model);
             _shopRepo.SaveOrderStatus(model);
             _shopRepo.SaveOrderProduct(model);
+            _shopRepo.UpdateProductStock();
 
             _cookieRepo.RemoveCookie("ProductData");
             _cookieRepo.RemoveCookie("cart");
+
 
             return View(modelVM);
         }

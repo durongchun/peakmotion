@@ -126,7 +126,7 @@ namespace peakmotion.Repositories
         {
             var products = _cookieRepo.GetProductsFromCookie();
 
-            foreach (var product in products)  // Loop through all products
+            foreach (var product in products)
             {
                 var newOrderProduct = new OrderProduct
                 {
@@ -151,7 +151,7 @@ namespace peakmotion.Repositories
                         .FirstOrDefault();
         }
 
-        public decimal getTotalAmount()
+        public decimal GetTotalAmount()
         {
             var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
 
@@ -172,10 +172,30 @@ namespace peakmotion.Repositories
             return total;
         }
 
+        public void UpdateProductStock()
+        {
+            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+            foreach (var prod in products)
+            {
+                var product = _context.Products
+                                     .FirstOrDefault(p => p.Pkproductid == prod.ID);
 
+                if (product != null)
+                {
+                    if (product.Qtyinstock >= prod.cartQty)
+                    {
+                        product.Qtyinstock -= prod.cartQty;
+                    }
+                    else
+                    {
+
+                        product.Qtyinstock = 0;
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
     }
-
-
 
 
 }

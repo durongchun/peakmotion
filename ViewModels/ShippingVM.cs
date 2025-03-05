@@ -31,7 +31,6 @@ namespace peakmotion.ViewModels
         [Display(Name = "Postal Code")]
         public string PostalCode { get; set; }
         public Boolean IsSaveAddress { get; set; } = false;
-        public decimal TotalAmount { get; set; }
 
     }
 }
