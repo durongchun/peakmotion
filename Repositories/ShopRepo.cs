@@ -11,12 +11,16 @@ namespace peakmotion.Repositories
     {
         private readonly PeakmotionContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly PmuserRepo _pmuserRepo;
+        private readonly CookieRepo _cookieRepo;
 
 
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager)
+        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo)
         {
             _context = context;
             _userManager = userManager;
+            _pmuserRepo = pmuserRepo;
+            _cookieRepo = cookieRepo;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
@@ -85,12 +89,13 @@ namespace peakmotion.Repositories
 
         public void SaveOrderInfo(PayPalConfirmationVM model)
         {
-            // Save confirmation to the database
+            var userId = _pmuserRepo.GetUserId();
+
             var newOrder = new Order
             {
                 Pptransactionid = model.TransactionId,
                 Orderdate = DateOnly.FromDateTime(DateTime.Now),
-                Fkpmuserid = 1,
+                Fkpmuserid = userId,
 
             };
 
@@ -118,17 +123,37 @@ namespace peakmotion.Repositories
 
         public void SaveOrderProduct(PayPalConfirmationVM model)
         {
-            var newOrderProduct = new OrderProduct
+            var products = _cookieRepo.GetProductsFromCookie();
+            // var newOrderProduct = new OrderProduct
+            // {
+            //     Qty = 1,
+            //     Unitprice = 40.00m,
+            //     Fkorderid = GetOrderId(model),
+            //     Fkproductid = 1,
+
+            // };
+
+            // _context.OrderProducts.Add(newOrderProduct);
+            // _context.SaveChanges();
+
+
+            foreach (var product in products)  // Loop through all products
             {
-                Qty = 1,
-                Unitprice = 40.00m,
-                Fkorderid = GetOrderId(model),
-                Fkproductid = 1,
+                var newOrderProduct = new OrderProduct
+                {
+                    Qty = product.cartQty,
+                    Unitprice = product.Price,
+                    Fkorderid = GetOrderId(model),
+                    Fkproductid = product.ID,
+                };
 
-            };
+                _context.OrderProducts.Add(newOrderProduct);
+            }
 
-            _context.OrderProducts.Add(newOrderProduct);
             _context.SaveChanges();
+
+
+
 
         }
 

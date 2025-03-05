@@ -74,6 +74,7 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderProduct(model);
 
             _cookieRepo.RemoveCookie("ProductData");
+            _cookieRepo.RemoveCookie("cart");
 
             return View(modelVM);
         }
