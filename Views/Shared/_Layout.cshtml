@@ -30,6 +30,9 @@
         RoleName = role,
         OnAdminPortal = onAdmin
         };
+
+        bool pageHasHeaderImage = (currentController == "Home" && currentPage == "Index") || (currentController ==
+        "Product" && currentPage == "Index") ;
         }
 
         <!DOCTYPE html>
@@ -61,8 +64,8 @@
 
         <body>
             <header>
-                <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? " bg-dark"
-                    : "navbar-brand-customer" )">
+                <nav class='navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? " bg-dark"
+                : "navbar-brand-customer" )'>
                     <div class="container-fluid gap-4">
                         <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
                                 asp-action="Index">peakmotion</a></h1>
@@ -71,7 +74,7 @@
                             aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
-                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between gap-2">
 
                             <partial name="_NavLeft" model="navbarVM" />
                             <partial name="_NavRight" model="navbarVM" />
@@ -83,12 +86,13 @@
             </header>
 
             @* Content *@
-            <main class="p-0 pb-4 @(navbarVM.OnAdminPortal ? " container-admin mx-7 my-5" : "container-fluid" )">
+            <main class='p-0 @(pageHasHeaderImage ? "": " pb-4 pt-5 mt-5" ) @(navbarVM.OnAdminPortal ? "container-admin mx-7 my-5"
+                : "container-fluid" )'>
                 @if (@navbarVM.OnAdminPortal)
                 {
                 <partial name="_Sidebar" model="navbarVM" />
                 }
-                <div role="main" class="pb-3 @(navbarVM.OnAdminPortal ? " container" : "" )">
+                <div role="main" class='pb-3 @(navbarVM.OnAdminPortal ? "container" : "" )'>
                     @RenderBody()
                 </div>
             </main>
