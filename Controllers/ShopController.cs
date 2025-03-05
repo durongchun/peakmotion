@@ -28,8 +28,11 @@ namespace peakmotion.Controllers
             IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
             var shippingInfo = shippings.FirstOrDefault();
 
+            var totalAmount = _shopRepo.getTotalAmount();
+
             var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
             ViewData["ProductData"] = productData;
+            ViewData["TotalAmount"] = totalAmount;
 
             return View("Index", shippingInfo);
         }

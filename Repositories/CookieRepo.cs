@@ -169,7 +169,7 @@ namespace peakmotion.Repositories
                 }
             }
 
-            return products;
+            return products ?? new List<ProductVM>();
 
         }
 

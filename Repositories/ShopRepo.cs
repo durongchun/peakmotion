@@ -13,6 +13,7 @@ namespace peakmotion.Repositories
         private readonly UserManager<IdentityUser> _userManager;
         private readonly PmuserRepo _pmuserRepo;
         private readonly CookieRepo _cookieRepo;
+        private readonly ProductRepo _productRepo;
 
 
         public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo)
@@ -124,18 +125,6 @@ namespace peakmotion.Repositories
         public void SaveOrderProduct(PayPalConfirmationVM model)
         {
             var products = _cookieRepo.GetProductsFromCookie();
-            // var newOrderProduct = new OrderProduct
-            // {
-            //     Qty = 1,
-            //     Unitprice = 40.00m,
-            //     Fkorderid = GetOrderId(model),
-            //     Fkproductid = 1,
-
-            // };
-
-            // _context.OrderProducts.Add(newOrderProduct);
-            // _context.SaveChanges();
-
 
             foreach (var product in products)  // Loop through all products
             {
@@ -152,9 +141,6 @@ namespace peakmotion.Repositories
 
             _context.SaveChanges();
 
-
-
-
         }
 
         public int GetOrderId(PayPalConfirmationVM model)
@@ -164,6 +150,28 @@ namespace peakmotion.Repositories
                         .Select(order => order.Pkorderid)
                         .FirstOrDefault();
         }
+
+        public decimal getTotalAmount()
+        {
+            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+
+            decimal subtotal = 0;
+            foreach (var product in products)
+            {
+                subtotal += product.Price * product.cartQty;
+
+            }
+
+            decimal gstRate = 0.05m;
+            decimal pstRate = 0.07m;
+            decimal gstAmount = subtotal * gstRate;
+            decimal pstAmount = subtotal * pstRate;
+            decimal totalTax = gstAmount + pstAmount;
+            decimal total = subtotal + totalTax;
+
+            return total;
+        }
+
 
     }
 
