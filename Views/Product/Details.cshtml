@@ -65,7 +65,30 @@
         <div class="col-md-6 d-flex flex-column justify-content-center"> <!-- Product Details -->
             <div class="product-details w-100">
                 <h1 class="product-name pb-5">@Model.Productname</h1>
-                <p class="product-price pb-5">$@Model.Unitprice.ToString("F2")</p>
+                
+                @{
+                    bool hasDiscount = ViewBag.ProductVM.Discount != null && ViewBag.ProductVM.Discount.Description == "discount";
+                    decimal finalPrice = ViewBag.ProductVM.Price;
+                    if (hasDiscount)
+                    {
+                        finalPrice = ViewBag.ProductVM.Price - ViewBag.ProductVM.Discount.Amount;
+                        if (finalPrice < 0)
+                        {
+                            finalPrice = 0;
+                        }
+                    }
+                }
+                @if (hasDiscount)
+                {
+                    <p class="product-price">
+                        <span class="product-discounted">@ViewBag.ProductVM.Price.ToString("C")</span>
+                        @finalPrice.ToString("C")
+                    </p>
+                }
+                else
+                {
+                    <p class="product-price">@ViewBag.ProductVM.Price.ToString("C")</p>
+                }
 
                 <!-- Color Selection -->
                 @if (Model.Colors?.Any() == true)
@@ -171,3 +194,24 @@
 
 
 </div>
+
+<style scoped>
+    .product-price {
+        display: flex;
+        flex: 1;
+        justify-content: start;
+        align-items: center;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: right;
+        font-size: 2rem;
+        opacity: 0.8;
+        color: black;
+    }
+
+    .product-discounted {
+        text-decoration: line-through;
+        opacity: 0.5;
+        margin-right: 0.25rem;
+    }
+</style>
