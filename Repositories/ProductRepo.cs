@@ -148,7 +148,8 @@ namespace peakmotion.Repositories
                         Qtyinstock = p.Qtyinstock,
                         Isfeatured = p.Isfeatured,
                         Ismembershipproduct = p.Ismembershipproduct,
-                        Fkdiscountid = p.Fkdiscountid
+                        Fkdiscountid = p.Fkdiscountid,
+                        Fkdiscount = d
                     }).FirstOrDefault();
         }
 
