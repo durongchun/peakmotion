@@ -4,7 +4,6 @@ using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
-
 namespace peakmotion.Repositories
 {
     public class ShopRepo
@@ -15,13 +14,19 @@ namespace peakmotion.Repositories
         private readonly CookieRepo _cookieRepo;
         private readonly ProductRepo _productRepo;
 
-
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo)
+        public ShopRepo(
+            PeakmotionContext context,
+            UserManager<IdentityUser> userManager,
+            PmuserRepo pmuserRepo,
+            CookieRepo cookieRepo,
+            ProductRepo productRepo
+        )
         {
             _context = context;
             _userManager = userManager;
             _pmuserRepo = pmuserRepo;
             _cookieRepo = cookieRepo;
+            _productRepo = productRepo;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
@@ -54,7 +59,6 @@ namespace peakmotion.Repositories
 
             if (userShippingInfo != null)
             {
-                // Update existing user properties
                 userShippingInfo.Firstname = model.FirstName;
                 userShippingInfo.Lastname = model.LastName;
                 userShippingInfo.Phone = model.PhoneNumber;
@@ -63,8 +67,6 @@ namespace peakmotion.Repositories
                 userShippingInfo.Province = model.Province;
                 userShippingInfo.Postalcode = model.PostalCode;
                 userShippingInfo.Country = country;
-
-                // Mark the entity as modified
                 _context.Entry(userShippingInfo).State = EntityState.Modified;
             }
             else
@@ -81,7 +83,6 @@ namespace peakmotion.Repositories
                     Country = country,
                     Email = model.EmailAddress,
                 };
-
                 _context.Pmusers.Add(userShippingInfo);
             }
 
@@ -91,41 +92,32 @@ namespace peakmotion.Repositories
         public void SaveOrderInfo(PayPalConfirmationVM model)
         {
             var userId = _pmuserRepo.GetUserId();
-
             var newOrder = new Order
             {
                 Pptransactionid = model.TransactionId,
                 Orderdate = DateOnly.FromDateTime(DateTime.Now),
                 Fkpmuserid = userId,
-
             };
-
             _context.Orders.Add(newOrder);
             _context.SaveChanges();
-
         }
 
         public void SaveOrderStatus(PayPalConfirmationVM model)
         {
             var orderStatus = "Pending";
             var orderId = GetOrderId(model);
-
             var newOrderStatus = new OrderStatus
             {
                 Orderstate = orderStatus,
                 Fkorderid = orderId,
-
             };
-
             _context.OrderStatuses.Add(newOrderStatus);
             _context.SaveChanges();
-
         }
 
         public void SaveOrderProduct(PayPalConfirmationVM model)
         {
             var products = _cookieRepo.GetProductsFromCookie();
-
             foreach (var product in products)
             {
                 var newOrderProduct = new OrderProduct
@@ -135,40 +127,48 @@ namespace peakmotion.Repositories
                     Fkorderid = GetOrderId(model),
                     Fkproductid = product.ID,
                 };
-
                 _context.OrderProducts.Add(newOrderProduct);
             }
-
             _context.SaveChanges();
-
         }
 
         public int GetOrderId(PayPalConfirmationVM model)
         {
             return _context.Orders
-                        .Where(order => order.Pptransactionid == model.TransactionId)
-                        .Select(order => order.Pkorderid)
-                        .FirstOrDefault();
+                .Where(order => order.Pptransactionid == model.TransactionId)
+                .Select(order => order.Pkorderid)
+                .FirstOrDefault();
         }
 
         public decimal GetTotalAmount()
         {
-            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
-
+            var cartItems = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
             decimal subtotal = 0;
-            foreach (var product in products)
+            foreach (var item in cartItems)
             {
-                subtotal += product.Price * product.cartQty;
-
+                var product = _productRepo.GetProduct(item.ID);
+                if (product == null)
+                {
+                    continue;
+                }
+                bool hasDiscount = product.Discount != null && product.Discount.Description == "discount";
+                decimal finalPrice = product.Price;
+                if (hasDiscount)
+                {
+                    finalPrice = product.Price - product.Discount.Amount;
+                    if (finalPrice < 0)
+                    {
+                        finalPrice = 0;
+                    }
+                }
+                subtotal += finalPrice * item.cartQty;
             }
-
             decimal gstRate = 0.05m;
             decimal pstRate = 0.07m;
             decimal gstAmount = subtotal * gstRate;
             decimal pstAmount = subtotal * pstRate;
             decimal totalTax = gstAmount + pstAmount;
             decimal total = subtotal + totalTax;
-
             return total;
         }
 
@@ -178,8 +178,7 @@ namespace peakmotion.Repositories
             foreach (var prod in products)
             {
                 var product = _context.Products
-                                     .FirstOrDefault(p => p.Pkproductid == prod.ID);
-
+                    .FirstOrDefault(p => p.Pkproductid == prod.ID);
                 if (product != null)
                 {
                     if (product.Qtyinstock >= prod.cartQty)
@@ -188,7 +187,6 @@ namespace peakmotion.Repositories
                     }
                     else
                     {
-
                         product.Qtyinstock = 0;
                     }
                 }
@@ -196,7 +194,4 @@ namespace peakmotion.Repositories
             _context.SaveChanges();
         }
     }
-
-
 }
-
