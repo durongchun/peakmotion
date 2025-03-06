@@ -3,7 +3,16 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Http;
+
+using peakmotion.Data.Services;
+
+
+using System.Text;
+using System.Text.Encodings.Web;
+
+using Microsoft.AspNetCore.Mvc;
+
+using Microsoft.AspNetCore.WebUtilities;
 
 
 namespace peakmotion.Repositories
@@ -16,15 +25,23 @@ namespace peakmotion.Repositories
         private readonly CookieRepo _cookieRepo;
         private readonly ProductRepo _productRepo;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IEmailService _emailService;
 
 
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor)
+        public ShopRepo(PeakmotionContext context,
+        UserManager<IdentityUser> userManager,
+        PmuserRepo pmuserRepo,
+        CookieRepo cookieRepo,
+        IHttpContextAccessor httpContextAccessor,
+        IEmailService emailService
+        )
         {
             _context = context;
             _userManager = userManager;
             _pmuserRepo = pmuserRepo;
             _cookieRepo = cookieRepo;
             _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
@@ -201,8 +218,24 @@ namespace peakmotion.Repositories
             }
             _context.SaveChanges();
         }
+
+        public async Task SendEmail(string emailAddress, string orderId)
+        {
+
+            var body = $"Thank you for your order! Your order ID is {orderId}.";
+
+            var response = await _emailService.SendSingleEmail(new ComposeEmailModel
+            {
+                Subject = "Order Confirmation",
+                Email = emailAddress,
+                Body = body
+            });
+        }
+
+
     }
-
-
 }
+
+
+
 

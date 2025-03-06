@@ -6,6 +6,7 @@ using peakmotion.Models;
 using System;
 using System.Collections.Generic;
 using NuGet.Protocol;
+using System.Threading.Tasks;
 
 namespace peakmotion.Controllers
 {
@@ -62,7 +63,7 @@ namespace peakmotion.Controllers
 
 
         [HttpGet("Home/PayPalConfirmation")]
-        public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
+        public async Task<IActionResult> PayPalConfirmation(PayPalConfirmationVM model)
         {
             var modelVM = new PayPalConfirmationVM
             {
@@ -77,6 +78,7 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderStatus(model);
             _shopRepo.SaveOrderProduct(model);
             _shopRepo.UpdateProductStock();
+            await _shopRepo.SendEmail("lucydu2021@gmail.com", model.TransactionId);
 
             _cookieRepo.RemoveCookie("ProductData");
             _cookieRepo.RemoveCookie("cart");
