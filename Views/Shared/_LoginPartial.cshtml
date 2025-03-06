@@ -53,7 +53,7 @@
         <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li>
     <li class="nav-item border border-white px-2">
-        <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        <a class="nav-link text-light" asp-area="Identity" asp-page="/Account/Login" asp-route-returnUrl="@Context.Request.Path">Login</a>
     </li>
     }
     </ul>

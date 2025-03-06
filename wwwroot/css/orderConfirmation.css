@@ -1,18 +1,17 @@
 #orderConfirmation {
   display: grid;
   grid-template-rows: 1fr 6fr;
-  /* margin-left: 6rem; */
-  align-items: center;
   justify-content: center;
+  align-items: start;
+}
+#orderConfirmation h5 {
+  margin-left: 1rem;
 }
 
 .orderInfo {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  align-items: center;
-  justify-content: center;
-  align-items: center;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
 button {
@@ -23,10 +22,21 @@ button {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 184px;
+  width: fit-content;
   height: 38px;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+@media (min-width: 1024px) {
+  .orderInfo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    justify-content: space-evenly;
+    margin-left: 6rem;
+    gap: 0;
+    justify-items: center;
+  }
 }
