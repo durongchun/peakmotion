@@ -207,9 +207,13 @@
 .popular,
 .instagram-images {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   overflow: hidden;
   gap: 1rem;
+}
+
+.popular .product-card {
+  min-width: 230px;
 }
 
 .popular {
