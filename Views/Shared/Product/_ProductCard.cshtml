@@ -2,7 +2,9 @@
 
 <div class="product">
     <a class="product-link" asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID">
-        <img class="product-image" src="/images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image">
+        <img class="product-image"
+             src="@(Model.PrimaryImage != null ? Url.Content(Model.PrimaryImage.Url) : Url.Content("/images/no-image.png"))"
+             alt="Product image">
         <p class="product-name">@Model.ProductName</p>
         <p class="product-desc">@Model.Description</p>
         @{
@@ -70,7 +72,7 @@
 
     a {
         text-decoration: none;
-        color: var(--colour-text)
+        color: var(--colour-text);
     }
 
     .product:hover {

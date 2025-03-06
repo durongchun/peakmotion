@@ -107,7 +107,7 @@
                 </div> *@
 
 
-                <form method="post" asp-controller="Product" asp-action="Details">
+                <form method="post" asp-controller="Cart" asp-action="Add">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
@@ -118,11 +118,10 @@
                     </div>
 
 
-
-
                     <!-- Add to Cart Button -->
                     <button type="submit" class="add-to-cart">Add to Cart</button>
                 </form>
+
             </div>
             <!-- Product Description -->
             <div class="d-flex w-100">

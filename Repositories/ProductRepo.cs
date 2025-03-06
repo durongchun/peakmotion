@@ -3,6 +3,8 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace peakmotion.Repositories
 {
@@ -179,24 +181,6 @@ namespace peakmotion.Repositories
             return images ?? new List<ProductImage>();
 
         }
-
-        public string GetProductPrimaryImage(int id)
-        {
-            var primaryImage = _context.ProductImages
-                                .Where(img => img.Fkproductid == id && img.Isprimary)
-                                .Select(img => new ProductImage
-                                {
-                                    Pkimageid = img.Pkimageid,
-                                    Fkproductid = id,
-                                    Url = img.Url,
-                                    Isprimary = img.Isprimary,
-                                    Alttag = img.Alttag,
-                                })
-                                .FirstOrDefault();
-
-            return primaryImage?.Url ?? "https://picsum.photos/500/700?random=1";
-        }
-
         public List<string> FormatDropdownSelectedValue(string key)
         {
             if (!string.IsNullOrEmpty(key))
@@ -210,70 +194,63 @@ namespace peakmotion.Repositories
 
         public async Task UploadImagesFromAdminProductEdit(ProductVM model, List<IFormFile> NewImages)
         {
-            try
+            if (!string.IsNullOrEmpty(model.ImagesToDelete))
             {
-                // Delete images if any are marked for deletion from page
-                if (!string.IsNullOrEmpty(model.ImagesToDelete))
-                {
-                    await DeleteProductImages(model.ID, model.ImagesToDelete);
-                }
+                await DeleteProductImages(model.ID, model.ImagesToDelete);
+            }
 
-                if (NewImages?.Any() != true) return;
+            if (NewImages?.Any() != true) return;
 
-                // Create directory if it doesn't exist
-                var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
-                Directory.CreateDirectory(uploadPath); // Ensures the directory exists
-
-                var existingProduct = GetProduct(model.ID);
-
-                // Load existing images
-                existingProduct.Images = await _context.ProductImages
-                    .Where(img => img.Fkproductid == model.ID)
+            if (model.Isprimary)
+            {
+                var existingPrimaryImages = await _context.ProductImages
+                    .Where(img => img.Fkproductid == model.ID && img.Isprimary)
                     .ToListAsync();
-
-                // Process all images first
-                var newImageEntities = new List<ProductImage>();
-
-                foreach (var file in NewImages)
+                foreach (var img in existingPrimaryImages)
                 {
-                    if (file.Length <= 0) continue;
+                    img.Isprimary = false;
+                }
+            }
 
-                    var fileName = model.photoName.Replace(" ", "").Trim();
-                    var filePath = Path.Combine(uploadPath, fileName);
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
+            Directory.CreateDirectory(uploadPath);
 
-                    // Copy the file first
-                    await using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        await file.CopyToAsync(stream);
-                        await stream.FlushAsync(); // Ensure all bytes are written
-                    }
+            var existingProduct = GetProduct(model.ID);
+            existingProduct.Images = await _context.ProductImages
+                .Where(img => img.Fkproductid == model.ID)
+                .ToListAsync();
 
-                    // Create the image entity
-                    var newImage = new ProductImage
-                    {
-                        Fkproductid = model.ID,
-                        Url = $"/images/products/{fileName}",
-                        Alttag = model.photoName,
-                        Isprimary = model.Isprimary,
-                    };
+            var newImageEntities = new List<ProductImage>();
 
-                    newImageEntities.Add(newImage);
-                    existingProduct.Images.Add(newImage);
+            foreach (var file in NewImages)
+            {
+                if (file.Length <= 0) continue;
+
+                var fileName = model.photoName.Replace(" ", "").Trim();
+                var filePath = Path.Combine(uploadPath, fileName);
+
+                await using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await file.CopyToAsync(stream);
+                    await stream.FlushAsync();
                 }
 
-                // Add all new images to context
-                await _context.ProductImages.AddRangeAsync(newImageEntities);
+                var newImage = new ProductImage
+                {
+                    Fkproductid = model.ID,
+                    Url = $"/images/products/{fileName}",
+                    Alttag = model.photoName,
+                    Isprimary = model.Isprimary
+                };
 
-                // Save all changes
-                await _context.SaveChangesAsync();
+                newImageEntities.Add(newImage);
+                existingProduct.Images.Add(newImage);
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error processing images: {ex.Message}");
-                Console.WriteLine($"Stack trace: {ex.StackTrace}");
-                throw new Exception($"Error processing images: {ex.Message}", ex);
-            }
+
+            await _context.ProductImages.AddRangeAsync(newImageEntities);
+            await _context.SaveChangesAsync();
         }
+
 
         public async Task UpdateProductDetail(Product product, ProductVM model)
         {
@@ -533,49 +510,69 @@ namespace peakmotion.Repositories
             return featuredProducts;
         }
 
-        // Get all products in the database.
+        public string GetProductPrimaryImage(int id)
+        {
+            var primaryImage = _context.ProductImages
+                                .Where(img => img.Fkproductid == id && img.Isprimary)
+                                .FirstOrDefault();
+            return primaryImage?.Url ?? "";
+        }
+
         public IEnumerable<ProductVM> GetAllProducts(string sortBy = "A-Z", List<int>? categoryIds = null)
         {
-            IEnumerable<ProductVM> products = from p in _context.Products
-                                              join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
-                                              from pi in pImageGroup.DefaultIfEmpty()
-                                              join d in _context.Discounts on p.Fkdiscountid equals d.Pkdiscountid into productGroup
-                                              from d in productGroup.DefaultIfEmpty()
-                                              select new ProductVM
-                                              {
-                                                  ID = p.Pkproductid,
-                                                  ProductName = p.Name,
-                                                  Description = p.Description,
-                                                  Price = p.Regularprice,
-                                                  Quantity = p.Qtyinstock,
-                                                  IsFeatured = p.Isfeatured == 1,
-                                                  IsMembershipProduct = p.Ismembershipproduct == 1,
-                                                  Discount = p.Fkdiscount,
-                                                  Categories = p.ProductCategories
-                                                        .Where(pc => pc.Fkproductid == p.Pkproductid)
-                                                        .Select(x => new Category
-                                                        {
-                                                            Pkcategoryid = x.Fkcategoryid,
-                                                            Categorygroup = x.Fkcategory.Categorygroup,
-                                                            Categoryname = x.Fkcategory.Categoryname,
-                                                        })
-                                                        .ToList(),
-                                                  Images = p.ProductImages,
-                                                  PrimaryImage = p.ProductImages
-                                                        .Where(pi => pi.Fkproductid == p.Pkproductid && pi.Isprimary)
-                                                        .FirstOrDefault()
-                                              };
+            var productEntities = _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories).ThenInclude(pc => pc.Fkcategory)
+                .Include(p => p.Fkdiscount)
+                .AsNoTracking()
+                .ToList();
 
-            // Sort products
-            IEnumerable<ProductVM> sortedProducts = sortedProducts = sortProducts(products, sortBy);
+            var products = productEntities.Select(p => new ProductVM
+            {
+                ID = p.Pkproductid,
+                ProductName = p.Name,
+                Description = p.Description,
+                Price = p.Regularprice,
+                Quantity = p.Qtyinstock,
+                IsFeatured = p.Isfeatured == 1,
+                IsMembershipProduct = p.Ismembershipproduct == 1,
+                Discount = p.Fkdiscount,
+                Categories = p.ProductCategories
+                                .Select(x => new Category
+                                {
+                                    Pkcategoryid = x.Fkcategoryid,
+                                    Categorygroup = x.Fkcategory.Categorygroup,
+                                    Categoryname = x.Fkcategory.Categoryname,
+                                }).ToList(),
+                Images = p.ProductImages,
+                PrimaryImage = p.ProductImages.FirstOrDefault(pi => pi.Isprimary)
+            });
 
-            // Check if products need to be filtered
-            if (categoryIds != null && categoryIds.Count() > 0) return filterProducts(sortedProducts, categoryIds);
+            // for debugging
+            foreach (var prod in products)
+            {
+                var productId = prod.ID;
+                var images = prod.Images;
 
-            // Return all the products
+                Console.WriteLine($"=== DebugCheckPrimaryImage for productId={productId} ===");
+                Console.WriteLine($"Count: {images.Count}");
+                foreach (var img in images)
+                {
+                    Console.WriteLine($"  pkimageid={img.Pkimageid}, isprimary={img.Isprimary}, url={img.Url}");
+                }
+            }
+
+            IEnumerable<ProductVM> sortedProducts = sortProducts(products, sortBy);
+
+            if (categoryIds != null && categoryIds.Count() > 0)
+                return filterProducts(sortedProducts, categoryIds);
+
             Console.WriteLine($"DEBUG: Product Count: {sortedProducts.Count()}");
             return sortedProducts;
         }
+
+
+
 
         public SelectList GetSortBySelectList()
         {
