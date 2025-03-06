@@ -1,108 +1,115 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using peakmotion.ViewModels
 @inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
-@{
-    @* Use session flag + checks *@
-    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-    var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
+    @inject UserManager<IdentityUser> UserManager
+        @{
+        @* Use session flag + checks *@
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentPage = ViewContext.RouteData.Values["action"]?.ToString();
 
-    var user = await UserManager.GetUserAsync(User);
-    var role = "";
-    if (user != null) {
+        var user = await UserManager.GetUserAsync(User);
+        var role = "";
+        if (user != null) {
         var roles = await UserManager.GetRolesAsync(user);
         if (roles != null && roles.Count() > 0) {
-            role = roles.First();
+        role = roles.First();
         } else {
-            Console.WriteLine("WARNING: User has no role!");
+        Console.WriteLine("WARNING: User has no role!");
         }
-    }
+        }
 
-    var isAdmin = User.IsInRole("Admin");
-    var isEmployee = User.IsInRole("Employee");
-    var isCustomer = User.IsInRole("Customer");
-    var onAdmin = SignInManager.IsSignedIn(User) && currentController == "Admin" && (isAdmin || isEmployee);
+        var isAdmin = User.IsInRole("Admin");
+        var isEmployee = User.IsInRole("Employee");
+        var isCustomer = User.IsInRole("Customer");
+        var onAdmin = SignInManager.IsSignedIn(User) && currentController == "Admin" && (isAdmin || isEmployee);
 
-    var navbarVM = new NavbarVM
-    {
+        var navbarVM = new NavbarVM
+        {
         Controller = currentController,
         Page = currentPage,
         RoleName = role,
         OnAdminPortal = onAdmin
-    };
-}
+        };
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - peakmotion</title>
-    <script type="importmap"></script>
-
-    <link rel="preload" href="https://fonts.googleapis.com">
-    <link rel="preload" href="https://fonts.gstatic.com" crossorigin>
-    <link as="font"
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-    <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons" as="style"
-        crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/peakmotion.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/peakmotion.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
-
-</head>
-
-<body>
-    <header>
-        <nav
-            class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? "bg-dark" : "navbar-brand-customer")">
-            <div class="container-fluid gap-4">
-                <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
-                        asp-action="Index">peakmotion</a></h1>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                   
-                    <partial name="_NavLeft" model="navbarVM"/>
-                    <partial name="_NavRight" model="navbarVM"/>
-                    <partial name="_LoginPartial" model="navbarVM" />
-                    
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    @* Content *@
-    <main class="p-0 pb-4 @(navbarVM.OnAdminPortal ? "container-admin mx-7 my-5" : "container-fluid")">
-        @if (@navbarVM.OnAdminPortal)
-        {
-            <partial name="_Sidebar" model="navbarVM"/>
+        bool pageHasHeaderImage = (currentController == "Home" && currentPage == "Index") || (currentController ==
+        "Product" && currentPage == "Index") ;
         }
-        <div role="main" class="pb-3 @(navbarVM.OnAdminPortal ? "container" : "")">
-            @RenderBody()
-        </div>
-    </main>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - peakmotion - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+        <!DOCTYPE html>
+        <html lang="en">
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @* <script src="~/js/search.js"></script> *@
-    @await RenderSectionAsync("Scripts", required: false)
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>@ViewData["Title"] - peakmotion</title>
+            <script type="importmap"></script>
 
-</body>
+            <link rel="preload" href="https://fonts.googleapis.com">
+            <link rel="preload" href="https://fonts.gstatic.com" crossorigin>
+            <link as="font"
+                href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+                rel="stylesheet">
+            <link rel="preload" href="https://fonts.googleapis.com/icon?family=Material+Icons" as="style"
+                crossorigin="anonymous">
+            <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"
+                crossorigin="anonymous">
 
-</html>
+            <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/peakmotion.styles.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/css/peakmotion.css" asp-append-version="true" />
+            <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+
+        </head>
+
+        <body>
+            <header>
+                <nav class='navbar navbar-expand-sm navbar-toggleable-sm navbar-dark @(onAdmin ? " bg-dark"
+                : "navbar-brand-customer" )'>
+                    <div class="container-fluid gap-4">
+                        <h1 class="fs-2"><a class="navbar-brand m-r-4" asp-area="" asp-controller="Home"
+                                asp-action="Index">peakmotion</a></h1>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between gap-2">
+
+                            <partial name="_NavLeft" model="navbarVM" />
+                            <partial name="_NavRight" model="navbarVM" />
+                            <partial name="_LoginPartial" model="navbarVM" />
+
+                        </div>
+                    </div>
+                </nav>
+            </header>
+
+            @* Content *@
+            <main class='p-0 @(pageHasHeaderImage ? "": " pb-4 pt-5 mt-5" ) @(navbarVM.OnAdminPortal ? "container-admin mx-7 my-5"
+                : "container-fluid" )'>
+                @if (@navbarVM.OnAdminPortal)
+                {
+                <partial name="_Sidebar" model="navbarVM" />
+                }
+                <div role="main" class='pb-3 @(navbarVM.OnAdminPortal ? "container" : "" )'>
+                    @RenderBody()
+                </div>
+            </main>
+
+            <footer class="border-top footer">
+                <div class="container">
+                    &copy; 2025 - PeakMotion
+                </div>
+            </footer>
+
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            @*
+            <script src="~/js/search.js"></script> *@
+            @await RenderSectionAsync("Scripts", required: false)
+
+        </body>
+
+        </html>
