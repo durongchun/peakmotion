@@ -59,5 +59,6 @@ button:hover {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 5rem;
+    margin-left: 1rem;
   }
 }
