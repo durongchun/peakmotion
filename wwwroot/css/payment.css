@@ -1,9 +1,7 @@
 .shippingOrderSummary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 5rem;
-  /* margin-left: 6rem; */
-  /* margin-top: 1rem; */
 }
 
 #name,
@@ -55,4 +53,11 @@ button:hover {
   min-width: 30px;
   height: 18px;
   border-radius: 4px;
+}
+@media (min-width: 1024px) {
+  .shippingOrderSummary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 5rem;
+  }
 }
