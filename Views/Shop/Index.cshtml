@@ -107,9 +107,6 @@ else
 <script>
     function redirectToLogin() {
         var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-        var loginUrl = '@Url.Content("~/Identity/Account/Login")' + '?returnUrl=' + returnUrl;
-        console.log("Redirecting to:", loginUrl); // Debugging
-        location.href = loginUrl;
+        location.href = '@Url.Content("~/Identity/Account/Login")' + '?returnUrl=' + returnUrl;
     }
-
 </script>
