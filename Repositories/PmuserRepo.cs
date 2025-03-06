@@ -203,20 +203,20 @@ namespace peakmotion.Repositories
             var identityUser = _httpContextAccessor.HttpContext?.User;
             if (identityUser == null || !identityUser.Identity.IsAuthenticated)
             {
-                return 0; // If no user is logged in, return 0 or your default value
+                return 1; // If no user is logged in, return 1 default.
             }
 
-            var currentUser = _userManager.GetUserAsync(identityUser).Result; // Blocking async call (not ideal)
+            var currentUser = _userManager.GetUserAsync(identityUser).Result;
 
             if (currentUser == null)
             {
-                return 0; // If no user is found, return 0
+                return 1; // If no user is found, return 1
             }
 
             return _db.Pmusers
                       .Where(p => p.Email == currentUser.Email)
                       .Select(p => p.Pkpmuserid)
-                      .FirstOrDefault(); // Will return 0 if no user found
+                      .FirstOrDefault();
         }
 
 

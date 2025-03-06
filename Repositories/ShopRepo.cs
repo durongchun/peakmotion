@@ -3,6 +3,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
 
 
 namespace peakmotion.Repositories
@@ -14,20 +15,25 @@ namespace peakmotion.Repositories
         private readonly PmuserRepo _pmuserRepo;
         private readonly CookieRepo _cookieRepo;
         private readonly ProductRepo _productRepo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo)
+        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
             _pmuserRepo = pmuserRepo;
             _cookieRepo = cookieRepo;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
         {
-            IEnumerable<ShippingVM> shippingInfo = _context.Pmusers.Select(
-                user => new ShippingVM
+            var userId = _pmuserRepo.GetUserId();
+
+            return _context.Pmusers
+                .Where(user => user.Pkpmuserid == userId) // Filter by logged-in user's ID
+                .Select(user => new ShippingVM
                 {
                     ID = user.Pkpmuserid,
                     EmailAddress = user.Email,
@@ -39,11 +45,10 @@ namespace peakmotion.Repositories
                     City = user.City,
                     Province = user.Province,
                     PostalCode = user.Postalcode
-                }
-            ).ToList();
-
-            return shippingInfo;
+                })
+                .ToList();
         }
+
 
         public void SaveShippingInfo(ShippingVM model)
         {
