@@ -2,7 +2,6 @@
 @inject peakmotion.Repositories.ProductRepo ProductRepo
 
 @{
-    // Decode the cart cookie
     var encodedCartString = CookieRepo.GetCookie("cart");
     var cartDict = new Dictionary<int, int>();
 
@@ -23,18 +22,26 @@
         }
     }
 
-    // Calculate subtotal
     decimal subtotal = 0;
     foreach (var kvp in cartDict)
     {
         var productVM = ProductRepo.GetProduct(kvp.Key);
         if (productVM != null)
         {
-            subtotal += productVM.Price * kvp.Value;
+            bool hasDiscount = productVM.Discount != null && productVM.Discount.Description == "discount";
+            decimal finalPrice = productVM.Price;
+            if (hasDiscount)
+            {
+                finalPrice = productVM.Price - productVM.Discount.Amount;
+                if (finalPrice < 0)
+                {
+                    finalPrice = 0;
+                }
+            }
+            subtotal += finalPrice * kvp.Value;
         }
     }
 
-    // Taxes
     decimal gstRate = 0.05m;
     decimal pstRate = 0.07m;
     decimal gstAmount = subtotal * gstRate;
@@ -67,10 +74,9 @@
     </div>
 </div>
 
-<!-- Update #totalAmount so that PayPal script can access the correct total -->
 <script>
     var finalTotalSpan = document.getElementById("finalTotal");
-    var totalAmountSpan = document.getElementById("totalAmount"); // from your Shop or Cart page
+    var totalAmountSpan = document.getElementById("totalAmount");
     if (finalTotalSpan && totalAmountSpan) {
         totalAmountSpan.textContent = finalTotalSpan.textContent.trim();
     }
