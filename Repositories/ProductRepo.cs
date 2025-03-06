@@ -16,6 +16,25 @@ namespace peakmotion.Repositories
         }
 
         // Get specific product in the database.
+        public ProductVM? GetProductById(int id, int qty)
+        {
+            var product = FetchProductFromDb(id);
+            if (product == null) return null;
+
+            var productVM = new ProductVM
+            {
+                ID = id,
+                ProductName = product.Name ?? "N/A",
+                Description = product.Description ?? "No description available",
+                Price = product.Regularprice,
+                Quantity = product.Qtyinstock,
+                cartQty = qty,
+
+            };
+
+            return productVM;
+        }
+
         // Get specific product in the database.
         public ProductVM? GetProduct(int id)
         {

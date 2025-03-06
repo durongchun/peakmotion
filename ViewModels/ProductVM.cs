@@ -82,6 +82,7 @@ namespace peakmotion.ViewModels
                 public string? ImagesToDelete { get; set; }
                 public bool Isprimary { get; set; } = false;
                 public string? ImageUrl { get; set; }
+                public int cartQty { get; set; } = 0;
 
 
         }

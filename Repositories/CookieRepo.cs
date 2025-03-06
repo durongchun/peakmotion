@@ -3,6 +3,7 @@ using peakmotion.Data;
 using peakmotion.Models;
 using Newtonsoft.Json;
 using peakmotion.ViewModels;
+using System.Net;
 
 namespace peakmotion.Repositories
 {
@@ -10,11 +11,13 @@ namespace peakmotion.Repositories
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpContext _httpContext;
+        private readonly ProductRepo _productPepo;
 
-        public CookieRepo(IHttpContextAccessor httpContextAccessor)
+        public CookieRepo(IHttpContextAccessor httpContextAccessor, ProductRepo productPepo)
         {
             _httpContextAccessor = httpContextAccessor;
             _httpContext = _httpContextAccessor.HttpContext;  // Store the HttpContext once
+            _productPepo = productPepo;
         }
 
         public void SetProductDataToCookie(ProductDetailVM productDetailViewModel)
@@ -139,6 +142,35 @@ namespace peakmotion.Repositories
                 // Delete the cookie with the specified key
                 _httpContext.Response.Cookies.Delete(key);
             }
+        }
+
+        public List<ProductVM> GetProductsFromCookie()
+        {
+            var encodedCartString = GetCookie("cart");
+            var products = new List<ProductVM>();
+
+            if (!string.IsNullOrEmpty(encodedCartString))
+            {
+                var decoded = WebUtility.UrlDecode(encodedCartString);
+                foreach (var segment in decoded.Split(","))
+                {
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
+                    {
+                        int productId = int.Parse(parts[0]);
+                        int qty = int.Parse(parts[1]);
+                        var product = _productPepo.GetProductById(productId, qty);
+                        if (product != null)
+                        {
+                            products.Add(product);
+
+                        }
+                    }
+                }
+            }
+
+            return products ?? new List<ProductVM>();
+
         }
 
     }

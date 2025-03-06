@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
-using System.Collections.Generic;
-using System.Net; // For WebUtility (UrlEncode/UrlDecode)
 
 namespace peakmotion.Controllers
 {
@@ -18,139 +18,109 @@ namespace peakmotion.Controllers
             _productRepo = productRepo;
         }
 
-        // Displays the cart contents
+        // Display the cart using ProductVM + a dictionary for quantities in ViewBag
         public IActionResult Index()
         {
             var encodedCartString = _cookieRepo.GetCookie("cart");
-            var cartItems = new List<CartItemVM>();
+            var products = new List<ProductVM>();
+            var quantities = new Dictionary<int, int>();
 
             if (!string.IsNullOrEmpty(encodedCartString))
             {
-                var cartString = WebUtility.UrlDecode(encodedCartString);
-
-                foreach (var productIDAndQty in cartString.Split(","))
+                var decoded = WebUtility.UrlDecode(encodedCartString);
+                foreach (var segment in decoded.Split(","))
                 {
-                    string[] arrIDAndQty = productIDAndQty.Split(":");
-                    if (arrIDAndQty.Length == 2)
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
                     {
-                        int productID = int.Parse(arrIDAndQty[0]);
-                        int qty = int.Parse(arrIDAndQty[1]);
-
-                        var product = _productRepo.GetProduct(productID);
+                        int productId = int.Parse(parts[0]);
+                        int qty = int.Parse(parts[1]);
+                        var product = _productRepo.GetProduct(productId);
                         if (product != null)
                         {
-                            var cartItem = new CartItemVM
-                            {
-                                ProductID = product.ID,
-                                ProductName = product.ProductName,
-                                Price = product.Price,
-                                CartQuantity = qty
-                            };
-
-                            cartItems.Add(cartItem);
+                            products.Add(product);
+                            quantities[productId] = qty;
                         }
                     }
                 }
             }
 
-            return View(cartItems);
+            if (TempData["Message"] != null)
+            {
+                ViewBag.ErrorMessage = TempData["Message"];
+            }
+
+            // We pass the dictionary in ViewBag so the view can show each product's quantity
+            ViewBag.CartQuantities = quantities;
+            return View(products);
         }
 
-        // Adds a new product to the cart if it does not exist.
-        // If the product exists, redirects to UpdateCartItem instead.
         [HttpPost]
-        public IActionResult Add(int productID, int qty = 1)
+        public IActionResult Add(int productId, int qty = 1)
         {
-            var product = _productRepo.GetProduct(productID);
+            var product = _productRepo.GetProduct(productId);
             if (product == null)
             {
                 TempData["Message"] = "Product not found.";
                 return RedirectToAction("Index");
             }
 
-            if (product.Quantity < qty)
+            if (product.Quantity == 0)
+            {
+                TempData["Message"] = "This product is out of stock.";
+                return RedirectToAction("Index");
+            }
+
+            if (qty > product.Quantity)
             {
                 TempData["Message"] = "Not enough inventory.";
                 return RedirectToAction("Index");
             }
 
-            var encodedCartString = _cookieRepo.GetCookie("cart");
-            var cartItems = new List<CartItemVM>();
-            bool productFoundInCart = false;
-            int existingQty = 0;
-
-            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
-
-            if (!string.IsNullOrEmpty(cartString))
+            // Decode existing cart
+            var encodedCart = _cookieRepo.GetCookie("cart");
+            var cartDict = new Dictionary<int, int>();
+            if (!string.IsNullOrEmpty(encodedCart))
             {
-                foreach (var productIDAndQty in cartString.Split(","))
+                var decoded = WebUtility.UrlDecode(encodedCart);
+                foreach (var segment in decoded.Split(","))
                 {
-                    string[] arrIDAndQty = productIDAndQty.Split(":");
-                    if (arrIDAndQty.Length == 2)
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
                     {
-                        int currentProductID = int.Parse(arrIDAndQty[0]);
-                        int currentQty = int.Parse(arrIDAndQty[1]);
-
-                        if (currentProductID == productID)
-                        {
-                            productFoundInCart = true;
-                            existingQty = currentQty;
-                        }
-                        else
-                        {
-                            var existingProduct = _productRepo.GetProduct(currentProductID);
-                            if (existingProduct != null)
-                            {
-                                var cartItem = new CartItemVM
-                                {
-                                    ProductID = existingProduct.ID,
-                                    ProductName = existingProduct.ProductName,
-                                    Price = existingProduct.Price,
-                                    CartQuantity = currentQty
-                                };
-                                cartItems.Add(cartItem);
-                            }
-                        }
+                        int pid = int.Parse(parts[0]);
+                        int existingQty = int.Parse(parts[1]);
+                        cartDict[pid] = existingQty;
                     }
                 }
             }
 
-            if (productFoundInCart)
+            // Merge quantity
+            if (cartDict.ContainsKey(productId))
             {
-                int newQty = existingQty + qty;
-                return RedirectToAction("UpdateCartItem", new { productID, newQty });
+                int newQty = cartDict[productId] + qty;
+                if (newQty > product.Quantity)
+                {
+                    TempData["Message"] = "Not enough inventory.";
+                    newQty = product.Quantity;
+                }
+                cartDict[productId] = newQty;
             }
             else
             {
-                var newProductItem = new CartItemVM
-                {
-                    ProductID = product.ID,
-                    ProductName = product.ProductName,
-                    Price = product.Price,
-                    CartQuantity = qty
-                };
-                cartItems.Add(newProductItem);
+                cartDict[productId] = qty;
             }
 
-            var updatedCartList = new List<string>();
-            foreach (var item in cartItems)
-            {
-                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
-            }
-            var updatedCartString = string.Join(",", updatedCartList);
-
-            // Encode and save to cookie
-            var encodedValue = WebUtility.UrlEncode(updatedCartString);
-            _cookieRepo.AddCookie("cart", encodedValue);
-
+            // Encode back to cookie
+            var updated = string.Join(",", cartDict.Select(x => $"{x.Key}:{x.Value}"));
+            _cookieRepo.AddCookie("cart", WebUtility.UrlEncode(updated));
             return RedirectToAction("Index");
         }
 
-        // Updates the quantity of an existing product in the cart
         [HttpPost]
-        public IActionResult Update(int productID, int newQty)
+        public IActionResult Update(int productId, int newQty)
         {
-            var product = _productRepo.GetProduct(productID);
+            var product = _productRepo.GetProduct(productId);
             if (product == null)
             {
                 TempData["Message"] = "Product not found.";
@@ -159,7 +129,7 @@ namespace peakmotion.Controllers
 
             if (newQty < 1)
             {
-                return RedirectToAction("DeleteCartItem", new { productID });
+                return RedirectToAction("Remove", new { productId });
             }
 
             if (newQty > product.Quantity)
@@ -168,117 +138,63 @@ namespace peakmotion.Controllers
                 newQty = product.Quantity;
             }
 
-            var encodedCartString = _cookieRepo.GetCookie("cart");
-            var cartItems = new List<CartItemVM>();
-            bool updated = false;
-
-            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
-
-            if (!string.IsNullOrEmpty(cartString))
+            var encodedCart = _cookieRepo.GetCookie("cart");
+            var cartDict = new Dictionary<int, int>();
+            if (!string.IsNullOrEmpty(encodedCart))
             {
-                foreach (var productIDAndQty in cartString.Split(","))
+                var decoded = WebUtility.UrlDecode(encodedCart);
+                foreach (var segment in decoded.Split(","))
                 {
-                    string[] arrIDAndQty = productIDAndQty.Split(":");
-                    if (arrIDAndQty.Length == 2)
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
                     {
-                        int currentProductID = int.Parse(arrIDAndQty[0]);
-                        int currentQty = int.Parse(arrIDAndQty[1]);
-
-                        var existingProduct = _productRepo.GetProduct(currentProductID);
-                        if (existingProduct != null)
-                        {
-                            if (currentProductID == productID)
-                            {
-                                cartItems.Add(new CartItemVM
-                                {
-                                    ProductID = existingProduct.ID,
-                                    ProductName = existingProduct.ProductName,
-                                    Price = existingProduct.Price,
-                                    CartQuantity = newQty
-                                });
-                                updated = true;
-                            }
-                            else
-                            {
-                                cartItems.Add(new CartItemVM
-                                {
-                                    ProductID = existingProduct.ID,
-                                    ProductName = existingProduct.ProductName,
-                                    Price = existingProduct.Price,
-                                    CartQuantity = currentQty
-                                });
-                            }
-                        }
+                        int pid = int.Parse(parts[0]);
+                        int existingQty = int.Parse(parts[1]);
+                        cartDict[pid] = existingQty;
                     }
                 }
             }
 
-            if (!updated)
+            if (cartDict.ContainsKey(productId))
             {
-                TempData["Message"] = "Product was not in the cart to update.";
-                return RedirectToAction("Index");
+                cartDict[productId] = newQty;
+            }
+            else
+            {
+                // If product not in cart, just add it
+                cartDict[productId] = newQty;
             }
 
-            var updatedCartList = new List<string>();
-            foreach (var item in cartItems)
-            {
-                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
-            }
-            var updatedCartString = string.Join(",", updatedCartList);
-
-            var encodedValue = WebUtility.UrlEncode(updatedCartString);
-            _cookieRepo.AddCookie("cart", encodedValue);
-
+            var updated = string.Join(",", cartDict.Select(x => $"{x.Key}:{x.Value}"));
+            _cookieRepo.AddCookie("cart", WebUtility.UrlEncode(updated));
             return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public IActionResult Delete(int productID)
+        public IActionResult Remove(int productId)
         {
-            var encodedCartString = _cookieRepo.GetCookie("cart");
-            var cartItems = new List<CartItemVM>();
-
-            string cartString = WebUtility.UrlDecode(encodedCartString ?? "");
-
-            if (!string.IsNullOrEmpty(cartString))
+            var encodedCart = _cookieRepo.GetCookie("cart");
+            var cartDict = new Dictionary<int, int>();
+            if (!string.IsNullOrEmpty(encodedCart))
             {
-                foreach (var productIDAndQty in cartString.Split(","))
+                var decoded = WebUtility.UrlDecode(encodedCart);
+                foreach (var segment in decoded.Split(","))
                 {
-                    string[] arrIDAndQty = productIDAndQty.Split(":");
-                    if (arrIDAndQty.Length == 2)
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
                     {
-                        int currentProductID = int.Parse(arrIDAndQty[0]);
-                        int currentQty = int.Parse(arrIDAndQty[1]);
-
-                        if (currentProductID != productID)
+                        int pid = int.Parse(parts[0]);
+                        int existingQty = int.Parse(parts[1]);
+                        if (pid != productId)
                         {
-                            var productObj = _productRepo.GetProduct(currentProductID);
-                            if (productObj != null)
-                            {
-                                var cartItem = new CartItemVM
-                                {
-                                    ProductID = productObj.ID,
-                                    ProductName = productObj.ProductName,
-                                    Price = productObj.Price,
-                                    CartQuantity = currentQty
-                                };
-                                cartItems.Add(cartItem);
-                            }
+                            cartDict[pid] = existingQty;
                         }
                     }
                 }
             }
 
-            var updatedCartList = new List<string>();
-            foreach (var item in cartItems)
-            {
-                updatedCartList.Add($"{item.ProductID}:{item.CartQuantity}");
-            }
-            var updatedCartString = string.Join(",", updatedCartList);
-
-            var encodedValue = WebUtility.UrlEncode(updatedCartString);
-            _cookieRepo.AddCookie("cart", encodedValue);
-
+            var updated = string.Join(",", cartDict.Select(x => $"{x.Key}:{x.Value}"));
+            _cookieRepo.AddCookie("cart", WebUtility.UrlEncode(updated));
             return RedirectToAction("Index");
         }
     }

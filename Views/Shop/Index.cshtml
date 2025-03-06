@@ -8,72 +8,8 @@
 
 
 @{
-    ViewData["Title"] = "Products";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-
-    
-    var products = (List<string>)ViewData["ProductData"]; 
-    decimal subtotal = 0;
-    decimal gstRate = 0.05m;  // 5% GST
-    decimal pstRate = 0.07m;  // 7% PST
-    decimal gstAmount = 0;
-    decimal pstAmount = 0;
-    decimal totalTax = 0;
-    decimal totalPrice = 0;
-
-    foreach (var product in products)
-    {
-        int quantity = 1; // Default quantity
-        decimal price = 0; // Default price
-
-        // Extract the quantity
-        if (product.Contains("Qty: "))
-        {
-            var quantityText = product.Split("Qty: ")[1].Split(",")[0].Trim(); // Extract text after "Qty: " and before ","
-            if (int.TryParse(quantityText, out int parsedQuantity))
-            {
-                quantity = parsedQuantity;
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"Invalid quantity format in: {quantityText}");
-            }
-        }
-
-        // Extract the price
-        if (product.Contains("Price: "))
-        {
-            var priceText = product.Split("Price: ")[1].Split(",")[0].Trim(); // Extract text after "Price: " and before ","
-            if (priceText.StartsWith("$"))
-            {
-                priceText = priceText.Substring(1); // Remove the "$"
-                if (decimal.TryParse(priceText, out decimal parsedPrice))
-                {
-                    price = parsedPrice;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Invalid price format in: {priceText}");
-                }
-            }
-        }
-
-        // Calculate subtotal for the current product
-        subtotal += price * quantity;
-    }
-
-    // Calculate GST and PST amounts
-    gstAmount = subtotal * gstRate;
-    pstAmount = subtotal * pstRate;
-
-    // Calculate total tax (GST + PST)
-    totalTax = gstAmount + pstAmount;
-
-    // Calculate total price (Subtotal + Total Tax)
-    totalPrice = subtotal + totalTax;
-    
-
-  
+    var totalAmount = ViewData["TotalAmount"] as decimal?;
+    var formattedTotalAmount = totalAmount.HasValue ? totalAmount.Value.ToString("F2") : "0.00";
 }
 
 
@@ -96,7 +32,7 @@
                     <tr>
                         <td>
                             <span style="color:darkred;">Amount:</span> 
-                            $<span id="totalAmount">@totalPrice.ToString("F2")</span> 
+                            <span id="totalAmount">@formattedTotalAmount</span> 
                             <span id="currency">@currency</span>
                         </td>
                     </tr>

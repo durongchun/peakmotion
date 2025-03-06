@@ -1,0 +1,14 @@
+﻿@page
+@model peakmotion.Areas.Identity.Pages.Account.Manage.DashboardModel
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="d-flex" style="min-height: 100vh;">
+    <aside>
+        @await Html.PartialAsync("_SideNavProfile")
+    </aside>
+    <main class="flex-grow-1 p-5">
+        <p>This is a customer dashboard.</p>
+    </main>
+</div>

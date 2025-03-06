@@ -2,12 +2,14 @@ using peakmotion.Data;
 using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
-namespace peakmotion.Repositories{
-    public class OrderRepo{
-         private readonly PeakmotionContext _context;
+namespace peakmotion.Repositories
+{
+    public class OrderRepo
+    {
+        private readonly PeakmotionContext _context;
         public OrderRepo(PeakmotionContext context)
         {
-        _context = context;
+            _context = context;
         }
         public async Task<Order> CreateOrder(Order order)
         {
@@ -32,7 +34,7 @@ namespace peakmotion.Repositories{
         public async Task DeleteOrder(int orderId)
         {
             var order = await GetOrderById(orderId);
-            if(order != null)
+            if (order != null)
             {
                 _context.Orders.Remove(order);
                 await _context.SaveChangesAsync();
