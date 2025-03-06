@@ -114,8 +114,12 @@ public class ProductController : Controller
 
         // Fetch the product with the given ID from the database
         var product = await _context.Products
-             .Include(p => p.Fkdiscount) 
+            .Include(p => p.Fkdiscount)
+            .Include(p => p.ProductImages)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Fkcategory)
             .FirstOrDefaultAsync(p => p.Pkproductid == id);
+
 
         // If no product is found, return NotFound
         if (product == null)

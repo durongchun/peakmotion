@@ -1,4 +1,4 @@
-@model peakmotion.ViewModels.ProductDetailVM
+﻿@model peakmotion.ViewModels.ProductDetailVM
 
 @{
     var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
@@ -24,31 +24,48 @@
                             aria-label="Slide 3"></button>
                     </div>
                     <div class="carousel-inner">
-                        @if (Model.Images?.Any() == true)
+                        @if (ViewBag.ProductVM != null && ViewBag.ProductVM.PrimaryImage != null)
                         {
-
-                            @foreach (var image in Model.Images)
+                            <div class="carousel-item active">
+                                <img src="@Url.Content(ViewBag.ProductVM.PrimaryImage.Url)" class="d-block w-100" alt="@ViewBag.ProductVM.ProductName" />
+                            </div>
+                            @foreach (var image in ViewBag.ProductVM.Images)
                             {
-                                <div class="carousel-item @(image == Model.Images.First() ? "active" : "")">
-                                    <img src="@image" class="d-block w-100" alt="@Model.Productname">
-                                </div>
+                                if (image.Url != ViewBag.ProductVM.PrimaryImage.Url)
+                                {
+                                    <div class="carousel-item">
+                                        <img src="@Url.Content(image.Url)" class="d-block w-100" alt="@ViewBag.ProductVM.ProductName" />
+                                    </div>
+                                }
                             }
-
                         }
                         else
                         {
                             <div class="carousel-item active">
-                                <img src="https://picsum.photos/500/600?random=1" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/500/600?random=2" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/500/600?random=3" class="d-block w-100" alt="...">
+                                <img src="@Url.Content("/images/no-image.png")" class="d-block w-100" alt="No Image" />
                             </div>
                         }
-
                     </div>
+
+                    @{
+                        // Log the PrimaryImage URL
+                        Console.WriteLine("PrimaryImage URL: " + (ViewBag.ProductVM?.PrimaryImage?.Url ?? "none"));
+
+                        // If the Images collection exists, log each image's URL
+                        if (ViewBag.ProductVM != null && ViewBag.ProductVM.Images != null)
+                        {
+                            foreach (var image in ViewBag.ProductVM.Images)
+                            {
+                                Console.WriteLine("Image URL: " + image.Url);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Images collection does not exist.");
+                        }
+                    }
+
+
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
