@@ -16,7 +16,7 @@ builder.Services.AddDbContext<PeakmotionContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity-related
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 

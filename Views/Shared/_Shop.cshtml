@@ -50,10 +50,13 @@
                     </div>
                 </div>
             </div>
+            @if (User.Identity.IsAuthenticated)
+            {
            <div class="saveAddress">
                 <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress">
                 <label for="IsSaveAddress">Save the above address to user profile</label>
             </div>
+            }
         </form>
 
         <div class="mb-3 mt-3">

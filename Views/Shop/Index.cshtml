@@ -17,9 +17,9 @@
     <partial name="_Shop" for="@Model" />
 </div>
 
-@if (User.Identity.IsAuthenticated)
-{
-    string currency = "CAD";
+@* @if (User.Identity.IsAuthenticated)
+{ *@
+    @* string currency = "CAD"; *@
     <div class="row">
         <div class="offset-9 col-sm-3 col-md-2">
             <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
@@ -33,7 +33,7 @@
                         <td>
                             <span style="color:darkred;">Amount:</span> 
                             <span id="totalAmount">@formattedTotalAmount</span> 
-                            <span id="currency">@currency</span>
+                            <span id="currency">CAD</span>
                         </td>
                     </tr>
                 </tbody>
@@ -88,7 +88,7 @@
         }
     }).render('#paypal-button-container'); // Ensure this matches the ID
 </script>
-}
+@* }
 
 else
 {
@@ -109,4 +109,4 @@ else
         var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
         location.href = '@Url.Content("~/Identity/Account/Login")' + '?returnUrl=' + returnUrl;
     }
-</script>
+</script> *@
