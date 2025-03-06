@@ -28,7 +28,6 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
-        // This property will control whether to show the dashboard or not.
         public bool ShowDashboard { get; set; }
 
         [BindProperty]
@@ -77,9 +76,7 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
 
         public async Task<IActionResult> OnGetAsync(bool? dashboard)
         {
-            // If ?dashboard=1, ShowDashboard = true
             ShowDashboard = (dashboard == true);
-
             await LoadAsync();
             return Page();
         }
@@ -91,7 +88,8 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
             string cancel
         )
         {
-            // Keep the dashboard flag
+            ModelState.Remove("edit");
+            ModelState.Remove("cancel");
             ShowDashboard = (dashboard == true);
 
             if (!string.IsNullOrEmpty(edit))
@@ -110,6 +108,13 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
 
             if (!string.IsNullOrEmpty(save))
             {
+                if (string.IsNullOrWhiteSpace(Input.NewPassword))
+                {
+                    ModelState.Remove("Input.CurrentPassword");
+                    ModelState.Remove("Input.NewPassword");
+                    ModelState.Remove("Input.ConfirmPassword");
+                }
+
                 if (!ModelState.IsValid)
                 {
                     StatusMessage = "Error: Required fields are missing or invalid.";
@@ -125,10 +130,9 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
 
-                // If the user wants to change password
-                if (!string.IsNullOrEmpty(Input.NewPassword))
+                if (!string.IsNullOrWhiteSpace(Input.NewPassword))
                 {
-                    if (string.IsNullOrEmpty(Input.CurrentPassword))
+                    if (string.IsNullOrWhiteSpace(Input.CurrentPassword))
                     {
                         ModelState.AddModelError(string.Empty, "Current password is required to change the password.");
                         StatusMessage = "Error: Current password required.";
