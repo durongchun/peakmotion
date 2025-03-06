@@ -2,6 +2,7 @@
 
 <div class="product">
     <a class="product-link" asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID">
+        @{Console.WriteLine($"PrimaryImage URL: {Model.PrimaryImage?.Url}");}
         <img class="product-image"
              src="@(Model.PrimaryImage != null ? Url.Content(Model.PrimaryImage.Url) : Url.Content("/images/no-image.png"))"
              alt="Product image">

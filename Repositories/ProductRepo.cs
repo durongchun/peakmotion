@@ -559,6 +559,7 @@ namespace peakmotion.Repositories
                 foreach (var img in images)
                 {
                     Console.WriteLine($"  pkimageid={img.Pkimageid}, isprimary={img.Isprimary}, url={img.Url}");
+
                 }
             }
 
