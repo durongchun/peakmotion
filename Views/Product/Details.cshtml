@@ -1,5 +1,10 @@
 @model peakmotion.ViewModels.ProductDetailVM
 
+@{
+    var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
+    int qty = cartDict.ContainsKey(Model.Pkproductid) ? cartDict[Model.Pkproductid] : 0;
+}
+
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
 </head>
@@ -111,11 +116,26 @@
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
-                    <!-- Quantity Selection -->
+                    <!-- Quantity Selection
                     <div class="quantity-selection pb-3">
                         <label for="Quantity">Select Quantity:</label>
                         <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
-                    </div>
+                    </div> -->
+                    <!-- new qty selection -->
+                    <label for="qty">Quantity:</label>
+                    <select id="qty" name="qty">
+                        @for (int i = 1; i <= (Model.Qty < 10 ? Model.Qty : 10); i++)
+                        {
+                            if (i == qty)
+                            {
+                                <option value="@i" selected>@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        }
+                    </select>
 
 
                     <!-- Add to Cart Button -->
