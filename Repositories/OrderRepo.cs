@@ -29,6 +29,7 @@ namespace peakmotion.Repositories
             return await _context.Orders
                 .Include(o => o.OrderProducts)
                 .Include(o => o.OrderStatuses)
+                .Include(o => o.Fkpmuser)
                 .ToListAsync();
         }
         public async Task DeleteOrder(int orderId)
