@@ -2,7 +2,6 @@
 @inject peakmotion.Repositories.ProductRepo ProductRepo
 
 @{
-    // Decode the cart cookie
     var encodedCartString = CookieRepo.GetCookie("cart");
     var cartDict = new Dictionary<int, int>();
 
@@ -40,7 +39,18 @@
                 var productVM = ProductRepo.GetProduct(productId);
                 if (productVM != null)
                 {
-                    var lineTotal = productVM.Price * qty;
+                    bool hasDiscount = productVM.Discount != null && productVM.Discount.Description == "discount";
+                    decimal finalPrice = productVM.Price;
+                    if (hasDiscount)
+                    {
+                        finalPrice = productVM.Price - productVM.Discount.Amount;
+                        if (finalPrice < 0)
+                        {
+                            finalPrice = 0;
+                        }
+                    }
+                    var lineTotal = finalPrice * qty;
+
                     <li class="list-group-item d-flex justify-content-between">
                         <span>@productVM.ProductName (Qty: @qty)</span>
                         <span>@lineTotal.ToString("C")</span>
