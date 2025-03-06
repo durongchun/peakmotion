@@ -3,6 +3,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace peakmotion.Repositories
 {
@@ -196,5 +197,22 @@ namespace peakmotion.Repositories
         {
             return _db.Pmusers.FirstOrDefault(pm => pm.Pkpmuserid == id);
         }
+
+        public int GetUserId()
+        {
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null) return 0; // If no user is logged in
+
+            var currentUser = _userManager.GetUserAsync(identityUser).Result; // Blocking async call (not ideal)
+
+            return _db.Pmusers
+                      .Where(p => p.Email == currentUser.Email)
+                      .Select(p => p.Pkpmuserid)
+                      .FirstOrDefault(); // Will return 0 if no user found
+        }
+
+
+
+
     }
 }

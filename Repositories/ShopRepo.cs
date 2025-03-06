@@ -11,12 +11,17 @@ namespace peakmotion.Repositories
     {
         private readonly PeakmotionContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly PmuserRepo _pmuserRepo;
+        private readonly CookieRepo _cookieRepo;
+        private readonly ProductRepo _productRepo;
 
 
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager)
+        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager, PmuserRepo pmuserRepo, CookieRepo cookieRepo)
         {
             _context = context;
             _userManager = userManager;
+            _pmuserRepo = pmuserRepo;
+            _cookieRepo = cookieRepo;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
@@ -85,12 +90,13 @@ namespace peakmotion.Repositories
 
         public void SaveOrderInfo(PayPalConfirmationVM model)
         {
-            // Save confirmation to the database
+            var userId = _pmuserRepo.GetUserId();
+
             var newOrder = new Order
             {
                 Pptransactionid = model.TransactionId,
                 Orderdate = DateOnly.FromDateTime(DateTime.Now),
-                Fkpmuserid = 1,
+                Fkpmuserid = userId,
 
             };
 
@@ -118,16 +124,21 @@ namespace peakmotion.Repositories
 
         public void SaveOrderProduct(PayPalConfirmationVM model)
         {
-            var newOrderProduct = new OrderProduct
+            var products = _cookieRepo.GetProductsFromCookie();
+
+            foreach (var product in products)
             {
-                Qty = 1,
-                Unitprice = 40.00m,
-                Fkorderid = GetOrderId(model),
-                Fkproductid = 1,
+                var newOrderProduct = new OrderProduct
+                {
+                    Qty = product.cartQty,
+                    Unitprice = product.Price,
+                    Fkorderid = GetOrderId(model),
+                    Fkproductid = product.ID,
+                };
 
-            };
+                _context.OrderProducts.Add(newOrderProduct);
+            }
 
-            _context.OrderProducts.Add(newOrderProduct);
             _context.SaveChanges();
 
         }
@@ -140,9 +151,51 @@ namespace peakmotion.Repositories
                         .FirstOrDefault();
         }
 
+        public decimal GetTotalAmount()
+        {
+            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+
+            decimal subtotal = 0;
+            foreach (var product in products)
+            {
+                subtotal += product.Price * product.cartQty;
+
+            }
+
+            decimal gstRate = 0.05m;
+            decimal pstRate = 0.07m;
+            decimal gstAmount = subtotal * gstRate;
+            decimal pstAmount = subtotal * pstRate;
+            decimal totalTax = gstAmount + pstAmount;
+            decimal total = subtotal + totalTax;
+
+            return total;
+        }
+
+        public void UpdateProductStock()
+        {
+            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+            foreach (var prod in products)
+            {
+                var product = _context.Products
+                                     .FirstOrDefault(p => p.Pkproductid == prod.ID);
+
+                if (product != null)
+                {
+                    if (product.Qtyinstock >= prod.cartQty)
+                    {
+                        product.Qtyinstock -= prod.cartQty;
+                    }
+                    else
+                    {
+
+                        product.Qtyinstock = 0;
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
     }
-
-
 
 
 }
