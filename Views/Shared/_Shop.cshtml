@@ -7,7 +7,11 @@
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
                 @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
+                <span id="emailError" class="text-danger" style="display:none;">Please enter a valid email address.</span>
+                @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
             </div>
+
+
             <div class="pt-2">
                 <h3>Shipping Address</h3>
                 <div id="name">
@@ -96,4 +100,27 @@
         debugger;
         document.querySelector('.shipping-form').submit();
     });
+
+    
+    document.getElementById('shippingForm').addEventListener('submit', function (e) {
+        var emailField = document.getElementById('email');
+        var emailError = document.getElementById('emailError');
+
+        // Check if the user is logged in
+        var isLoggedIn = @Json.Serialize(User.Identity.IsAuthenticated);
+
+        // If not logged in, enforce email requirement
+        if (!isLoggedIn && emailField.value.trim() === '') {
+            e.preventDefault();
+            emailError.style.display = 'block';
+        } else {
+            emailError.style.display = 'none';
+        }
+    });
+    
+
 </script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.6.0.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.3/jquery.validate.min.js"></script>
+<script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.7/jquery.validate.unobtrusive.min.js"></script>
+
