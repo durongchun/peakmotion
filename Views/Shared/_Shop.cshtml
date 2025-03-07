@@ -7,11 +7,15 @@
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
                 @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
-                <span id="emailError" class="text-danger" style="display:none;">Please enter a valid email address.</span>
-                @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
+                }
+                
             </div>
 
-
+            @if (User.Identity.IsAuthenticated)
+            {
             <div class="pt-2">
                 <h3>Shipping Address</h3>
                 <div id="name">
@@ -54,8 +58,7 @@
                     </div>
                 </div>
             </div>
-            @if (User.Identity.IsAuthenticated)
-            {
+           
            <div class="saveAddress">
                 <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress">
                 <label for="IsSaveAddress">Save the above address to user profile</label>
@@ -120,23 +123,25 @@
         @if (User.Identity.IsAuthenticated)
         {
             <text>
-            var saveAddressCheckbox = document.getElementById('IsSaveAddress');
-
-            // For Authenticated Users: Submit only when checkbox is checked
-            if (saveAddressCheckbox) {
-                saveAddressCheckbox.addEventListener('change', function () {
-                    shippingForm.submit();
-                });
-            }
+            document.getElementById('IsSaveAddress').addEventListener('change', function() {
+                debugger;
+                document.querySelector('.shipping-form').submit();
+            });
             </text>
         }
     });
+
+    $(document).ready(function () {
+        $("form").validate(); // This will apply validation to the form
+    });
 </script>
+
+
 
     
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
 
-</script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.6.0.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.19.3/jquery.validate.min.js"></script>
-<script src="https://ajax.aspnetcdn.com/ajax/mvc/5.2.7/jquery.validate.unobtrusive.min.js"></script>
+
 

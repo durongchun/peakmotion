@@ -7,8 +7,7 @@ namespace peakmotion.ViewModels
     public class ShippingVM
     {
         public int ID { get; set; }
-
-        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Required]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 
