@@ -31,9 +31,6 @@ namespace peakmotion.Controllers
 
             var totalAmount = _shopRepo.GetTotalAmount();
 
-            var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
-
-            ViewData["ProductData"] = productData;
             ViewData["TotalAmount"] = totalAmount;
 
             return View("Index", shippingInfo);
