@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using peakmotion.Data;
 using peakmotion.Models;
 using peakmotion.Repositories;
+using peakmotion.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

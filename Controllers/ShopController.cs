@@ -6,6 +6,7 @@ using peakmotion.Models;
 using System;
 using System.Collections.Generic;
 using NuGet.Protocol;
+using System.Threading.Tasks;
 
 namespace peakmotion.Controllers
 {
@@ -23,9 +24,9 @@ namespace peakmotion.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index(ShippingVM model)
         {
-            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
+            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo(model);
             var shippingInfo = shippings.FirstOrDefault();
 
             var totalAmount = _shopRepo.GetTotalAmount();
@@ -42,6 +43,8 @@ namespace peakmotion.Controllers
         public IActionResult Edit(ShippingVM model)
         {
             string returnMessage = string.Empty;
+
+            _shopRepo.SetShippingDataToCookie(model);
 
             try
             {
@@ -62,7 +65,7 @@ namespace peakmotion.Controllers
 
 
         [HttpGet("Home/PayPalConfirmation")]
-        public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
+        public async Task<IActionResult> PayPalConfirmation(PayPalConfirmationVM model)
         {
             var modelVM = new PayPalConfirmationVM
             {
@@ -78,7 +81,10 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderProduct(model);
             _shopRepo.UpdateProductStock();
 
-            _cookieRepo.RemoveCookie("ProductData");
+            var email = _shopRepo.GetEmailAddress();
+            await _shopRepo.SendEmail(email, model.TransactionId);
+
+            _cookieRepo.RemoveCookie("ShippingData");
             _cookieRepo.RemoveCookie("cart");
 
 

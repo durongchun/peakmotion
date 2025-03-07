@@ -17,9 +17,6 @@
     <partial name="_Shop" for="@Model" />
 </div>
 
-@if (User.Identity.IsAuthenticated)
-{
-    string currency = "CAD";
     <div class="row">
         <div class="offset-9 col-sm-3 col-md-2">
             <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
@@ -33,7 +30,7 @@
                         <td>
                             <span style="color:darkred;">Amount:</span> 
                             <span id="totalAmount">@formattedTotalAmount</span> 
-                            <span id="currency">@currency</span>
+                            <span id="currency">CAD</span>
                         </td>
                     </tr>
                 </tbody>
@@ -41,72 +38,71 @@
         </div>
     </div>
 
-    <script>
-    paypal.Buttons({
-        // Set up the transaction
-        createOrder: function (data, actions) {
-            const amount = document.getElementById('totalAmount').textContent.trim();
-            const currency = document.getElementById('currency').textContent.trim();
-            console.log("Amount:", amount, "Currency:", currency);
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: document.getElementById('totalAmount').textContent.trim(),
-                        currency_code: document.getElementById('currency').textContent.trim()
+   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var emailField = document.getElementById("email");
+        var paypalContainer = document.getElementById("paypal-button-container");
 
-                    }
-                }]
-            });
-        },
-
-        // Finalize the transaction
-        onApprove: function (data, actions) {
-            return actions.order.capture().then(function (details) {
-                console.log("Transaction details:", details);
-                const transactionId = encodeURIComponent(details.id);
-                const amount = encodeURIComponent(details.purchase_units[0].amount.value);
-                const payerName = encodeURIComponent(details.payer.name.given_name);
-                const email = encodeURIComponent(details.payer.email_address); // Extract email
-
-                window.location.href =
-                    `/Home/PayPalConfirmation?TransactionId=${transactionId}&Amount=${amount}&PayerName=${payerName}&Email=${email}`;
-            });
-        },
-
-
-        onCancel: function (data) {
-            alert('Transaction was cancelled.');
-        },
-        onError: function (err) {
-            alert('An error occurred during the transaction.');
-        },
-        style: {
-            layout: 'vertical', // 'vertical', 'horizontal'
-            color: 'blue',      // 'gold', 'blue', 'silver', 'black'
-            shape: 'rect',      // 'rect', 'pill'
-            label: 'paypal'     // 'checkout', 'pay', 'buynow', 'paypal'
+        function renderPayPalButton() {
+            paypalContainer.innerHTML = ""; // Clear any existing button
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: document.getElementById('totalAmount').textContent.trim(),
+                                currency_code: document.getElementById('currency').textContent.trim()
+                            }
+                        }]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        console.log("Transaction details:", details);
+                        const transactionId = encodeURIComponent(details.id);
+                        const amount = encodeURIComponent(details.purchase_units[0].amount.value);
+                        const payerName = encodeURIComponent(details.payer.name.given_name);
+                        const email = encodeURIComponent(details.payer.email_address);
+                        
+                        window.location.href =
+                            `/Home/PayPalConfirmation?TransactionId=${transactionId}&Amount=${amount}&PayerName=${payerName}&Email=${email}`;
+                    });
+                },
+                onCancel: function () {
+                    alert('Transaction was cancelled.');
+                },
+                onError: function () {
+                    alert('An error occurred during the transaction.');
+                },
+                style: {
+                    layout: 'vertical',
+                    color: 'blue',
+                    shape: 'rect',
+                    label: 'paypal'
+                }
+            }).render("#paypal-button-container");
         }
-    }).render('#paypal-button-container'); // Ensure this matches the ID
+
+        function checkEmailAndRenderPayPal() {
+            if (emailField.value.trim() !== "") {
+                renderPayPalButton();
+            } else {
+                paypalContainer.innerHTML = "<p style='color:red;'>Please enter your email to proceed with PayPal.</p>";
+            }
+        }
+
+        // Check when the user types, pastes, or leaves the field
+        emailField.addEventListener("input", checkEmailAndRenderPayPal);
+        emailField.addEventListener("change", checkEmailAndRenderPayPal);
+        emailField.addEventListener("blur", checkEmailAndRenderPayPal);
+
+        // Force-check autofill after a delay
+        setTimeout(checkEmailAndRenderPayPal, 500);
+    });
 </script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }
 
-else
-{
-    <div class="row" style="">
-    <div class="offset-2 col-sm-6">
-        <div class="form-group">
-            <button class="btn btn-primary" style="border-color:#6E0B14; background-color: #6E0B14;"
-                onclick="redirectToLogin()">
-                Login to Purchase
-            </button>
-        </div>
-    </div>
-</div>
-}
 
-<script>
-    function redirectToLogin() {
-        var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-        location.href = '@Url.Content("~/Identity/Account/Login")' + '?returnUrl=' + returnUrl;
-    }
-</script>

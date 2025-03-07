@@ -3,6 +3,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using peakmotion.Data.Services;
 
 namespace peakmotion.Repositories
 {
@@ -13,42 +14,69 @@ namespace peakmotion.Repositories
         private readonly PmuserRepo _pmuserRepo;
         private readonly CookieRepo _cookieRepo;
         private readonly ProductRepo _productRepo;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IEmailService _emailService;
 
-        public ShopRepo(
-            PeakmotionContext context,
-            UserManager<IdentityUser> userManager,
-            PmuserRepo pmuserRepo,
-            CookieRepo cookieRepo,
-            ProductRepo productRepo
+
+        public ShopRepo(PeakmotionContext context,
+        UserManager<IdentityUser> userManager,
+        PmuserRepo pmuserRepo,
+        CookieRepo cookieRepo,
+        IHttpContextAccessor httpContextAccessor,
+        IEmailService emailService
         )
         {
             _context = context;
             _userManager = userManager;
             _pmuserRepo = pmuserRepo;
             _cookieRepo = cookieRepo;
-            _productRepo = productRepo;
+            _httpContextAccessor = httpContextAccessor;
+            _emailService = emailService;
         }
 
-        public IEnumerable<ShippingVM> GetShippingInfo()
+        public IEnumerable<ShippingVM> GetShippingInfo(ShippingVM model)
         {
-            IEnumerable<ShippingVM> shippingInfo = _context.Pmusers.Select(
-                user => new ShippingVM
-                {
-                    ID = user.Pkpmuserid,
-                    EmailAddress = user.Email,
-                    FirstName = user.Firstname,
-                    LastName = user.Lastname,
-                    PhoneNumber = user.Phone,
-                    Address = user.Address,
-                    ApptUnit = user.Address,
-                    City = user.City,
-                    Province = user.Province,
-                    PostalCode = user.Postalcode
-                }
-            ).ToList();
+            var userId = _pmuserRepo.GetUserId();
 
-            return shippingInfo;
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
+            {
+                return new List<ShippingVM> { _cookieRepo.GetShippingVMFromCookie() };
+
+
+            }
+            else
+            {
+                return _context.Pmusers
+                    .Where(user => user.Pkpmuserid == userId) // Filter by logged-in user's ID
+                    .Select(user => new ShippingVM
+                    {
+                        ID = user.Pkpmuserid,
+                        EmailAddress = user.Email,
+                        FirstName = user.Firstname,
+                        LastName = user.Lastname,
+                        PhoneNumber = user.Phone,
+                        Address = user.Address,
+                        ApptUnit = user.Address,
+                        City = user.City,
+                        Province = user.Province,
+                        PostalCode = user.Postalcode
+                    })
+                    .ToList();
+
+            }
         }
+
+        public void SetShippingDataToCookie(ShippingVM model)
+        {
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
+            {
+
+                _cookieRepo.AddShippingVMToCookie(model);
+            }
+        }
+
 
         public void SaveShippingInfo(ShippingVM model)
         {
@@ -192,6 +220,50 @@ namespace peakmotion.Repositories
                 }
             }
             _context.SaveChanges();
+        }
+
+        public string GetEmailAddress()
+        {
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
+            {
+                var shippingVM = _cookieRepo.GetShippingVMFromCookie();
+
+                if (shippingVM == null)
+                {
+                    throw new InvalidOperationException("No shipping information found in the cookie.");
+                }
+
+                return shippingVM.EmailAddress;
+
+            }
+            var currentUser = _userManager.GetUserAsync(identityUser).Result;
+            return currentUser.Email;
+
+        }
+
+        public async Task SendEmail(string emailAddress, string orderId)
+        {
+            var body = $@"
+        <p>Dear Valued Customer,</p>
+        <p>Thank you for your order! Your order ID is <strong>{orderId}</strong>.</p>
+        <p>We appreciate your business and look forward to serving you again.</p>
+
+        <br>
+        <p>Best regards,</p>
+        <p><strong>PeakMotion Support Team</strong></p>
+        <p>Email: <a href='mailto:support@peakmotion.com'>support@peakmotion.com</a></p>
+        <p>Phone: +1 (123) 456-7890</p>
+        <p>Website: <a href='https://www.peakmotion.com'>www.peakmotion.com</a></p>
+        <br>
+        <p><em>This is an automated message. Please do not reply to this email.</em></p>";
+
+            var response = await _emailService.SendSingleEmail(new ComposeEmailModel
+            {
+                Subject = "Order Confirmation",
+                Email = emailAddress,
+                Body = body
+            });
         }
     }
 }

@@ -8,6 +8,7 @@ namespace peakmotion.ViewModels
     {
         public int ID { get; set; }
 
+        [Required]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
 

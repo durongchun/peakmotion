@@ -236,14 +236,28 @@ namespace peakmotion.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
 
+                    // Professional Email Body
+                    var body = $@"
+                                <p>Dear {Input.Email},</p>
+                                <p>Thank you for registering with <strong>PeakMotion</strong>! To complete your registration and activate your account, please confirm your email by clicking the link below:</p>
+                                <p><a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style='color: #007bff; text-decoration: none; font-weight: bold;'>Confirm Your Email</a></p>
+                                <p>If you did not sign up for this account, you can safely ignore this email.</p>
+                                
+                                <br>
+                                <p>Best regards,</p>
+                                <p><strong>PeakMotion Support Team</strong></p>
+                                <p>Email: <a href='mailto:support@peakmotion.com'>support@peakmotion.com</a></p>
+                                <p>Phone: +1 (123) 456-7890</p>
+                                <p>Website: <a href='https://www.peakmotion.com'>www.peakmotion.com</a></p>
+                                <br>
+                                <p style='color: gray; font-size: 12px;'><em>This is an automated message. Please do not reply to this email.</em></p>";
+
                     // SendGrid
                     var response = await _emailService.SendSingleEmail(new ComposeEmailModel
                     {
                         Subject = "Confirm your email",
                         Email = Input.Email,
-                        Body = $"Please confirm your account by <a " +
-                                $"href='{HtmlEncoder.Default.Encode(callbackUrl)}'> " +
-                                $"clicking here</a>."
+                        Body = body,
                     });
 
                     return RedirectToPage("RegisterConfirmation", new { email = Input.Email, returnUrl = returnUrl });
