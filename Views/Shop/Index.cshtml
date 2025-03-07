@@ -17,9 +17,6 @@
     <partial name="_Shop" for="@Model" />
 </div>
 
-@* @if (User.Identity.IsAuthenticated)
-{ *@
-    @* string currency = "CAD"; *@
     <div class="row">
         <div class="offset-9 col-sm-3 col-md-2">
             <div id="paypal-button-container" style="text-align:right;padding-right:20px;"></div>
@@ -90,7 +87,7 @@
             if (emailField.value.trim() !== "") {
                 renderPayPalButton();
             } else {
-                paypalContainer.innerHTML = "<p style='color:red;'>Please enter your email to proceed with PayPal.</p>";
+                paypalContainer.innerHTML = "<p style='color:red; padding-right: 4rem;'>Please enter your email to proceed with PayPal.</p>";
             }
         }
 
@@ -108,25 +105,3 @@
     <partial name="_ValidationScriptsPartial" />
 }
 
-@* }
-
-else
-{
-    <div class="row" style="">
-    <div class="offset-2 col-sm-6">
-        <div class="form-group">
-            <button class="btn btn-primary" style="border-color:#6E0B14; background-color: #6E0B14;"
-                onclick="redirectToLogin()">
-                Login to Purchase
-            </button>
-        </div>
-    </div>
-</div>
-}
-
-<script>
-    function redirectToLogin() {
-        var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
-        location.href = '@Url.Content("~/Identity/Account/Login")' + '?returnUrl=' + returnUrl;
-    }
-</script> *@
