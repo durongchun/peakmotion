@@ -121,8 +121,10 @@ namespace peakmotion.Repositories
             var sizeChoices = FetchCategoryDropdown("size");
             var categoryChoices = FetchCategoryDropdown("category");
             var propertyChoices = FetchCategoryDropdown("property");
+            var bestSellerChoices = FetchCategoryDropdown("bestseller");
             Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
             {
+                { "bestseller", bestSellerChoices },
                 { "category", categoryChoices },
                 { "property", propertyChoices },
                 { "gender", genderChoices },
