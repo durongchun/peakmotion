@@ -23,6 +23,17 @@ namespace peakmotion.Repositories
             var product = FetchProductFromDb(id);
             if (product == null) return null;
 
+            // Retrieve product images using the existing method.
+            var productImages = GetProductImage(id);
+
+            // Find the primary image among the retrieved images.
+            var primaryImage = productImages.FirstOrDefault(img => img.Isprimary);
+            // Optionally, if no primary image is set, fallback to the first available image.
+            if (primaryImage == null && productImages.Any())
+            {
+                primaryImage = productImages.First();
+            }
+
             var productVM = new ProductVM
             {
                 ID = id,
@@ -31,11 +42,13 @@ namespace peakmotion.Repositories
                 Price = product.Regularprice,
                 Quantity = product.Qtyinstock,
                 cartQty = qty,
-
+                Images = productImages,
+                PrimaryImage = primaryImage
             };
 
             return productVM;
         }
+
 
         // Get specific product in the database.
         public ProductVM? GetProduct(int id)
@@ -561,6 +574,7 @@ namespace peakmotion.Repositories
                 foreach (var img in images)
                 {
                     Console.WriteLine($"  pkimageid={img.Pkimageid}, isprimary={img.Isprimary}, url={img.Url}");
+
                 }
             }
 
