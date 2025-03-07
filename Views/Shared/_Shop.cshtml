@@ -6,11 +6,11 @@
             <h3>Contact</h3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
-                @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
-                @if (!User.Identity.IsAuthenticated)
+                @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @type="email", @placeholder = "Enter your email address", @class = "form-control" })
+                @* @if (!User.Identity.IsAuthenticated)
                 {
-                    @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger" })
-                }
+                    @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger", @id = "emailerror" })
+                } *@
                 
             </div>
 
@@ -102,49 +102,60 @@
 
 <script>
 
+    document.addEventListener("DOMContentLoaded", function () {
+        var emailField = document.getElementById('email');
+        var shippingForm = document.querySelector('.shipping-form');
+        var hiddenSubmit = document.getElementById('hiddenSubmit');
+        
 
-
-document.addEventListener("DOMContentLoaded", function () {
-    var emailField = document.getElementById('email');
-    var shippingForm = document.querySelector('.shipping-form');
-    var hiddenSubmit = document.getElementById('hiddenSubmit');
-
-    function autoSubmitForm() {
-        // Check form validity if using jQuery Validate
-        if (typeof $(shippingForm).valid === 'function' && !$(shippingForm).valid()) {
-            console.log("Form not valid, not submitting");
-            return;
-        }
-        // Use modern requestSubmit if available, else fallback
-        if (typeof shippingForm.requestSubmit === 'function') {
-            shippingForm.requestSubmit();
-        } else {
-            hiddenSubmit.click();
-        }
-    }
-
-    @if (!User.Identity.IsAuthenticated)
-    {
-        <text>
-        emailField.addEventListener('blur', function () {
-            if (emailField.value.trim() !== '') {
-                autoSubmitForm();
-            } else {
-                console.log("Email is empty"); // Optionally, add feedback here
+        function autoSubmitForm() {
+            // Check form validity if using jQuery Validate
+            if (typeof $(shippingForm).valid === 'function' && !$(shippingForm).valid()) {
+                console.log("Form not valid, not submitting");
+                return;
             }
-        });
-        </text>
-    }
+            // Use modern requestSubmit if available, else fallback
+            if (typeof shippingForm.requestSubmit === 'function') {
+                shippingForm.requestSubmit();
+            } else {
+                hiddenSubmit.click();
+            }
+        }
 
-    @if (User.Identity.IsAuthenticated)
-    {
-        <text>
-        document.getElementById('IsSaveAddress').addEventListener('change', function() {
-            autoSubmitForm();
-        });
-        </text>
-    }
-});
+        // Function to check if email is already filled
+        function checkIfEmailFilled() {
+            if (emailField.value.trim() !== '') {
+                console.log("Email field is already filled.");
+                return true; 
+            } else {
+                console.log("Email field is empty.");
+                return false; 
+            }
+        }
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <text>
+                emailField.addEventListener('blur', function() {
+                    
+                    if (checkIfEmailFilled()) {
+                        autoSubmitForm();
+                    } else {
+                        console.log("Email is empty")
+                    }
+                })
+            </text>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <text>
+            document.getElementById('IsSaveAddress').addEventListener('change', function() {
+                autoSubmitForm();
+            });
+            </text>
+        }
+    });
 
 
 

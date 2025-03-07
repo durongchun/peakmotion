@@ -62,3 +62,7 @@ button:hover {
     margin-left: 1rem;
   }
 }
+
+input[type="email"]:invalid {
+  border: 2px solid red;
+}
