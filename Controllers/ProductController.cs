@@ -51,6 +51,7 @@ public class ProductController : Controller
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
+            ViewBag.PageTitle = "Search...";
         }
         ViewBag.SearchString = searchString;
 
@@ -69,8 +70,10 @@ public class ProductController : Controller
             case "Men": ViewBag.PageTitle = "Men"; break;
             case "Women": ViewBag.PageTitle = "Women"; break;
             case "Equipment": ViewBag.PageTitle = "Equipment"; break;
+            case "2025": ViewBag.PageTitle = "Best Sellers"; break;
             default: ViewBag.PageTitle = "All Products"; break;
         }
+        if (!string.IsNullOrEmpty(searchString)) ViewBag.PageTitle = "Searching ...";
         return View(data);
     }
 
@@ -114,10 +117,14 @@ public class ProductController : Controller
 
         // Fetch the product with the given ID from the database
         var product = await _context.Products
+<<<<<<< HEAD
             .Include(p => p.Fkdiscount)
             .Include(p => p.ProductImages)
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Fkcategory)
+=======
+             .Include(p => p.Fkdiscount)
+>>>>>>> main
             .FirstOrDefaultAsync(p => p.Pkproductid == id);
 
 
