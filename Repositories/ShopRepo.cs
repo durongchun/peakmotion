@@ -233,8 +233,19 @@ namespace peakmotion.Repositories
 
         public async Task SendEmail(string emailAddress, string orderId)
         {
+            var body = $@"
+        <p>Dear Valued Customer,</p>
+        <p>Thank you for your order! Your order ID is <strong>{orderId}</strong>.</p>
+        <p>We appreciate your business and look forward to serving you again.</p>
 
-            var body = $"Thank you for your order! Your order ID is {orderId}.";
+        <br>
+        <p>Best regards,</p>
+        <p><strong>PeakMotion Support Team</strong></p>
+        <p>Email: <a href='mailto:support@peakmotion.com'>support@peakmotion.com</a></p>
+        <p>Phone: +1 (123) 456-7890</p>
+        <p>Website: <a href='https://www.peakmotion.com'>www.peakmotion.com</a></p>
+        <br>
+        <p><em>This is an automated message. Please do not reply to this email.</em></p>";
 
             var response = await _emailService.SendSingleEmail(new ComposeEmailModel
             {

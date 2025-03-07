@@ -8,7 +8,6 @@ namespace peakmotion.ViewModels
     {
         public int ID { get; set; }
 
-        [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
         [Display(Name = "Email Address")]
         public string EmailAddress { get; set; }
