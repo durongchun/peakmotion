@@ -51,7 +51,7 @@ namespace peakmotion.Repositories
             var identityUser = _httpContextAccessor.HttpContext?.User;
             if (identityUser == null || !identityUser.Identity.IsAuthenticated)
             {
-                return SendEmailAddressPaypalConfirmationVM(model);
+                return new List<ShippingVM> { _cookieRepo.GetShippingVMFromCookie() };
 
 
             }
@@ -244,35 +244,32 @@ namespace peakmotion.Repositories
             });
         }
 
-        public IEnumerable<ShippingVM> SendEmailAddressPaypalConfirmationVM(ShippingVM model)
+        public void SetShippingDataToCookie(ShippingVM model)
         {
-
-            var shippingInfo = new ShippingVM
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
             {
 
-                EmailAddress = model.EmailAddress,
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber,
-                Address = model.Address,
-                ApptUnit = model.ApptUnit,
-                City = model.City,
-                Province = model.Province,
-                PostalCode = model.PostalCode
-            };
-
-            return new List<ShippingVM> { shippingInfo };
+                _cookieRepo.AddShippingVMToCookie(model);
+            }
         }
 
 
-        public string GetEmailAddress(PayPalConfirmationVM model)
+
+        public string GetEmailAddress()
         {
-            var email = model.Email;
-            return email;
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
+            {
+                return _cookieRepo.GetShippingVMFromCookie().EmailAddress;
+
+            }
+            var currentUser = _userManager.GetUserAsync(identityUser).Result;
+            return currentUser.Email;
+
+
+
         }
-
-
-
     }
 }
 

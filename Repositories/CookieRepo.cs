@@ -173,6 +173,26 @@ namespace peakmotion.Repositories
 
         }
 
+        public void AddShippingVMToCookie(ShippingVM shippingInfoList, int expireDays = 7)
+        {
+            var serializedShippingInfo = JsonConvert.SerializeObject(shippingInfoList);
+            AddCookie("ShippingData", serializedShippingInfo, expireDays);
+        }
+
+
+        public ShippingVM GetShippingVMFromCookie()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return null;
+
+            var cookieValue = context.Request.Cookies["ShippingData"];
+            if (string.IsNullOrEmpty(cookieValue)) return null;
+
+            var shippingInfo = JsonConvert.DeserializeObject<ShippingVM>(cookieValue);
+            return shippingInfo;
+        }
+
+
     }
 
 }

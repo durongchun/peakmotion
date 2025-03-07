@@ -44,7 +44,7 @@ namespace peakmotion.Controllers
         {
             string returnMessage = string.Empty;
 
-            _shopRepo.SendEmailAddressPaypalConfirmationVM(model);
+            _shopRepo.SetShippingDataToCookie(model);
 
             try
             {
@@ -80,10 +80,11 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderStatus(model);
             _shopRepo.SaveOrderProduct(model);
             _shopRepo.UpdateProductStock();
-            var email = _shopRepo.GetEmailAddress(model);
-            await _shopRepo.SendEmail("lucydu2021@gmail.com", model.TransactionId);
 
-            _cookieRepo.RemoveCookie("ProductData");
+            var email = _shopRepo.GetEmailAddress();
+            await _shopRepo.SendEmail(email, model.TransactionId);
+
+            _cookieRepo.RemoveCookie("ShippingData");
             _cookieRepo.RemoveCookie("cart");
 
 
