@@ -35,6 +35,10 @@ header {
   opacity: 0.7;
 }
 
+.navbar-right {
+  gap: 0.5rem;
+}
+
 .text-header {
   font-weight: 100;
 }
@@ -86,6 +90,29 @@ a.btn {
 .show-on-xlg,
 .show-on-md {
   display: none;
+}
+
+@media (min-width: 576px) {
+  #searchToggleContainer {
+    margin-left: auto !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .navbar-collapse {
+    background-color: var(--colour-topbar);
+    margin-top: 1rem;
+    padding: 2rem;
+  }
+
+  #searchToggleContainer {
+    margin-top: 1rem;
+  }
+
+  .navbar-right {
+    gap: 1rem;
+    margin-top: 1rem;
+  }
 }
 
 @media (min-width: 676px) {
