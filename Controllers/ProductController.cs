@@ -117,14 +117,10 @@ public class ProductController : Controller
 
         // Fetch the product with the given ID from the database
         var product = await _context.Products
-<<<<<<< HEAD
             .Include(p => p.Fkdiscount)
             .Include(p => p.ProductImages)
             .Include(p => p.ProductCategories)
                 .ThenInclude(pc => pc.Fkcategory)
-=======
-             .Include(p => p.Fkdiscount)
->>>>>>> main
             .FirstOrDefaultAsync(p => p.Pkproductid == id);
 
 
