@@ -16,13 +16,12 @@
             <div class="product-image-carousel">
                 <div class="carousel slide" id="carouselExampleIndicators">
                     <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
-                            class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                            aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                            aria-label="Slide 3"></button>
+                        @for (int i = 0; i < (ViewBag.ProductVM.Images?.Count ?? 0); i++)
+                        {
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+                        }
                     </div>
+
                     <div class="carousel-inner">
                         @if (ViewBag.ProductVM != null && ViewBag.ProductVM.PrimaryImage != null)
                         {
