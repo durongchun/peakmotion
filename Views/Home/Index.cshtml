@@ -6,12 +6,15 @@
 
     <link rel="stylesheet" href="~/css/homepage.css">
     <div>
-        <img class="homepageheader" src="~/images/homeheader.jpg" alt="homeheaderimage">
+        <img class="homepageheader" src="~/images/home/pexels-simonmigaj-746386.jpg" alt="homeheaderimage">
         <div class="home-container">
 
             <div class="bestseller">
                 <h2 class="text-center">GEAR UP.<br> ADVENTURE AWAITS!</h2>
-                <button class="home-btn">SHOP BEST SELLERS</button>
+                <a class="d-flex flex-column gap-3 home-btn" asp-area="" asp-controller="Product" asp-action="Index"
+                    asp-route-category="2025">
+                    SHOP BEST SELLERS</a>
+
             </div>
 
             <div class="home-categories">

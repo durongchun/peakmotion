@@ -156,7 +156,7 @@ public class AdminController : Controller
             customerName = order.Fkpmuser?.Firstname ?? "Unknown",
             OrderDate = order.Orderdate,
             Total = order.OrderProducts.Sum(op => op.Unitprice * op.Qty),
-            ShippingStatus = order.OrderStatuses.LastOrDefault()?.Orderstate ?? "Unknown"
+            ShippingStatus = order.OrderStatuses.LastOrDefault()?.Orderstate ?? "Pending"
         }).ToList();
 
         var shippingStatus = new List<String> { "Pending", "Shipped", "Delivered", "Cancelled" };

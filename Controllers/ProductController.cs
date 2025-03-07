@@ -51,6 +51,7 @@ public class ProductController : Controller
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
+            ViewBag.PageTitle = "Search...";
         }
         ViewBag.SearchString = searchString;
 
@@ -69,8 +70,10 @@ public class ProductController : Controller
             case "Men": ViewBag.PageTitle = "Men"; break;
             case "Women": ViewBag.PageTitle = "Women"; break;
             case "Equipment": ViewBag.PageTitle = "Equipment"; break;
+            case "2025": ViewBag.PageTitle = "Best Sellers"; break;
             default: ViewBag.PageTitle = "All Products"; break;
         }
+        if (!string.IsNullOrEmpty(searchString)) ViewBag.PageTitle = "Searching ...";
         return View(data);
     }
 
@@ -111,10 +114,15 @@ public class ProductController : Controller
     /// <returns></returns>
     public async Task<IActionResult> Details(int id)
     {
+
         // Fetch the product with the given ID from the database
         var product = await _context.Products
-            // .Include(p => p.Fkdiscount) // Include Discount if necessary
+            .Include(p => p.Fkdiscount)
+            .Include(p => p.ProductImages)
+            .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Fkcategory)
             .FirstOrDefaultAsync(p => p.Pkproductid == id);
+
 
         // If no product is found, return NotFound
         if (product == null)
@@ -136,6 +144,23 @@ public class ProductController : Controller
 
         _cookieRepo.SetProductDataToCookie(productDetailViewModel);
 
+        var productVM = new ProductVM
+        {
+            ID = product.Pkproductid,
+            ProductName = product.Name,
+            Description = product.Description ?? string.Empty,
+            Price = product.Regularprice,
+            Quantity = product.Qtyinstock,
+            IsFeatured = product.Isfeatured == 1,
+            IsMembershipProduct = product.Ismembershipproduct == 1,
+            Discount = product.Fkdiscount,
+            Categories = product.ProductCategories.Select(pc => pc.Fkcategory).ToList(),
+            Images = product.ProductImages,
+            PrimaryImage = product.ProductImages.FirstOrDefault(),
+            Pkdiscountid = product.Fkdiscountid
+        };
+
+        ViewBag.ProductVM = productVM;
         // Return the view with the view model
         return View(productDetailViewModel);
     }

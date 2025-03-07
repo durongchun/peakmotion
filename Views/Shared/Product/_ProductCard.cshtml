@@ -1,43 +1,43 @@
 ﻿@model peakmotion.ViewModels.ProductVM
 
 <div class="product">
-
-    <a class="product-link" asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID" class="">
-        <img class="product-image" src="/images/pexels-tima-miroshnichenko-7010141.jpg" alt="Product image">
+    <a class="product-link" asp-controller="Product" asp-action="Details" asp-route-id="@Model.ID">
+        @{Console.WriteLine($"PrimaryImage URL: {Model.PrimaryImage?.Url}");}
+        <img class="product-image"
+            src='@(Model.PrimaryImage != null ? Url.Content(Model.PrimaryImage.Url) : Url.Content("/images/no-image.png"))'
+            alt="Product image">
         <p class="product-name">@Model.ProductName</p>
         <p class="product-desc">@Model.Description</p>
         @{
-        var hasDiscount = @Model.Discount != null && @Model.Discount.Description != "free shipping";
-        var newPrice = @Model.Discount?.Amount / 100 * @Model.Price;
-        var newPriceStr = newPrice?.ToString("C");
-        }
-        @if (@hasDiscount)
+        bool hasDiscount = Model.Discount != null && Model.Discount.Description == "discount";
+        decimal finalPrice = Model.Price;
+        if (hasDiscount)
         {
-        <p class="product-price">
-            <span class="product-discounted">@Model.Price</span>
-            @newPriceStr
-        </p>
-        }
-        else
-        {
-        <p class="product-price">@Model.Price.ToString("C")</p>
-        }
+        finalPrice = Model.Price - Model.Discount.Amount;
+        if (finalPrice < 0) { finalPrice=0; } } } @if (hasDiscount) { <p class="product-price">
+            <span class="product-discounted">@Model.Price.ToString("C")</span>
+            @finalPrice.ToString("C")
+            </p>
+            }
+            else
+            {
+            <p class="product-price">@Model.Price.ToString("C")</p>
+            }
     </a>
     <div class="product-actions">
-        <!-- for wishlist btn  -->
         <form asp-controller="Wishlist" asp-action="Add" method="post">
             <input type="hidden" name="productId" value="@Model.ID" />
-            <button type="submit" class="add-to-wishlist-btn btn-image"><img src="~/images/heart_colour.svg"
-                    alt="Wishlist Button" width="32" height="32"></button>
+            <button type="submit" class="add-to-wishlist-btn btn-image">
+                <img src="~/images/heart_colour.svg" alt="Wishlist Button" width="32" height="32">
+            </button>
         </form>
-        <!-- for cart btn  -->
         <form asp-controller="Cart" asp-action="Add" method="post">
             <input type="hidden" name="productId" value="@Model.ID" />
-            <button type="submit" class="add-to-wishlist-btn btn-image"><img src="~/images/cart_colour.svg"
-                    alt="Checkout Button" width="32" height="32"></button>
+            <button type="submit" class="add-to-wishlist-btn btn-image">
+                <img src="~/images/cart_colour.svg" alt="Checkout Button" width="32" height="32">
+            </button>
         </form>
     </div>
-
 </div>
 
 <style scoped>
@@ -65,7 +65,7 @@
 
     a {
         text-decoration: none;
-        color: var(--colour-text)
+        color: var(--colour-text);
     }
 
     .product:hover {
@@ -81,59 +81,59 @@
         overflow: hidden;
         border: 1px solid white;
         transition: all 0.25s ease;
-        min-width: 200px;
+        min-width: 230px;
+    }
 
-        .product-image {
-            width: 100%;
-            height: 300px;
-            padding-bottom: 0.5rem;
-            object-fit: cover;
-        }
+    .product-image {
+        width: 100%;
+        height: 300px;
+        padding-bottom: 0.5rem;
+        object-fit: contain;
+    }
 
-        p {
-            margin: 0%;
-        }
+    p {
+        margin: 0%;
+    }
 
-        .product-name {
-            font-size: 1rem;
-            font-weight: 700;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .product-name {
+        font-size: 1rem;
+        font-weight: 700;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .product-desc {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .product-desc {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        .product-price {
-            display: flex;
-            flex: 1;
-            justify-content: end;
-            align-items: end;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            text-align: right;
-            font-size: 0.9rem;
-            opacity: 0.8;
-            color: var(--colour-primary);
-        }
+    .product-price {
+        display: flex;
+        flex: 1;
+        justify-content: end;
+        align-items: end;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: right;
+        font-size: 0.9rem;
+        opacity: 0.8;
+        color: var(--colour-primary);
+    }
 
-        .product-discounted {
-            text-decoration: line-through;
-            opacity: 0.5;
-            margin-right: 0.25rem;
-        }
+    .product-discounted {
+        text-decoration: line-through;
+        opacity: 0.5;
+        margin-right: 0.25rem;
     }
 
     .product>a {
-        flex: 1
+        flex: 1;
     }
 </style>

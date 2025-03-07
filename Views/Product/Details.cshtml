@@ -1,4 +1,9 @@
-@model peakmotion.ViewModels.ProductDetailVM
+﻿@model peakmotion.ViewModels.ProductDetailVM
+
+@{
+    var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
+    int qty = cartDict.ContainsKey(Model.Pkproductid) ? cartDict[Model.Pkproductid] : 0;
+}
 
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
@@ -11,39 +16,55 @@
             <div class="product-image-carousel">
                 <div class="carousel slide" id="carouselExampleIndicators">
                     <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
-                            class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1"
-                            aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2"
-                            aria-label="Slide 3"></button>
-                    </div>
-                    <div class="carousel-inner">
-                        @if (Model.Images?.Any() == true)
+                        @for (int i = 0; i < (ViewBag.ProductVM.Images?.Count ?? 0); i++)
                         {
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+                        }
+                    </div>
 
-                            @foreach (var image in Model.Images)
+                    <div class="carousel-inner">
+                        @if (ViewBag.ProductVM != null && ViewBag.ProductVM.PrimaryImage != null)
+                        {
+                            <div class="carousel-item active">
+                                <img src="@Url.Content(ViewBag.ProductVM.PrimaryImage.Url)" class="d-block w-100" alt="@ViewBag.ProductVM.ProductName" />
+                            </div>
+                            @foreach (var image in ViewBag.ProductVM.Images)
                             {
-                                <div class="carousel-item @(image == Model.Images.First() ? "active" : "")">
-                                    <img src="@image" class="d-block w-100" alt="@Model.Productname">
-                                </div>
+                                if (image.Url != ViewBag.ProductVM.PrimaryImage.Url)
+                                {
+                                    <div class="carousel-item">
+                                        <img src="@Url.Content(image.Url)" class="d-block w-100" alt="@ViewBag.ProductVM.ProductName" />
+                                    </div>
+                                }
                             }
-
                         }
                         else
                         {
                             <div class="carousel-item active">
-                                <img src="https://picsum.photos/500/600?random=1" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/500/600?random=2" class="d-block w-100" alt="...">
-                            </div>
-                            <div class="carousel-item">
-                                <img src="https://picsum.photos/500/600?random=3" class="d-block w-100" alt="...">
+                                <img src="@Url.Content("/images/no-image.png")" class="d-block w-100" alt="No Image" />
                             </div>
                         }
-
                     </div>
+
+                    @{
+                        // Log the PrimaryImage URL
+                        Console.WriteLine("PrimaryImage URL: " + (ViewBag.ProductVM?.PrimaryImage?.Url ?? "none"));
+
+                        // If the Images collection exists, log each image's URL
+                        if (ViewBag.ProductVM != null && ViewBag.ProductVM.Images != null)
+                        {
+                            foreach (var image in ViewBag.ProductVM.Images)
+                            {
+                                Console.WriteLine("Image URL: " + image.Url);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Images collection does not exist.");
+                        }
+                    }
+
+
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
                         data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -60,7 +81,30 @@
         <div class="col-md-6 d-flex flex-column justify-content-center"> <!-- Product Details -->
             <div class="product-details w-100">
                 <h1 class="product-name pb-5">@Model.Productname</h1>
-                <p class="product-price pb-5">$@Model.Unitprice.ToString("F2")</p>
+                
+                @{
+                    bool hasDiscount = ViewBag.ProductVM.Discount != null && ViewBag.ProductVM.Discount.Description == "discount";
+                    decimal finalPrice = ViewBag.ProductVM.Price;
+                    if (hasDiscount)
+                    {
+                        finalPrice = ViewBag.ProductVM.Price - ViewBag.ProductVM.Discount.Amount;
+                        if (finalPrice < 0)
+                        {
+                            finalPrice = 0;
+                        }
+                    }
+                }
+                @if (hasDiscount)
+                {
+                    <p class="product-price">
+                        <span class="product-discounted">@ViewBag.ProductVM.Price.ToString("C")</span>
+                        @finalPrice.ToString("C")
+                    </p>
+                }
+                else
+                {
+                    <p class="product-price">@ViewBag.ProductVM.Price.ToString("C")</p>
+                }
 
                 <!-- Color Selection -->
                 @if (Model.Colors?.Any() == true)
@@ -107,22 +151,36 @@
                 </div> *@
 
 
-                <form method="post" asp-controller="Product" asp-action="Details">
+                <form method="post" asp-controller="Cart" asp-action="Add">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
-                    <!-- Quantity Selection -->
+                    <!-- Quantity Selection
                     <div class="quantity-selection pb-3">
                         <label for="Quantity">Select Quantity:</label>
                         <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
-                    </div>
-
-
+                    </div> -->
+                    <!-- new qty selection -->
+                    <label for="qty">Quantity:</label>
+                    <select id="qty" name="qty">
+                        @for (int i = 1; i <= (Model.Qty < 10 ? Model.Qty : 10); i++)
+                        {
+                            if (i == qty)
+                            {
+                                <option value="@i" selected>@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        }
+                    </select>
 
 
                     <!-- Add to Cart Button -->
                     <button type="submit" class="add-to-cart">Add to Cart</button>
                 </form>
+
             </div>
             <!-- Product Description -->
             <div class="d-flex w-100">
@@ -152,3 +210,24 @@
 
 
 </div>
+
+<style scoped>
+    .product-price {
+        display: flex;
+        flex: 1;
+        justify-content: start;
+        align-items: center;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: right;
+        font-size: 2rem;
+        opacity: 0.8;
+        color: black;
+    }
+
+    .product-discounted {
+        text-decoration: line-through;
+        opacity: 0.5;
+        margin-right: 0.25rem;
+    }
+</style>

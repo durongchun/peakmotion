@@ -1,4 +1,5 @@
 @model IEnumerable<peakmotion.ViewModels.OrderVM>
+
 @{
     ViewData["Title"] = "Orders";
     var statuses = new List<SelectListItem> {
@@ -8,7 +9,9 @@
         new SelectListItem { Text = "Cancelled", Value = "Cancelled" }
     };
 }
+
 <h1>Orders</h1>
+
 <table>
     <thead>
         <tr>
@@ -31,13 +34,16 @@
                     <form method="post" action="@Url.Action("UpdateShippingStatus", "Admin")" id="form_@order.OrderId">
                         <input type="hidden" name="orderId" value="@order.OrderId" />
 
-                        <!-- Use DropDownList to bind the status value -->
+                        <!-- Use DropDownList with 'selected' attribute -->
                         @Html.DropDownList(
-                                "status",  // The name for the select field will be "status" to match parameter in controller
-                                statuses,
-                                "-- Select Status --",
-                                new { @class = "form-control statusDropdown", data_orderid = order.OrderId, selected = order.ShippingStatus }
-                                )
+                            "status",  // Name of the select element (this will be bound to the parameter in controller)
+                            statuses,  // Dropdown options
+                            new { 
+                                @class = "form-control statusDropdown", 
+                                data_orderid = order.OrderId, 
+                                selected = order.ShippingStatus  // Set the selected value
+                            }
+                        )
                         <button type="submit" class="btn btn-primary">Update Status</button>
                     </form>
                 </td>
