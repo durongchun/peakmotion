@@ -24,9 +24,9 @@ namespace peakmotion.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index(ShippingVM model)
         {
-            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
+            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo(model);
             var shippingInfo = shippings.FirstOrDefault();
 
             var totalAmount = _shopRepo.GetTotalAmount();
@@ -43,6 +43,8 @@ namespace peakmotion.Controllers
         public IActionResult Edit(ShippingVM model)
         {
             string returnMessage = string.Empty;
+
+            _shopRepo.SendEmailAddressPaypalConfirmationVM(model);
 
             try
             {
@@ -78,6 +80,7 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderStatus(model);
             _shopRepo.SaveOrderProduct(model);
             _shopRepo.UpdateProductStock();
+            var email = _shopRepo.GetEmailAddress(model);
             await _shopRepo.SendEmail("lucydu2021@gmail.com", model.TransactionId);
 
             _cookieRepo.RemoveCookie("ProductData");

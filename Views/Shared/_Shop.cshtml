@@ -96,27 +96,43 @@
 </div>
 
 <script>
-    document.getElementById('IsSaveAddress').addEventListener('change', function() {
-        debugger;
-        document.querySelector('.shipping-form').submit();
-    });
-
-    
-    document.getElementById('shippingForm').addEventListener('submit', function (e) {
+   
+    document.addEventListener("DOMContentLoaded", function () {
         var emailField = document.getElementById('email');
         var emailError = document.getElementById('emailError');
+        var shippingForm = document.querySelector('.shipping-form');
 
-        // Check if the user is logged in
-        var isLoggedIn = @Json.Serialize(User.Identity.IsAuthenticated);
+        @if (!User.Identity.IsAuthenticated) 
+        {
+            <text>
+            // Auto-submit form when the user moves to the next input
+            emailField.addEventListener('blur', function () {
+                if (emailField.value.trim() !== '') {
+                    emailError.style.display = 'none';
+                    shippingForm.submit(); // Auto-submit form
+                } else {
+                    emailError.style.display = 'block'; // Show error if empty
+                }
+            });
+            </text>
+        }
 
-        // If not logged in, enforce email requirement
-        if (!isLoggedIn && emailField.value.trim() === '') {
-            e.preventDefault();
-            emailError.style.display = 'block';
-        } else {
-            emailError.style.display = 'none';
+        @if (User.Identity.IsAuthenticated)
+        {
+            <text>
+            var saveAddressCheckbox = document.getElementById('IsSaveAddress');
+
+            // For Authenticated Users: Submit only when checkbox is checked
+            if (saveAddressCheckbox) {
+                saveAddressCheckbox.addEventListener('change', function () {
+                    shippingForm.submit();
+                });
+            }
+            </text>
         }
     });
+</script>
+
     
 
 </script>

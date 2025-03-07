@@ -44,27 +44,39 @@ namespace peakmotion.Repositories
             _emailService = emailService;
         }
 
-        public IEnumerable<ShippingVM> GetShippingInfo()
+        public IEnumerable<ShippingVM> GetShippingInfo(ShippingVM model)
         {
             var userId = _pmuserRepo.GetUserId();
 
-            return _context.Pmusers
-                .Where(user => user.Pkpmuserid == userId) // Filter by logged-in user's ID
-                .Select(user => new ShippingVM
-                {
-                    ID = user.Pkpmuserid,
-                    EmailAddress = user.Email,
-                    FirstName = user.Firstname,
-                    LastName = user.Lastname,
-                    PhoneNumber = user.Phone,
-                    Address = user.Address,
-                    ApptUnit = user.Address,
-                    City = user.City,
-                    Province = user.Province,
-                    PostalCode = user.Postalcode
-                })
-                .ToList();
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            if (identityUser == null || !identityUser.Identity.IsAuthenticated)
+            {
+                return SendEmailAddressPaypalConfirmationVM(model);
+
+
+            }
+            else
+            {
+                return _context.Pmusers
+                    .Where(user => user.Pkpmuserid == userId) // Filter by logged-in user's ID
+                    .Select(user => new ShippingVM
+                    {
+                        ID = user.Pkpmuserid,
+                        EmailAddress = user.Email,
+                        FirstName = user.Firstname,
+                        LastName = user.Lastname,
+                        PhoneNumber = user.Phone,
+                        Address = user.Address,
+                        ApptUnit = user.Address,
+                        City = user.City,
+                        Province = user.Province,
+                        PostalCode = user.Postalcode
+                    })
+                    .ToList();
+
+            }
         }
+
 
 
         public void SaveShippingInfo(ShippingVM model)
@@ -231,6 +243,34 @@ namespace peakmotion.Repositories
                 Body = body
             });
         }
+
+        public IEnumerable<ShippingVM> SendEmailAddressPaypalConfirmationVM(ShippingVM model)
+        {
+
+            var shippingInfo = new ShippingVM
+            {
+
+                EmailAddress = model.EmailAddress,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                Address = model.Address,
+                ApptUnit = model.ApptUnit,
+                City = model.City,
+                Province = model.Province,
+                PostalCode = model.PostalCode
+            };
+
+            return new List<ShippingVM> { shippingInfo };
+        }
+
+
+        public string GetEmailAddress(PayPalConfirmationVM model)
+        {
+            var email = model.Email;
+            return email;
+        }
+
 
 
     }
