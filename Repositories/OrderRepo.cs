@@ -57,12 +57,13 @@ namespace peakmotion.Repositories
 
 
         // Get all orders for a specific user
-        public async Task<List<Order>> GetOrdersByUserId(int userId)
-        {
-            return await _context.Orders
-                .Where(o => o.Fkpmuserid == userId)
-                .ToListAsync();
-        }
+       public async Task<List<Order>> GetOrdersByUserId(string userId)
+{
+    return await _context.Orders
+        .Where(o => o.Fkpmuserid.ToString() == userId)  // Adjusted to use string comparison
+        .ToListAsync();
+}
+
 
         // Get a specific order for a user by order ID
         public async Task<Order> GetOrderByIdForUser(int orderId, string userId)
