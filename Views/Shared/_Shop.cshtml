@@ -1,71 +1,8 @@
 ﻿@model peakmotion.ViewModels.ShippingVM
 
-@{
-    var products = (List<string>)ViewData["ProductData"]; 
-    decimal subtotal = 0;
-    decimal gstRate = 0.05m;  // 5% GST
-    decimal pstRate = 0.07m;  // 7% PST
-    decimal gstAmount = 0;
-    decimal pstAmount = 0;
-    decimal totalTax = 0;
-    decimal totalPrice = 0;
-
-    foreach (var product in products)
-    {
-        int quantity = 1; // Default quantity
-        decimal price = 0; // Default price
-
-        // Extract the quantity
-        if (product.Contains("Qty: "))
-        {
-            var quantityText = product.Split("Qty: ")[1].Split(",")[0].Trim(); // Extract text after "Qty: " and before ","
-            if (int.TryParse(quantityText, out int parsedQuantity))
-            {
-                quantity = parsedQuantity;
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"Invalid quantity format in: {quantityText}");
-            }
-        }
-
-        // Extract the price
-        if (product.Contains("Price: "))
-        {
-            var priceText = product.Split("Price: ")[1].Split(",")[0].Trim(); // Extract text after "Price: " and before ","
-            if (priceText.StartsWith("$"))
-            {
-                priceText = priceText.Substring(1); // Remove the "$"
-                if (decimal.TryParse(priceText, out decimal parsedPrice))
-                {
-                    price = parsedPrice;
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Invalid price format in: {priceText}");
-                }
-            }
-        }
-
-        // Calculate subtotal for the current product
-        subtotal += price * quantity;
-    }
-
-    // Calculate GST and PST amounts
-    gstAmount = subtotal * gstRate;
-    pstAmount = subtotal * pstRate;
-
-    // Calculate total tax (GST + PST)
-    totalTax = gstAmount + pstAmount;
-
-    // Calculate total price (Subtotal + Total Tax)
-    totalPrice = subtotal + totalTax;
-}
-
-
 <div class="shippingOrderSummary">
     <section>
-        <form class="shipping-form" action="/shipping" method="POST">
+        <form class="shipping-form" action="/Shipping/Edit" method="POST" enctype="multipart/form-data">
             <h3>Contact</h3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
@@ -113,6 +50,10 @@
                     </div>
                 </div>
             </div>
+           <div class="saveAddress">
+                <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress">
+                <label for="IsSaveAddress">Save the above address to user profile</label>
+            </div>
         </form>
 
         <div class="mb-3 mt-3">
@@ -134,28 +75,22 @@
 
     </section>
     <section>
-        <h4>ORDER SUMMARY</h4>
-        @foreach (var product in products)
-        {
-            <div>@product</div>
-        }
-        <br>
-        <div id="giftApply">
-            <div class="d-flex flex-column mb-3">
-                <label for="code">Gift Card/Discount Code</label>
-                <input type="text" id="code" name="code" placeholder="Code">
-            </div>
-            <button id="apply">APPLY</button>
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
+
+            <!-- Show the order summary partial (list of products) -->
+            @Html.Partial("_OrderSummaryPartial")
+
+            <!-- Show the payment partial (subtotal, taxes, total) -->
+            @Html.Partial("_PaymentPartial")
+
         </div>
-         <hr style="border: 1px solid #ccc; margin: 20px 0;">
-            <div class="d-flex flex-column mb-3">
-                <p>Subtotal: $@Math.Round(subtotal, 2)</p>
-                <p>GST (5%): $@Math.Round(gstAmount, 2)</p>
-                <p>PST (7%): $@Math.Round(pstAmount, 2)</p>
-                <p>Shipping: Free</p>
-                <p>Tax: $@Math.Round(totalTax, 2)</p>
-            </div>
-         <hr style="border: 1px solid #ccc; margin: 20px 0;">
-         <div><h1>Total: $@Math.Round(totalPrice, 2) CAD</h1></div>
     </section>
 </div>
+
+<script>
+    document.getElementById('IsSaveAddress').addEventListener('change', function() {
+        debugger;
+        document.querySelector('.shipping-form').submit();
+    });
+</script>

@@ -1,0 +1,83 @@
+﻿@inject peakmotion.Repositories.CookieRepo CookieRepo
+@inject peakmotion.Repositories.ProductRepo ProductRepo
+
+@{
+    var encodedCartString = CookieRepo.GetCookie("cart");
+    var cartDict = new Dictionary<int, int>();
+
+    if (!string.IsNullOrEmpty(encodedCartString))
+    {
+        var decoded = System.Net.WebUtility.UrlDecode(encodedCartString);
+        foreach (var segment in decoded.Split(","))
+        {
+            var parts = segment.Split(":");
+            if (parts.Length == 2)
+            {
+                if (int.TryParse(parts[0], out int productId) &&
+                    int.TryParse(parts[1], out int qty))
+                {
+                    cartDict[productId] = qty;
+                }
+            }
+        }
+    }
+
+    decimal subtotal = 0;
+    foreach (var kvp in cartDict)
+    {
+        var productVM = ProductRepo.GetProduct(kvp.Key);
+        if (productVM != null)
+        {
+            bool hasDiscount = productVM.Discount != null && productVM.Discount.Description == "discount";
+            decimal finalPrice = productVM.Price;
+            if (hasDiscount)
+            {
+                finalPrice = productVM.Price - productVM.Discount.Amount;
+                if (finalPrice < 0)
+                {
+                    finalPrice = 0;
+                }
+            }
+            subtotal += finalPrice * kvp.Value;
+        }
+    }
+
+    decimal gstRate = 0.05m;
+    decimal pstRate = 0.07m;
+    decimal gstAmount = subtotal * gstRate;
+    decimal pstAmount = subtotal * pstRate;
+    decimal totalTax = gstAmount + pstAmount;
+    decimal total = subtotal + totalTax;
+}
+
+<div class="mt-3">
+    <div class="d-flex justify-content-between">
+        <span>Subtotal</span>
+        <span>@subtotal.ToString("C")</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <span>GST (5%)</span>
+        <span>@gstAmount.ToString("C")</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <span>PST (7%)</span>
+        <span>@pstAmount.ToString("C")</span>
+    </div>
+    <div class="d-flex justify-content-between">
+        <span>Shipping</span>
+        <span>Free</span>
+    </div>
+    <hr />
+    <div class="d-flex justify-content-between fw-bold">
+        <span>Total</span>
+        <span id="finalTotal">@total.ToString("F2")</span>
+    </div>
+</div>
+
+<script>
+    var finalTotalSpan = document.getElementById("finalTotal");
+    var totalAmountSpan = document.getElementById("totalAmount");
+    if (finalTotalSpan && totalAmountSpan) {
+        totalAmountSpan.textContent = finalTotalSpan.textContent.trim();
+    }
+</script>

@@ -5,6 +5,7 @@ using peakmotion.ViewModels;
 using peakmotion.Models;
 using System;
 using System.Collections.Generic;
+using NuGet.Protocol;
 
 namespace peakmotion.Controllers
 {
@@ -21,88 +22,65 @@ namespace peakmotion.Controllers
             _context = context;
         }
 
-        // Action for displaying products
+
         public IActionResult Index()
         {
             IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
             var shippingInfo = shippings.FirstOrDefault();
 
+            var totalAmount = _shopRepo.GetTotalAmount();
+
             var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
+
             ViewData["ProductData"] = productData;
+            ViewData["TotalAmount"] = totalAmount;
 
             return View("Index", shippingInfo);
         }
 
-        [HttpPost]
-        public IActionResult Edit(string firstname, string lastname, string phone, string address, string city,
-                                    string province, string postalcode, string country, string email)
+        [HttpPost("Shipping/Edit")]
+        public IActionResult Edit(ShippingVM model)
         {
             string returnMessage = string.Empty;
 
             try
             {
-                // Save shipping information using the repository
-                _shopRepo.SaveShippingInfo(firstname, lastname, phone, address, city, province, postalcode, country, email);
-
-                // Success message
-                returnMessage = "Shipping information updated successfully!";
+                if (model.IsSaveAddress)
+                {
+                    _shopRepo.SaveShippingInfo(model);
+                    returnMessage = "Shipping information updated successfully!";
+                }
             }
             catch (Exception ex)
             {
-                // Handle any errors during saving
                 returnMessage = "An error occurred while updating the shipping information: " + ex.Message;
             }
 
-            // Redirect to the Index action with the return message as a query parameter
             return RedirectToAction("Index", new { message = returnMessage });
         }
 
 
 
         [HttpGet("Home/PayPalConfirmation")]
-        public IActionResult PayPalConfirmation(
-            string transactionId,
-            string amount,
-            string payerName,
-            string email,
-            string currency = "CAD")
+        public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
         {
-            // Safe conversion from string to decimal
-            if (!decimal.TryParse(amount, out decimal parsedAmount))
-            {
-                parsedAmount = 0; // Fallback in case of failure
-            }
-
-            if (!long.TryParse(transactionId, out long parsedTransactionId))
-            {
-                // Handle the case where parsing fails
-                parsedTransactionId = 0; // Or some default value
-            }
-
-            // Save confirmation to the database
-            // var newPayPalConfirmation = new Order
-            // {
-            //     Pptransactionid = parsedTransactionId,
-            //     // Amount = parsedAmount,
-            //     // PayerName = payerName,
-            //     // Email = email,
-            //     Orderdate = DateOnly.FromDateTime(DateTime.UtcNow)
-            // };
-
-            // _context.Orders.Add(newPayPalConfirmation);
-            // _context.SaveChanges();
-
-            // Prepare ViewModel for the view
             var modelVM = new PayPalConfirmationVM
             {
-                TransactionId = transactionId,
-                Amount = parsedAmount,
-                PayerName = payerName,
-                Email = email,
-                Currency = currency
+                TransactionId = model.TransactionId,
+                Amount = model.Amount,
+                PayerName = model.PayerName,
+                Email = model.Email,
+                Currency = model.Currency,
             };
 
+            _shopRepo.SaveOrderInfo(model);
+            _shopRepo.SaveOrderStatus(model);
+            _shopRepo.SaveOrderProduct(model);
+            _shopRepo.UpdateProductStock();
+
             _cookieRepo.RemoveCookie("ProductData");
+            _cookieRepo.RemoveCookie("cart");
+
 
             return View(modelVM);
         }

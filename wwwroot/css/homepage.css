@@ -1,0 +1,290 @@
+.home-btn {
+  background-color: #3f6c29;
+  color: white;
+  border: none;
+  padding: 0.5rem 2rem;
+  font-family: 'Montserrat', serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+  white-space: nowrap;
+  width: min-content;
+  transition: all 0.25s ease;
+}
+
+.home-btn:hover {
+  background-color: #183227;
+  transition: all 0.25s ease;
+}
+
+.home-btn-dark-green {
+  background-color: #183227;
+  border: solid 2dvh #183227;
+  color: white;
+  padding: 0.5rem 1rem;
+  font-family: 'Montserrat', serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.home-btn-dark-green:hover {
+  background-color: transparent;
+  border: solid 2px white;
+  transition: all 0.25s ease;
+}
+
+.home-btn-outline {
+  background-color: white;
+  border: solid 3px #3f6c29;
+  color: #3f6c29;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  font-family: 'Montserrat', serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  text-align: center;
+  white-space: nowrap;
+  width: 100%;
+  transition: all 0.25s ease;
+}
+
+.home-btn-outline:hover {
+  background-color: white;
+  border: solid 3px #183227;
+  color: #183227;
+  transition: all 0.25s ease;
+}
+
+.homepageheader {
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  max-width: 960px;
+  margin: auto;
+}
+
+.bestseller {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  font-family: 'Bebas Neue';
+  margin: auto;
+  margin-top: -3rem;
+  position: relative;
+  background: white;
+  padding: 1rem 3rem;
+  width: max-content;
+}
+
+.bestseller h2 {
+  font-size: 3rem;
+}
+
+.bestseller button {
+  width: 100%;
+}
+
+.home-categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+.home-categories > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: space-between;
+  border: 1px solid white;
+  transition: all 0.25s ease;
+  padding: 0.25rem;
+}
+
+.home-categories > div:hover {
+  opacity: 0.8;
+  border: 1px solid grey;
+  transition: all 0.25s ease;
+}
+
+.shopwear a > img:hover {
+  opacity: 0.8;
+  transition: all 0.25s ease;
+}
+
+.home-categories a {
+  max-width: 100%; /* Ensure that the subparent does not grow larger than the grid cell */
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis;
+}
+
+.home-categories img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: top;
+}
+
+.home-sale {
+  display: flex;
+  overflow: hidden;
+}
+
+.bg-dark {
+  color: white;
+  padding: 2rem;
+}
+
+.home-sale > div {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.home-sale .sale-date {
+  font-family: 'Montserrat', serif;
+  margin: 0;
+  font-size: 2rem;
+}
+
+.home-sale img {
+  object-fit: cover;
+  overflow: hidden;
+  height: 100%;
+}
+
+.home-categories button {
+}
+
+.shopwear {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.shopwear > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.shopwear img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  object-position: top;
+  max-height: 500px;
+  transition: all 0.25s ease;
+}
+
+.shopwear div:nth-of-type(2) img {
+  transform: scaleX(-1);
+}
+
+.shopwear button {
+}
+
+.instagram {
+  margin-bottom: 5rem;
+}
+
+.popular,
+.instagram-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  overflow: hidden;
+  gap: 1rem;
+}
+
+.popular {
+  overflow: scroll;
+  grid-auto-flow: column;
+}
+
+.popular::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
+
+.instagram-images {
+  height: calc(200px + 1rem); /* hide rows below the first */
+}
+
+.member {
+  display: flex;
+  background-color: #3f6c29;
+}
+
+.member > div {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  align-items: start;
+  justify-content: center;
+  color: white;
+  gap: 1rem;
+}
+
+.member p {
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.member h3 {
+  font-weight: 400;
+  font-family: 'Bebas Neue';
+  font-size: 2.5rem;
+}
+
+.member img {
+  flex: 1;
+  max-height: 350px;
+  object-fit: cover;
+  background-color: #3f6c29;
+  padding: 2rem;
+  opacity: 0.5;
+}
+
+.peak {
+  font-family: 'Bebas Neue';
+}
+
+.populartitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.populartitle img {
+  max-width: 2rem;
+}
+.hidden {
+  display: none !important;
+}
+.instagram-images img {
+  width: 100%;
+  aspect-ratio: 3 / 3;
+  object-fit: cover;
+}
+.discount {
+  font-size: 100px;
+}
+
+.product-card {
+  display: flex;
+}

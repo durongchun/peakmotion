@@ -2,20 +2,25 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Models;
 using peakmotion.Repositories;
+using peakmotion.ViewModels;
 
 namespace peakmotion.Controllers;
 
 public class HomeController : Controller
 {
+    private readonly ProductRepo _productRepo;
     private readonly ILogger<HomeController> _logger;
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ProductRepo productRepo, ILogger<HomeController> logger)
     {
+        _productRepo = productRepo;
         _logger = logger;
     }
 
     public IActionResult Index()
     {
-        return View();
+        IEnumerable<ProductVM> featuredProducts = _productRepo.GetTopFeaturedProductsBy(10);
+        Console.WriteLine($"Featured Products: {featuredProducts.Count()}");
+        return View(featuredProducts);
     }
 
     public IActionResult Privacy()

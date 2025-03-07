@@ -4,19 +4,29 @@ using peakmotion.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
-
 namespace peakmotion.Repositories
 {
     public class ShopRepo
     {
         private readonly PeakmotionContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly PmuserRepo _pmuserRepo;
+        private readonly CookieRepo _cookieRepo;
+        private readonly ProductRepo _productRepo;
 
-
-        public ShopRepo(PeakmotionContext context, UserManager<IdentityUser> userManager)
+        public ShopRepo(
+            PeakmotionContext context,
+            UserManager<IdentityUser> userManager,
+            PmuserRepo pmuserRepo,
+            CookieRepo cookieRepo,
+            ProductRepo productRepo
+        )
         {
             _context = context;
             _userManager = userManager;
+            _pmuserRepo = pmuserRepo;
+            _cookieRepo = cookieRepo;
+            _productRepo = productRepo;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo()
@@ -40,72 +50,148 @@ namespace peakmotion.Repositories
             return shippingInfo;
         }
 
-        public void SaveShippingInfo(String firstname, String lastname, String phone, String address, String city,
-                                                        String province, String postalcode, String country, String email)
+        public void SaveShippingInfo(ShippingVM model)
         {
-            var userShippingInfo = new Pmuser
+            var country = "CA";
+
+            var userShippingInfo = _context.Pmusers
+                .FirstOrDefault(u => u.Email == model.EmailAddress);
+
+            if (userShippingInfo != null)
             {
-                Firstname = firstname,
-                Lastname = lastname,
-                Phone = phone,
-                Address = address,
-                City = city,
-                Province = province,
-                Postalcode = postalcode,
-                Country = country,
-                Email = email,
+                userShippingInfo.Firstname = model.FirstName;
+                userShippingInfo.Lastname = model.LastName;
+                userShippingInfo.Phone = model.PhoneNumber;
+                userShippingInfo.Address = model.Address;
+                userShippingInfo.City = model.City;
+                userShippingInfo.Province = model.Province;
+                userShippingInfo.Postalcode = model.PostalCode;
+                userShippingInfo.Country = country;
+                _context.Entry(userShippingInfo).State = EntityState.Modified;
+            }
+            else
+            {
+                userShippingInfo = new Pmuser
+                {
+                    Firstname = model.FirstName,
+                    Lastname = model.LastName,
+                    Phone = model.PhoneNumber,
+                    Address = model.Address,
+                    City = model.City,
+                    Province = model.Province,
+                    Postalcode = model.PostalCode,
+                    Country = country,
+                    Email = model.EmailAddress,
+                };
+                _context.Pmusers.Add(userShippingInfo);
+            }
 
-            };
-
-            _context.Pmusers.Add(userShippingInfo);
             _context.SaveChanges();
         }
 
+        public void SaveOrderInfo(PayPalConfirmationVM model)
+        {
+            var userId = _pmuserRepo.GetUserId();
+            var newOrder = new Order
+            {
+                Pptransactionid = model.TransactionId,
+                Orderdate = DateOnly.FromDateTime(DateTime.Now),
+                Fkpmuserid = userId,
+            };
+            _context.Orders.Add(newOrder);
+            _context.SaveChanges();
+        }
 
+        public void SaveOrderStatus(PayPalConfirmationVM model)
+        {
+            var orderStatus = "Pending";
+            var orderId = GetOrderId(model);
+            var newOrderStatus = new OrderStatus
+            {
+                Orderstate = orderStatus,
+                Fkorderid = orderId,
+            };
+            _context.OrderStatuses.Add(newOrderStatus);
+            _context.SaveChanges();
+        }
+
+        public void SaveOrderProduct(PayPalConfirmationVM model)
+        {
+            var products = _cookieRepo.GetProductsFromCookie();
+            foreach (var product in products)
+            {
+                var newOrderProduct = new OrderProduct
+                {
+                    Qty = product.cartQty,
+                    Unitprice = product.Price,
+                    Fkorderid = GetOrderId(model),
+                    Fkproductid = product.ID,
+                };
+                _context.OrderProducts.Add(newOrderProduct);
+            }
+            _context.SaveChanges();
+        }
+
+        public int GetOrderId(PayPalConfirmationVM model)
+        {
+            return _context.Orders
+                .Where(order => order.Pptransactionid == model.TransactionId)
+                .Select(order => order.Pkorderid)
+                .FirstOrDefault();
+        }
+
+        public decimal GetTotalAmount()
+        {
+            var cartItems = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+            decimal subtotal = 0;
+            foreach (var item in cartItems)
+            {
+                var product = _productRepo.GetProduct(item.ID);
+                if (product == null)
+                {
+                    continue;
+                }
+                bool hasDiscount = product.Discount != null && product.Discount.Description == "discount";
+                decimal finalPrice = product.Price;
+                if (hasDiscount)
+                {
+                    finalPrice = product.Price - product.Discount.Amount;
+                    if (finalPrice < 0)
+                    {
+                        finalPrice = 0;
+                    }
+                }
+                subtotal += finalPrice * item.cartQty;
+            }
+            decimal gstRate = 0.05m;
+            decimal pstRate = 0.07m;
+            decimal gstAmount = subtotal * gstRate;
+            decimal pstAmount = subtotal * pstRate;
+            decimal totalTax = gstAmount + pstAmount;
+            decimal total = subtotal + totalTax;
+            return total;
+        }
+
+        public void UpdateProductStock()
+        {
+            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
+            foreach (var prod in products)
+            {
+                var product = _context.Products
+                    .FirstOrDefault(p => p.Pkproductid == prod.ID);
+                if (product != null)
+                {
+                    if (product.Qtyinstock >= prod.cartQty)
+                    {
+                        product.Qtyinstock -= prod.cartQty;
+                    }
+                    else
+                    {
+                        product.Qtyinstock = 0;
+                    }
+                }
+            }
+            _context.SaveChanges();
+        }
     }
-
-    // Get specific product in the database.
-    // public ProductVM? GetProduct(int id)s
-    // {
-    //     ProductVM? product = _context.Products.Select(p => new ProductVM
-    //     {
-    //         ID = p.Pkproductid,
-    //         ProductName = p.Name,
-    //         Description = p.Description,
-    //         Price = p.Regularprice,
-    //         // Currency = p.Currency,
-    //         // Image = p.Image
-    //     }).FirstOrDefault(p => p.ID == id);
-
-    //     return product;
-    // }
-
-    // // Get all products in the database.
-    // public IEnumerable<ProductVM> GetAllProducts()
-    // {
-    //     IEnumerable<ProductVM> products = from p in _context.Products
-    //                                       join pc in _context.ProductCategories on p.Pkproductid equals pc.Fkproductid into pCatGroup
-    //                                       from pc in pCatGroup.DefaultIfEmpty()
-    //                                       join pi in _context.ProductImages on p.Pkproductid equals pi.Fkproductid into pImageGroup
-    //                                       from pi in pImageGroup.DefaultIfEmpty()
-    //                                       join d in _context.Discounts on p.Fkdiscountid equals d.Pkdiscountid into productGroup
-    //                                       from d in productGroup.DefaultIfEmpty()
-    //                                       select new ProductVM
-    //                                       {
-    //                                           ID = p.Pkproductid,
-    //                                           ProductName = p.Name,
-    //                                           Description = p.Description,
-    //                                           Price = p.Regularprice,
-    //                                           Quantity = p.Qtyinstock,
-    //                                           IsFeatured = p.Isfeatured == 1 ? true : false,
-    //                                           IsMembershipProduct = p.Ismembershipproduct == 1 ? true : false,
-    //                                           Discount = p.Fkdiscount,
-    //                                           Categories = p.ProductCategories
-    //                                               .Where(pc => pc.Fkproductid == p.Pkproductid)
-    //                                               .Select(x => x.Fkcategory)
-    //                                               .ToList(),
-    //                                       };
-    //     return products;
-    // }
 }
-

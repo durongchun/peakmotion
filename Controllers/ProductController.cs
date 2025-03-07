@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Diagnostics;
+
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
 using peakmotion.Models;
-using peakmotion.Data;
+
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 
 namespace peakmotion.Controllers;
 public class ProductController : Controller
@@ -23,47 +25,96 @@ public class ProductController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public IActionResult Index(string? searchString = null, string? sortedByString = "A-Z")
+    /// <summary>
+    ///     This is used to get all products and for the search results
+    ///     Note: 
+    ///         - 0 parameters - use both default values
+    ///         - 1 parameter - values goes to searchString
+    /// </summary>
+    /// <param name="searchString">This is a nullable default parameter</param>
+    /// <param name="sortedByString">This is an default parameter</param>
+    /// <param name="category">This is a value from the topbar</param>
+    /// <returns></returns>
+    public IActionResult Index(string? searchString = null, string sortedByString = "A-Z", string category = "")
     {
-        // Find all the category types the product can be filtered by
-        var genderChoices = _productRepo.FetchCategoryDropdown("gender");
-        var colorChoices = _productRepo.FetchCategoryDropdown("color");
-        var sizeChoices = _productRepo.FetchCategoryDropdown("size");
-        var categoryChoices = _productRepo.FetchCategoryDropdown("category");
-        var propertyChoices = _productRepo.FetchCategoryDropdown("property");
-        Dictionary<string, List<Category>> filterTypes = new Dictionary<string, List<Category>>
-        {
-            { "category", categoryChoices },
-            { "property", propertyChoices },
-            { "gender", genderChoices },
-            { "color", colorChoices },
-            { "size", sizeChoices }
-        };
+        Console.WriteLine($"DEBUG: PRODUCT LIST (search: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (category: {category})");
 
-        // Find all the products
-        IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+        // Filter by topbar selection + sort (assuming sortby is valid)
+        int? categoryId = _productRepo.GetFilterCategoryId(category);
+        Console.WriteLine($"DEBUG: PRODUCT LIST (category id: {categoryId})");
+        List<int>? filterId = categoryId.HasValue ? new List<int> { (int)categoryId } : null;
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedByString, filterId);
+
+        // Filter by search query
         if (!string.IsNullOrEmpty(searchString))
         {
             products = products.Where(p => p.ProductName.ToLower().Contains(searchString.ToLower()));
         }
+        ViewBag.SearchString = searchString;
 
         // Build the response
-        ViewBag.SearchString = searchString;
-        ViewBag.SortedBy = sortedByString;
         CategoriesProductsVM data = new CategoriesProductsVM
         {
             Products = products,
-            Filters = filterTypes
+            Filters = _productRepo.CreateDictionaryOfCategories(),
+            FilterId = categoryId,
+            SortOptions = _productRepo.GetSortBySelectList(),
+            SortByChoice = sortedByString // if doesn't match in the list - default to A-Z on frontend
         };
+        // Set the page title/breadcrum
+        switch (category)
+        {
+            case "Men": ViewBag.PageTitle = "Men"; break;
+            case "Women": ViewBag.PageTitle = "Women"; break;
+            case "Equipment": ViewBag.PageTitle = "Equipment"; break;
+            default: ViewBag.PageTitle = "All Products"; break;
+        }
         return View(data);
     }
 
-    // GET: /Product/Details/5
+    /// <summary>
+    ///     For PARTIAL RELOADS
+    ///         - sorting 
+    ///         - filtering
+    ///         - rendering partial view for new product order
+    /// </summary>
+    /// <param name="sortedByString"></param>
+    /// <param name="numbers"></param>
+    /// <returns></returns>
+    public ActionResult FilterAndSort(string sortedBy, string numbers)
+    {
+        Console.WriteLine($"Sorting products: {sortedBy}");
+        Console.WriteLine($"Filtering products by category id: {numbers}");
+
+        List<int> selectedIds = new List<int>();
+        try
+        {
+            selectedIds = JsonSerializer.Deserialize<List<int>>(numbers);
+            Console.WriteLine($"Filtering products by category id: {string.Join(", ", selectedIds)}");
+        }
+        catch (System.Exception)
+        {
+            Console.WriteLine($"JSON ERROR: Could not convert filter id to string: {numbers}");
+        }
+
+        IEnumerable<ProductVM> products = _productRepo.GetAllProducts(sortedBy, selectedIds);
+        return PartialView("Product/_ProductList", products);
+    }
+
+    /// <summary>
+    ///     Products details
+    ///     ie. GET: /Product/Details/5
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<IActionResult> Details(int id)
     {
+
         // Fetch the product with the given ID from the database
         var product = await _context.Products
-            // .Include(p => p.Fkdiscount) // Include Discount if necessary
+             .Include(p => p.Fkdiscount) 
             .FirstOrDefaultAsync(p => p.Pkproductid == id);
 
         // If no product is found, return NotFound
@@ -86,6 +137,23 @@ public class ProductController : Controller
 
         _cookieRepo.SetProductDataToCookie(productDetailViewModel);
 
+        var productVM = new ProductVM
+        {
+            ID = product.Pkproductid,
+            ProductName = product.Name,
+            Description = product.Description ?? string.Empty,
+            Price = product.Regularprice,
+            Quantity = product.Qtyinstock,
+            IsFeatured = product.Isfeatured == 1,
+            IsMembershipProduct = product.Ismembershipproduct == 1,
+            Discount = product.Fkdiscount,
+            Categories = product.ProductCategories.Select(pc => pc.Fkcategory).ToList(),
+            Images = product.ProductImages,
+            PrimaryImage = product.ProductImages.FirstOrDefault(),
+            Pkdiscountid = product.Fkdiscountid
+        };
+
+        ViewBag.ProductVM = productVM;
         // Return the view with the view model
         return View(productDetailViewModel);
     }

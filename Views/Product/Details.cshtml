@@ -1,5 +1,10 @@
 @model peakmotion.ViewModels.ProductDetailVM
 
+@{
+    var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
+    int qty = cartDict.ContainsKey(Model.Pkproductid) ? cartDict[Model.Pkproductid] : 0;
+}
+
 <head>
     <link rel="stylesheet" href="~/css/product-details.css" />
 </head>
@@ -60,7 +65,30 @@
         <div class="col-md-6 d-flex flex-column justify-content-center"> <!-- Product Details -->
             <div class="product-details w-100">
                 <h1 class="product-name pb-5">@Model.Productname</h1>
-                <p class="product-price pb-5">$@Model.Unitprice.ToString("F2")</p>
+                
+                @{
+                    bool hasDiscount = ViewBag.ProductVM.Discount != null && ViewBag.ProductVM.Discount.Description == "discount";
+                    decimal finalPrice = ViewBag.ProductVM.Price;
+                    if (hasDiscount)
+                    {
+                        finalPrice = ViewBag.ProductVM.Price - ViewBag.ProductVM.Discount.Amount;
+                        if (finalPrice < 0)
+                        {
+                            finalPrice = 0;
+                        }
+                    }
+                }
+                @if (hasDiscount)
+                {
+                    <p class="product-price">
+                        <span class="product-discounted">@ViewBag.ProductVM.Price.ToString("C")</span>
+                        @finalPrice.ToString("C")
+                    </p>
+                }
+                else
+                {
+                    <p class="product-price">@ViewBag.ProductVM.Price.ToString("C")</p>
+                }
 
                 <!-- Color Selection -->
                 @if (Model.Colors?.Any() == true)
@@ -107,22 +135,36 @@
                 </div> *@
 
 
-                <form method="post" asp-controller="Product" asp-action="Details">
+                <form method="post" asp-controller="Cart" asp-action="Add">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
-                    <!-- Quantity Selection -->
+                    <!-- Quantity Selection
                     <div class="quantity-selection pb-3">
                         <label for="Quantity">Select Quantity:</label>
                         <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
-                    </div>
-
-
+                    </div> -->
+                    <!-- new qty selection -->
+                    <label for="qty">Quantity:</label>
+                    <select id="qty" name="qty">
+                        @for (int i = 1; i <= (Model.Qty < 10 ? Model.Qty : 10); i++)
+                        {
+                            if (i == qty)
+                            {
+                                <option value="@i" selected>@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        }
+                    </select>
 
 
                     <!-- Add to Cart Button -->
                     <button type="submit" class="add-to-cart">Add to Cart</button>
                 </form>
+
             </div>
             <!-- Product Description -->
             <div class="d-flex w-100">
@@ -152,3 +194,24 @@
 
 
 </div>
+
+<style scoped>
+    .product-price {
+        display: flex;
+        flex: 1;
+        justify-content: start;
+        align-items: center;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: right;
+        font-size: 2rem;
+        opacity: 0.8;
+        color: black;
+    }
+
+    .product-discounted {
+        text-decoration: line-through;
+        opacity: 0.5;
+        margin-right: 0.25rem;
+    }
+</style>

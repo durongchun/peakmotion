@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using peakmotion.Models;
-using peakmotion.Models;
 
 namespace peakmotion.ViewModels
 {
@@ -51,14 +50,14 @@ namespace peakmotion.ViewModels
                 [Display(Name = "Main Image")]
                 public ProductImage? PrimaryImage { get; set; }
 
-                public int? Pkdiscountid { get; set; }  // Nullable in case there's no discount applied
+                public int? Pkdiscountid { get; set; }
 
 
-                public List<string> Colors { get; set; }  // List of available colors
-                public List<string> Sizes { get; set; }   // List of available sizes
+                public List<string> Colors { get; set; }
+                public List<string> Sizes { get; set; }
 
-                public List<string> Types { get; set; }   // List of available sizes
-                public List<string> Properties { get; set; }   // List of available sizes
+                public List<string> Types { get; set; }
+                public List<string> Properties { get; set; }
 
                 [BindNever, ValidateNever]
                 public List<Category> ColorDropdown { get; set; } = new List<Category>();
@@ -81,6 +80,9 @@ namespace peakmotion.ViewModels
                 public List<Discount> DiscountDropdown { get; set; } = new List<Discount>();
                 public string? photoName { get; set; } //alttage
                 public string? ImagesToDelete { get; set; }
+                public bool Isprimary { get; set; } = false;
+                public string? ImageUrl { get; set; }
+                public int cartQty { get; set; } = 0;
 
 
         }

@@ -1,123 +1,116 @@
 @model IEnumerable<peakmotion.ViewModels.UserVM>
 
-@{ ViewData["Title"] = "Users";}
-<h1 class="mb-4">Users</h1>
+    @{ ViewData["Title"] = "Users";}
+    <h1 class="mb-4">Users</h1>
 
-@{ var messageText = string.Empty;
+    @{ var messageText = string.Empty;
     var alertClass = string.Empty;
 
     if (!string.IsNullOrEmpty(ViewBag.Message))
     {
-        string message = ViewBag.Message.ToString();
-        string[] messageParts = message.Split(',');
+    string message = ViewBag.Message.ToString();
+    string[] messageParts = message.Split(',');
 
-        var messageType = messageParts[0];
-        messageText = messageParts.Length > 1 ? messageParts[1] : string.Empty;
+    var messageType = messageParts[0];
+    messageText = messageParts.Length > 1 ? messageParts[1] : string.Empty;
 
-        switch (messageType)
-        {
-            case "success": alertClass = "alert alert-success"; break;
-            case "warning": alertClass = "alert alert-warning"; break;
-            case "error": alertClass = "alert alert-danger"; break;
-        }
+    switch (messageType)
+    {
+    case "success": alertClass = "alert alert-success"; break;
+    case "warning": alertClass = "alert alert-warning"; break;
+    case "error": alertClass = "alert alert-danger"; break;
     }
-}
-<div class="user-role-response @alertClass">@messageText</div>
+    }
+    }
+    <div class="user-role-response @alertClass">@messageText</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.First().FullName)</th>
-            <th>@Html.DisplayNameFor(model => model.First().Email)</th>
-            <th>@Html.DisplayNameFor(model => model.First().RoleName)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().FullName)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Email)</th>
+                <th>@Html.DisplayNameFor(model => model.First().RoleName)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
             <tr>
                 <td>@user.FullName</td>
                 <td>@user.Email</td>
                 <td>
-                    @using (Html.BeginForm("EditEmployeeRole", "Admin", FormMethod.Post, new { id = "updateUserRoleForm" }))
+                    @using (Html.BeginForm("EditEmployeeRole", "Admin", FormMethod.Post, new { id = "updateUserRoleForm"
+                    }))
                     {
-                        <select 
-                            name="newRole"
-                            class="form-select"
-                            onchange="onChangeUserRole(this)" 
-                            data-user-id="@user.Email"
-                            asp-for="@user.RoleName" 
-                            asp-items="ViewBag.RoleSelectList" 
-                            >
-                            <option value="">-- Select Role --</option>
-                        </select>
+                    <select name="newRole" class="form-select" onchange="onChangeUserRole(this)"
+                        data-user-id="@user.Email" asp-for="@user.RoleName" asp-items="ViewBag.RoleSelectList">
+                        <option value="">-- Select Role --</option>
+                    </select>
                     }
                 </td>
                 <td>
                     <form asp-controller="Admin" asp-action="DeleteUserRole" method="post">
                         <input type="hidden" name="userEmail" value="@user.Email" />
                         <input type="hidden" name="newRole" value="@user.RoleName" />
-                        <input type="submit" value="Delete" class="btn btn-danger" /> 
+                        <input type="submit" value="Delete" class="btn btn-danger" />
                     </form>
                 </td>
-                
-                </tr>
-        }
-    </tbody>
-</table>
 
-<script>
-
-    // Update the message type form the ajax response
-    function setMessageType(response) {
-        const messageContainer = document.querySelector(".user-role-response");
-
-        const message = response.toString();
-        const messageParts = message.split(',');
-        const messageType = messageParts[0];
-        const messageText = messageParts.length > 1 ? messageParts[1] : "";
-        var alertClass = "";
-        switch (messageType) {
-            case "success": alertClass = ["alert", "alert-success"]; break;
-            case "warning": alertClass = ["alert", "alert-warning"]; break;
-            case "error": alertClass = ["alert", "alert-danger"]; break; 
-        }
-        messageContainer.className = "user-role-response";
-        messageContainer.classList.add(...alertClass);
-        messageContainer.textContent = messageText;
-    }
-
-    // Edit the user's role
-    function onChangeUserRole(e) {
-        @* Retrieve the values *@
-        var newRole = e.value;
-        var userEmail = e.getAttribute('data-user-id');
-        console.log(`'${newRole}' for ${userEmail}`);
-
-        @* For outputting response message *@
-        const messageContainer = document.querySelector(".user-role-response");
-
-        @* Call endpoint to update role + handle response message *@
-        $.ajax({
-            url: '@Url.Action("EditEmployeeRole", "Admin")',
-            type: 'POST',
-            data: { newRole, userEmail },
-            success: function (response) {
-                setMessageType(response);
-            },
-            error: function (xhr, status, error) {
-                setMessageType(xhr?.responseText);
+            </tr>
             }
-        });
-    }
-    @* document.addEventListener("DOMContentLoaded", function() {
-    }) *@
+        </tbody>
+    </table>
 
-</script>
+    <script>
 
-<style>
-#admin-userRole-response:empty {
-    display: none;
-}
-</style>
+        // Update the message type form the ajax response
+        function setMessageType(response) {
+            const messageContainer = document.querySelector(".user-role-response");
+
+            const message = response.toString();
+            const messageParts = message.split(',');
+            const messageType = messageParts[0];
+            const messageText = messageParts.length > 1 ? messageParts[1] : "";
+            var alertClass = "";
+            switch (messageType) {
+                case "success": alertClass = ["alert", "alert-success"]; break;
+                case "warning": alertClass = ["alert", "alert-warning"]; break;
+                case "error": alertClass = ["alert", "alert-danger"]; break;
+            }
+            messageContainer.className = "user-role-response";
+            messageContainer.classList.add(...alertClass);
+            messageContainer.textContent = messageText;
+        }
+
+        // Edit the user's role
+        function onChangeUserRole(e) {
+            /* Retrieve the values */
+            var newRole = e.value;
+            var userEmail = e.getAttribute('data-user-id');
+            console.log(`'${newRole}' for ${userEmail}`);
+
+            /* For outputting response message */
+            const messageContainer = document.querySelector(".user-role-response");
+
+            /* Call endpoint to update role + handle response message */
+            $.ajax({
+                url: '@Url.Action("EditEmployeeRole", "Admin")',
+                type: 'POST',
+                data: { newRole, userEmail },
+                success: function (response) {
+                    setMessageType(response);
+                },
+                error: function (xhr, status, error) {
+                    setMessageType(xhr?.responseText);
+                }
+            });
+        }
+
+    </script>
+
+    <style>
+        #admin-userRole-response:empty {
+            display: none;
+        }
+    </style>

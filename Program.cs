@@ -71,6 +71,14 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Define named routes
+app.MapControllerRoute(
+    name: "FilterSortProductRoute", // Name of the second named route
+    pattern: "Product/FilterAndSort",   // URL pattern for the route
+    defaults: new { controller = "Product", action = "FilterAndSort" }
+);
+
+// Default route (fallback)
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

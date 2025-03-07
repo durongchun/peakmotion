@@ -1,14 +1,29 @@
-@model IEnumerable<peakmotion.ViewModels.CartItemVM>
+@model IEnumerable<peakmotion.ViewModels.ProductVM>
+
+@{
+    var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
+}
 
 @if (Model != null && Model.Any())
 {
-    foreach (var item in Model)
+    foreach (var product in Model)
     {
+        int qty = cartDict.ContainsKey(product.ID) ? cartDict[product.ID] : 0;
+        bool hasDiscount = product.Discount != null && product.Discount.Description == "discount";
+        decimal finalPrice = product.Price;
+        if (hasDiscount)
+        {
+            finalPrice = product.Price - product.Discount.Amount;
+            if (finalPrice < 0)
+            {
+                finalPrice = 0;
+            }
+        }
         <div class="cart-item">
             <div class="cart-item-image">
-                @if (item.PrimaryImage != null)
+                @if (product.PrimaryImage != null)
                 {
-                    <img src="~/images/@item.PrimaryImage.Url" alt="Product" />
+                    <img src="~/images/@product.PrimaryImage.Url" alt="Product" />
                 }
                 else
                 {
@@ -16,23 +31,41 @@
                 }
             </div>
             <div class="cart-item-info">
-                <h4>@item.ProductName</h4>
+                <h4>@product.ProductName</h4>
                 <p>Blue Linen/White</p>
                 <p>Size: M</p>
-                <p>Item Price: @string.Format("{0:C}", item.Price)</p>
-                <p>
-                    Quantity:
-                    <select>
-                        <option selected>@item.CartQuantity</option>
-                        <option>1</option>
-                        <option>2</option>
+                <p>Item Price: @finalPrice.ToString("C")</p>
+                <form asp-action="Update" asp-controller="Cart" method="post">
+                    <input type="hidden" name="productId" value="@product.ID" />
+                    <label for="newQty">Quantity:</label>
+                    <select id="newQty" name="newQty">
+                        @for (int i = 1; i <= (product.Quantity < 10 ? product.Quantity : 10); i++)
+                        {
+                            if (i == qty)
+                            {
+                                <option value="@i" selected>@i</option>
+                            }
+                            else
+                            {
+                                <option value="@i">@i</option>
+                            }
+                        }
                     </select>
-                </p>
-                <p>Total Price: @string.Format("{0:C}", item.Price * item.CartQuantity)</p>
+                    <button type="submit">Update Quantity</button>
+                </form>
+                <p>Total: @(finalPrice * qty)</p>
                 <div class="cart-item-actions">
-                    <a>Edit</a>
-                    <a>Save for Later</a>
-                    <a asp-action="DeleteCartItem" asp-route-productId="@item.ProductID">Remove</a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form method="post" asp-controller="Wishlist" asp-action="Add" style="display:inline;">
+                            <input type="hidden" name="productId" value="@product.ID" />
+                            <button type="submit">Save for Later</button>
+                        </form>
+                    }
+                    <form asp-action="Remove" asp-controller="Cart" method="post" style="display:inline;">
+                        <input type="hidden" name="productId" value="@product.ID" />
+                        <button type="submit">Remove</button>
+                    </form>
                 </div>
             </div>
         </div>

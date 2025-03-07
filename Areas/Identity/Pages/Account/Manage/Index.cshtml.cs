@@ -14,7 +14,11 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly PmuserRepo _pmuserRepo;
 
-        public IndexModel(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo)
+        public IndexModel(
+            UserManager<IdentityUser> userManager,
+            SignInManager<IdentityUser> signInManager,
+            PmuserRepo pmuserRepo
+        )
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -24,21 +28,23 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
         [TempData]
         public string StatusMessage { get; set; }
 
+        public bool ShowDashboard { get; set; }
+
         [BindProperty]
         public bool IsEditing { get; set; }
 
         [BindProperty]
         public EditInputModel Input { get; set; }
 
-        public string DisplayEmail { get; set; }
-        public string DisplayFirstName { get; set; }
-        public string DisplayLastName { get; set; }
-        public string DisplayPhone { get; set; }
-        public string DisplayAddress { get; set; }
-        public string DisplayCity { get; set; }
-        public string DisplayProvince { get; set; }
-        public string DisplayPostalCode { get; set; }
-        public string DisplayCountry { get; set; }
+        public string DisplayEmail { get; set; } = "";
+        public string DisplayFirstName { get; set; } = "";
+        public string DisplayLastName { get; set; } = "";
+        public string DisplayPhone { get; set; } = "";
+        public string DisplayAddress { get; set; } = "";
+        public string DisplayCity { get; set; } = "";
+        public string DisplayProvince { get; set; } = "";
+        public string DisplayPostalCode { get; set; } = "";
+        public string DisplayCountry { get; set; } = "";
 
         public class EditInputModel
         {
@@ -60,22 +66,32 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
             public string Country { get; set; }
 
             [DataType(DataType.Password)]
-            public string? CurrentPassword { get; set; }
+            public string CurrentPassword { get; set; }
             [DataType(DataType.Password)]
-            public string? NewPassword { get; set; }
+            public string NewPassword { get; set; }
             [DataType(DataType.Password)]
             [Compare("NewPassword", ErrorMessage = "Passwords do not match.")]
-            public string? ConfirmPassword { get; set; }
+            public string ConfirmPassword { get; set; }
         }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(bool? dashboard)
         {
+            ShowDashboard = (dashboard == true);
             await LoadAsync();
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(string? edit, string? save, string? cancel)
+        public async Task<IActionResult> OnPostAsync(
+            bool? dashboard,
+            string edit,
+            string save,
+            string cancel
+        )
         {
+            ModelState.Remove("edit");
+            ModelState.Remove("cancel");
+            ShowDashboard = (dashboard == true);
+
             if (!string.IsNullOrEmpty(edit))
             {
                 IsEditing = true;
@@ -92,6 +108,13 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
 
             if (!string.IsNullOrEmpty(save))
             {
+                if (string.IsNullOrWhiteSpace(Input.NewPassword))
+                {
+                    ModelState.Remove("Input.CurrentPassword");
+                    ModelState.Remove("Input.NewPassword");
+                    ModelState.Remove("Input.ConfirmPassword");
+                }
+
                 if (!ModelState.IsValid)
                 {
                     StatusMessage = "Error: Required fields are missing or invalid.";
@@ -107,17 +130,21 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
                     return Page();
                 }
 
-                if (!string.IsNullOrEmpty(Input.NewPassword))
+                if (!string.IsNullOrWhiteSpace(Input.NewPassword))
                 {
-                    if (string.IsNullOrEmpty(Input.CurrentPassword))
+                    if (string.IsNullOrWhiteSpace(Input.CurrentPassword))
                     {
-                        ModelState.AddModelError(string.Empty, "Current password is required to change password.");
+                        ModelState.AddModelError(string.Empty, "Current password is required to change the password.");
                         StatusMessage = "Error: Current password required.";
                         IsEditing = true;
                         await LoadAsync();
                         return Page();
                     }
-                    var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.CurrentPassword, Input.NewPassword);
+                    var changePasswordResult = await _userManager.ChangePasswordAsync(
+                        user,
+                        Input.CurrentPassword,
+                        Input.NewPassword
+                    );
                     if (!changePasswordResult.Succeeded)
                     {
                         foreach (var error in changePasswordResult.Errors)
@@ -177,8 +204,8 @@ namespace peakmotion.Areas.Identity.Pages.Account.Manage
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return;
-            DisplayEmail = user.Email ?? "";
 
+            DisplayEmail = user.Email ?? "";
             var pmUser = _pmuserRepo.GetPmuserByEmail(user.Email);
             if (pmUser != null)
             {

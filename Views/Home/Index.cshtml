@@ -1,8 +1,187 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model IEnumerable<peakmotion.ViewModels.ProductVM>
 
-<div class="text-center mx-7 my-5">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    @{
+    ViewData["Title"] = "Home Page";
+    }
+
+    <link rel="stylesheet" href="~/css/homepage.css">
+    <div>
+        <img class="homepageheader" src="~/images/homeheader.jpg" alt="homeheaderimage">
+        <div class="home-container">
+
+            <div class="bestseller">
+                <h2 class="text-center">GEAR UP.<br> ADVENTURE AWAITS!</h2>
+                <button class="home-btn">SHOP BEST SELLERS</button>
+            </div>
+
+            <div class="home-categories">
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Top">
+                        <img src="~/images/tops.jpg" alt="">
+
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Top"
+                        class="home-btn-outline">TOPS</a>
+                </div>
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Bottom">
+                        <img src="~/images/bottoms.jpg" alt="">
+
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Bottom"
+                        class="home-btn-outline">BOTTOMS</a>
+                </div>
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Accessories">
+                        <img src="~/images/accessories.jpg" alt="">
+
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Accessories"
+                        class="home-btn-outline">ACCESSORIES</a>
+                </div>
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Equipment">
+                        <img src="~/images/equipments.jpg" alt="">
+                    </a>
+                    <a asp-area="" asp-controller="Product" asp-action="Index" asp-route-category="Equipment"
+                        class="home-btn-outline">EQUIPMENT</a>
+                </div>
+            </div>
+
+            <div class="home-sale">
+                <div class="bg-dark">
+                    <p class="sale-date">Mar 14-21</p>
+                    <img src="~/images/home/sale-desc.png" alt="">
+                </div>
+                <div>
+                    <img src="~/images/home/sale-equipment.jpg" alt="">
+                </div>
+            </div>
+
+            <div class="shopwear">
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Men">
+                        <img src="~/images/home/menswear.jpg" alt="">
+                    </a>
+                    <a asp-controller="Product" asp-action="Index" asp-route-category="Men" class="home-btn">SHOP
+                        MENSWEAR</a>
+                </div>
+                <div>
+                    <a class="d-flex flex-column gap-3" asp-area="" asp-controller="Product" asp-action="Index"
+                        asp-route-category="Women">
+                        <img src="~/images/home/womenswear.jpg" alt="">
+                    </a>
+                    <button asp-controller="Product" asp-action="Index" asp-route-category="Women" class="home-btn">SHOP
+                        WOMENSWEAR</button>
+                </div>
+            </div>
+
+            <div>
+                <div class="populartitle">
+                    <h2 class="peak">POPULAR RIGHT NOW</h2>
+                    <div>
+                        <img src="~/images/left-arrow.svg" alt="prev">
+                        <img src="~/images/right-arrow.svg" alt="next">
+                    </div>
+
+                </div>
+
+                <div class="popular">
+                    @foreach (var featuredItem in Model.Select((item, index) => new { item, index }))
+                    {
+                    <div class="product-card @(featuredItem.index >= 5 ? " d-none" : "" )">
+                        <partial name="Product/_ProductCard" for="@featuredItem.item" />
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="member">
+                <div>
+                    <h3>Become a Member Today!</h3>
+                    <p>Enjoy early access to sales, special discounts, and personalized gear recommendations tailored to
+                        your adventure style. As a member, you'll also receive expert hiking tips, invitations to
+                        community events, and a chance to connect with fellow outdoor enthusiasts. </p>
+                    <a class="home-btn-dark-green" asp-area="Identity" asp-page="/Account/Register">Register Now</a>
+
+                </div>
+                <img src="~/images/noun-hiking-1631508.svg" alt="">
+            </div>
+
+
+            <div class="instagram">
+                <h2 class="peak">#PEAKMOTION</h2>
+                <div class="instagram-images">
+                    <img src="~/images/instagram1.jpg" alt="">
+                    <img src="~/images/instagram2.jpg" alt="">
+                    <img src="~/images/instagram3.jpg" alt="">
+                    <img src="~/images/instagram4.jpg" alt="">
+                    <img src="~/images/instagram5.jpg" alt="">
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let currentIndex = 0;
+            const itemsPerPage = 5;
+            const productCards = document.querySelectorAll(".product-card");
+            const totalItems = productCards.length;
+
+            const prevBtn = document.querySelector('img[alt="prev"]');
+            const nextBtn = document.querySelector('img[alt="next"]');
+
+            function updateVisibility() {
+                productCards.forEach((product, index) => {
+                    if (index >= currentIndex && index < currentIndex + itemsPerPage) {
+                        product.classList.remove("d-none"); // Show items
+                    } else {
+                        product.classList.add("d-none"); // Hide items
+                    }
+                });
+
+                // Disable prev button if at the beginning
+                if (currentIndex === 0) {
+                    prevBtn.style.opacity = "0.5"; // Grey out
+                    prevBtn.style.pointerEvents = "none"; // Disable click
+                } else {
+                    prevBtn.style.opacity = "1";
+                    prevBtn.style.pointerEvents = "auto";
+                }
+
+                // Disable next button if at the end
+                if (currentIndex + itemsPerPage >= totalItems) {
+                    nextBtn.style.opacity = "0.5"; // Grey out
+                    nextBtn.style.pointerEvents = "none"; // Disable click
+                } else {
+                    nextBtn.style.opacity = "1";
+                    nextBtn.style.pointerEvents = "auto";
+                }
+            }
+
+            nextBtn.addEventListener("click", function () {
+                if (currentIndex + itemsPerPage < totalItems) {
+                    currentIndex += itemsPerPage;
+                    updateVisibility();
+                }
+            });
+
+            prevBtn.addEventListener("click", function () {
+                if (currentIndex > 0) {
+                    currentIndex -= itemsPerPage;
+                    updateVisibility();
+                }
+            });
+
+            updateVisibility();
+        });
+    </script>
