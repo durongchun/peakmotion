@@ -1,0 +1,43 @@
+@model IEnumerable<peakmotion.ViewModels.OrderVM>
+
+@{
+    ViewData["Title"] = "Orders Page";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left side: side nav -->
+        <div class="col-auto bg-light p-0" style="min-height:100vh;">
+            @Html.Partial("_SideNavProfile")
+        </div>
+        <div class="col">
+            <div class="p-4">
+                <h2 class="mb-4">Your Orders</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order Date</th>
+                            <th>Order ID</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr>
+                                <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
+                                <td>@order.OrderId</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm"
+                                        href="@Url.Action("DetailsOrderId", "Order", new { id = order.OrderId })">
+                                        View Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
