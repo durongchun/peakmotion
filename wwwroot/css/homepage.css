@@ -20,9 +20,10 @@
 
 .home-btn-dark-green {
   background-color: #183227;
-  border: solid 2dvh #183227;
+  border: solid 2px #183227;
   color: white;
-  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  padding: 1rem 2rem;
   font-family: 'Montserrat', serif;
   font-optical-sizing: auto;
   font-weight: 500;
@@ -100,7 +101,7 @@
 
 .home-categories {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 3rem;
 }
 
@@ -169,12 +170,16 @@
   height: 100%;
 }
 
+.bg-dark img {
+  object-fit: contain;
+}
+
 .home-categories button {
 }
 
 .shopwear {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
 }
 
