@@ -599,7 +599,8 @@ namespace peakmotion.Repositories
                 {"Equipment", "gear"},
                 {"Top", "top"},
                 {"Bottom", "bottom"},
-                {"Accessories", "accessories"}
+                {"Accessories", "accessories"},
+                {"2025", "2025"}
             };
             string? value;
             if (allowedFilters.TryGetValue(name, out value))
