@@ -146,6 +146,7 @@ namespace peakmotion.Repositories
         public void SaveOrderStatus(PayPalConfirmationVM model)
         {
             var orderStatus = "Pending";
+
             var orderId = GetOrderId(model);
 
             var newOrderStatus = new OrderStatus
