@@ -11,6 +11,7 @@ namespace peakmotion.ViewModels
         public string ShippingStatus { get; set; }
         public List<OrderStatusVM> orderStatuses { get; set; } = new List<OrderStatusVM>();
         public List<OrderProductVM> OrderProducts { get; set; } = new List<OrderProductVM>();
+        public List<Pmuser> Pmuser { get; set; } = new List<Pmuser>();
     }
     public class OrderCreateVM
     {

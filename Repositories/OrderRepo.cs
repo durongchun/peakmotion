@@ -60,7 +60,7 @@ namespace peakmotion.Repositories
         public async Task<List<Order>> GetOrdersByUserId(int userId)
         {
             return await _context.Orders
-                .Where(o => o.Fkpmuserid == userId)  // Adjusted to use string comparison
+                .Where(o => o.Fkpmuserid == userId)
                 .ToListAsync();
         }
 
@@ -70,9 +70,6 @@ namespace peakmotion.Repositories
         {
             return await _context.Orders
                 .Where(o => o.Fkpmuserid == userId && o.Pkorderid == orderId)
-                .Include(o => o.OrderStatuses)
-                .Include(o => o.OrderProducts)
-                .ThenInclude(op => op.Fkproduct)
                 .FirstOrDefaultAsync();
         }
     }

@@ -46,9 +46,97 @@
                             
 
                              </div>
-                           
-                        }
                             
+                        </div>
+                        
+                         <div class="subtotal">
+                                <div>
+                                    <label for="subtotal">Subtotal</label>
+                                    <div>@Model</div>
+                                </div>
+                                <div>
+                                    <label for="shipping">Shipping</label>
+                                    <div>@Model</div>
+                                </div>
+                                <div>
+                                    <label for="total">Total</label>
+                                    <div>@Model.Total</div>
+                                </div>
+
+                        </div>
+                        <div class="deliver">
+                            @foreach (var item in Model.Pmuser)  {
+                                <div class="deliverMethod">
+                                    <div>
+                                        <label for="name">Name</label>
+                                        <div>@item.Firstname @item.Lastname</div>
+                                        
+                                    </div>
+                                    <div>
+                                        <label for="address">Address</label>
+                                        <div>@item.Address</div>
+                                    </div>
+                                    <div>
+                                        <label for="city">City</label>
+                                        <div>@item.City</div>
+                                    </div>
+                                    <div>
+                                        <label for="province">Province</label>
+                                        <div>@item.Province</div>
+                                    </div>
+                                    <div>
+                                        <label for="postal">Postal Code</label>
+                                        <div>@item.Postalcode</div>
+                                    </div>
+                                    <div>
+                                        <label for="phone">Phone</label>
+                                        <div>@item.Phone</div>
+                                    </div>
+                                    <div>
+                                        <label for="email">Email</label>
+                                        <div>@item.Email</div>
+                                    </div>
+
+                                </div>
+                                 <div class="billing">
+                                        <div>
+                                            <label for="name">Name</label>
+                                            <div>@item.Firstname @item.Lastname</div>
+                                                
+                                        </div>
+                                        <div>
+                                            <label for="address">Address</label>
+                                            <div>@item.Address</div>
+                                        </div>
+                                        <div>
+                                            <label for="city">City</label>
+                                            <div>@item.City</div>
+                                        </div>
+                                        <div>
+                                            <label for="province">Province</label>
+                                            <div>@item.Province</div>
+                                        </div>
+                                        <div>
+                                            <label for="postal">Postal Code</label>
+                                            <div>@item.Postalcode</div>
+                                        </div>
+                                        <div>
+                                            <label for="phone">Phone</label>
+                                            <div>@item.Phone</div>
+                                        </div>
+                                        <div>
+                                            <label for="email">Email</label>
+                                            <div>@item.Email</div>
+                                        </div>
+
+                                    </div>
+                                
+                            }
+                            
+                           
+                        </div>
+                            
+                           
                         </div>
                     </div>
 
