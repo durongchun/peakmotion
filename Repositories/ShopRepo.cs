@@ -189,24 +189,49 @@ namespace peakmotion.Repositories
                         .FirstOrDefault();
         }
 
+
         public decimal GetTotalAmount()
         {
-            var products = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
-
+            var cartItems = _cookieRepo.GetProductsFromCookie() ?? new List<ProductVM>();
             decimal subtotal = 0;
-            foreach (var product in products)
+            foreach (var item in cartItems)
             {
-                subtotal += product.Price * product.cartQty;
+                var product = _context.Products
+                .Where(p => p.Pkproductid == item.ID)
+                .Include(p => p.Fkdiscount)
+                .FirstOrDefault();
+                var productVM = new ProductVM
+                {
+                    ID = product.Pkproductid,
+                    ProductName = product.Name,
+                    Description = product.Description ?? "No description",
+                    Price = product.Regularprice,
+                    Quantity = product.Qtyinstock,
+                    Discount = product.Fkdiscount,
+                };
 
+                if (product == null)
+                {
+                    continue;
+                }
+                bool hasDiscount = productVM.Discount != null && productVM.Discount.Description == "discount";
+                decimal finalPrice = productVM.Price;
+                if (hasDiscount)
+                {
+                    finalPrice = productVM.Price - productVM.Discount.Amount;
+                    if (finalPrice < 0)
+                    {
+                        finalPrice = 0;
+                    }
+                }
+                subtotal += finalPrice * item.cartQty;
             }
-
             decimal gstRate = 0.05m;
             decimal pstRate = 0.07m;
             decimal gstAmount = subtotal * gstRate;
             decimal pstAmount = subtotal * pstRate;
             decimal totalTax = gstAmount + pstAmount;
             decimal total = subtotal + totalTax;
-
             return total;
         }
 
