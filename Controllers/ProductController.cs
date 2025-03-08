@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 
 namespace peakmotion.Controllers;
-public class ProductController : Controller
+public class ProductController : BaseController
 {
     private readonly ProductRepo _productRepo;
     private readonly PeakmotionContext _context;
     private readonly CookieRepo _cookieRepo;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public ProductController(ProductRepo productRepo, PeakmotionContext context, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor)
+    public ProductController(ProductRepo productRepo, PeakmotionContext context, CookieRepo cookieRepo, IHttpContextAccessor httpContextAccessor) : base(cookieRepo)
     {
         _productRepo = productRepo;
         _context = context;

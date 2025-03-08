@@ -7,12 +7,12 @@ using peakmotion.ViewModels;
 
 namespace peakmotion.Controllers
 {
-    public class CartController : Controller
+    public class CartController : BaseController
     {
         private readonly CookieRepo _cookieRepo;
         private readonly ProductRepo _productRepo;
 
-        public CartController(CookieRepo cookieRepo, ProductRepo productRepo)
+        public CartController(CookieRepo cookieRepo, ProductRepo productRepo) : base(cookieRepo)
         {
             _cookieRepo = cookieRepo;
             _productRepo = productRepo;

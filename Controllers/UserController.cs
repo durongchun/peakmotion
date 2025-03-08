@@ -6,7 +6,7 @@ using peakmotion.ViewModels;
 
 namespace peakmotion.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private readonly PmuserRepo _pmuserRepo;
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -14,7 +14,7 @@ namespace peakmotion.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly CookieRepo _cookieRepo;
 
-        public UserController(SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager, ILogger<HomeController> logger, CookieRepo cookieRepo)
+        public UserController(SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager, ILogger<HomeController> logger, CookieRepo cookieRepo): base(cookieRepo)
         {
             _pmuserRepo = pmuserRepo;
             _userManager = userManager;

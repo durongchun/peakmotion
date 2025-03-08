@@ -68,6 +68,29 @@ header {
   padding-left: 5rem;
 }
 
+#user-cart-qty-container {
+  position: relative;
+}
+
+#user-cart-qty {
+  background-color: yellowgreen;
+  color: #222222;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: 100%;
+  position: absolute;
+  bottom: -10px;
+  right: -7px;
+  min-width: 26px;
+  min-height: 26px;
+  aspect-ratio: 1;
+  text-align: center;
+  margin-bottom: 0rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 /* .container-admin {
   display: flex;
   gap: 1.5rem;

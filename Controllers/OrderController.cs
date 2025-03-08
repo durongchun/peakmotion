@@ -13,13 +13,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace peakmotion.Controllers;
 
-public class OrderController : Controller
+public class OrderController : BaseController
 {
     private readonly PeakmotionContext _context;
+    private readonly CookieRepo _cookieRepo;
     private readonly OrderRepo _orderRepo;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public OrderController(PeakmotionContext context, OrderRepo orderRepo, UserManager<IdentityUser> userManager)
+    public OrderController(PeakmotionContext context, CookieRepo cookieRepo, OrderRepo orderRepo, UserManager<IdentityUser> userManager): base(cookieRepo)
     {
         _context = context;
         _orderRepo = orderRepo;
