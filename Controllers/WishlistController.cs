@@ -69,7 +69,7 @@ namespace peakmotion.Controllers
             if (exists)
             {
                 TempData["Message"] = "This product is already in your wishlist.";
-                return RedirectToAction("Index", "Cart");
+                return RedirectToAction("Index", "Wishlist");
             }
 
             // Add to wishlist
@@ -79,7 +79,7 @@ namespace peakmotion.Controllers
             // Or do nothing: up to you
 
             TempData["Message"] = "Product saved for later.";
-            return RedirectToAction("Index", "Cart");
+            return RedirectToAction("Index", "Wishlist");
         }
 
         [HttpPost]
