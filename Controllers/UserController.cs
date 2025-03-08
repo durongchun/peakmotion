@@ -26,6 +26,7 @@ namespace peakmotion.Controllers
         public async Task<IActionResult> Logout()
         {
             _cookieRepo.RemoveCookie("cart");
+            _cookieRepo.RemoveCookie("Status");
 
             var identityUser = await _userManager.GetUserAsync(User);
             if (identityUser != null && identityUser.Email != null)
