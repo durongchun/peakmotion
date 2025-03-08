@@ -48,6 +48,7 @@ namespace peakmotion.Controllers
                 if (model.IsSaveAddress)
                 {
                     _shopRepo.SaveShippingInfo(model);
+                    _cookieRepo.AddSaveStatusToCookie(model);
                     returnMessage = "Shipping information updated successfully!";
                 }
             }
@@ -83,6 +84,7 @@ namespace peakmotion.Controllers
 
             _cookieRepo.RemoveCookie("ShippingData");
             _cookieRepo.RemoveCookie("cart");
+            _cookieRepo.RemoveCookie("Status");
 
 
             return View(modelVM);

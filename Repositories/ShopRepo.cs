@@ -47,6 +47,7 @@ namespace peakmotion.Repositories
         public IEnumerable<ShippingVM> GetShippingInfo(ShippingVM model)
         {
             var userId = _pmuserRepo.GetUserId();
+            var isSaveAddress = _cookieRepo.GetSaveStatusFromCookie();
 
             var identityUser = _httpContextAccessor.HttpContext?.User;
             if (identityUser == null || !identityUser.Identity.IsAuthenticated)
@@ -70,7 +71,9 @@ namespace peakmotion.Repositories
                         ApptUnit = user.Address,
                         City = user.City,
                         Province = user.Province,
-                        PostalCode = user.Postalcode
+                        PostalCode = user.Postalcode,
+                        IsSaveAddress = isSaveAddress,
+
                     })
                     .ToList();
 

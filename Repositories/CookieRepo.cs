@@ -100,6 +100,28 @@ namespace peakmotion.Repositories
             return shippingInfo;
         }
 
+        public void AddSaveStatusToCookie(ShippingVM model, int expireDays = 7)
+        {
+            var serializedShippingInfo = JsonConvert.SerializeObject(model.IsSaveAddress);
+            AddCookie("Status", serializedShippingInfo, expireDays);
+        }
+
+        public bool GetSaveStatusFromCookie()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return false;
+
+            var cookieValue = context.Request.Cookies["Status"];
+            if (string.IsNullOrEmpty(cookieValue)) return false;
+
+            var status = JsonConvert.DeserializeObject<bool>(cookieValue);
+            return status;
+
+
+
+
+        }
+
 
     }
 
