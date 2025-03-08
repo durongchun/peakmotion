@@ -227,7 +227,7 @@ namespace peakmotion.Repositories
                 }
             }
 
-            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "product-images");
             Directory.CreateDirectory(uploadPath);
 
             var existingProduct = GetProduct(model.ID);
@@ -241,7 +241,7 @@ namespace peakmotion.Repositories
             {
                 if (file.Length <= 0) continue;
 
-                var fileName = model.photoName.Replace(" ", "").Trim();
+                var fileName = file.FileName;
                 var filePath = Path.Combine(uploadPath, fileName);
 
                 await using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -253,7 +253,7 @@ namespace peakmotion.Repositories
                 var newImage = new ProductImage
                 {
                     Fkproductid = model.ID,
-                    Url = $"/images/products/{fileName}",
+                    Url = $"/images/product-images/{fileName}",
                     Alttag = model.photoName,
                     Isprimary = model.Isprimary
                 };
