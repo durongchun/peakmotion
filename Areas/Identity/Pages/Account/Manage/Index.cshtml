@@ -1,136 +1,152 @@
 ﻿@page
 @model peakmotion.Areas.Identity.Pages.Account.Manage.IndexModel
 @{
-    Layout = "/Views/Shared/_Layout.cshtml";
+Layout = "/Views/Shared/_Layout.cshtml";
 }
 
 @if (!string.IsNullOrEmpty(Model.StatusMessage))
 {
-    <div class="@(Model.StatusMessage.StartsWith("Error") ? "text-danger" : "text-success") mb-3">
-        @Model.StatusMessage
-    </div>
+<div class="@(Model.StatusMessage.StartsWith(" Error") ? "text-danger" : "text-success" ) mb-3">
+    @Model.StatusMessage
+</div>
 }
 
-<div class="d-flex" style="min-height: 100vh;">
-    <aside>
-        @await Html.PartialAsync("_SideNavProfile")
-    </aside>
-    <main class="flex-grow-1 p-5">
+<div class="row">
+    <div class="col-auto bg-light ms-4 pe-3 pt-3" style="min-height:100vh;">
+        <aside>
+            @await Html.PartialAsync("_SideNavProfile")
+        </aside>
+    </div>
+    <div class="col pt-3 mt-4 m-4">
         @if (Model.ShowDashboard)
         {
-            <h2>This is a customer dashboard.</h2>
+        <h2>This is a customer dashboard.</h2>
         }
         else
         {
-            <h2>PROFILE</h2>
-            @if (!Model.IsEditing)
-            {
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Email</label>
-                    <p>@Model.DisplayEmail</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">First Name</label>
-                    <p>@Model.DisplayFirstName</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Last Name</label>
-                    <p>@Model.DisplayLastName</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Phone</label>
-                    <p>@Model.DisplayPhone</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Address</label>
-                    <p>@Model.DisplayAddress</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">City</label>
-                    <p>@Model.DisplayCity</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Province</label>
-                    <p>@Model.DisplayProvince</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Postal Code</label>
-                    <p>@Model.DisplayPostalCode</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Country</label>
-                    <p>@Model.DisplayCountry</p>
-                </div>
-                <div class="mb-3">
-                    <label class="fw-bold d-block">Password</label>
-                    <p>********</p>
-                </div>
-                <form method="post">
-                    <button type="submit" name="edit" value="true" class="btn btn-dark">EDIT</button>
-                </form>
-            }
-            else
-            {
-                <form method="post">
-                    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Email (read-only)</label>
-                        <input asp-for="DisplayEmail" class="form-control" readonly />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">First Name</label>
-                        <input asp-for="Input.FirstName" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Last Name</label>
-                        <input asp-for="Input.LastName" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Phone</label>
-                        <input asp-for="Input.Phone" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Address</label>
-                        <input asp-for="Input.Address" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">City</label>
-                        <input asp-for="Input.City" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Province</label>
-                        <input asp-for="Input.Province" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Postal Code</label>
-                        <input asp-for="Input.PostalCode" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Country</label>
-                        <input asp-for="Input.Country" class="form-control" />
-                    </div>
-                    <hr />
-                    <h4>Change Password (Optional)</h4>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Current Password</label>
-                        <input asp-for="Input.CurrentPassword" class="form-control" type="password" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">New Password</label>
-                        <input asp-for="Input.NewPassword" class="form-control" type="password" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="fw-bold d-block">Confirm Password</label>
-                        <input asp-for="Input.ConfirmPassword" class="form-control" type="password" />
-                    </div>
-                    <button type="submit" name="save" value="true" class="btn btn-dark">SAVE</button>
-                    <button type="submit" name="cancel" value="true" class="btn btn-outline-secondary ms-3">CANCEL</button>
-                </form>
-            }
+        <h2>PROFILE</h2>
+        @if (!Model.IsEditing)
+        {
+        <div class="profile-items-container mt-4">
+            <div class="mb-3">
+                <label class="fw-bold d-block">Email</label>
+                <p>@Model.DisplayEmail</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Phone</label>
+                <p>@Model.DisplayPhone</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">First Name</label>
+                <p>@Model.DisplayFirstName</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Last Name</label>
+                <p>@Model.DisplayLastName</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Address</label>
+                <p>@Model.DisplayAddress</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">City</label>
+                <p>@Model.DisplayCity</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Province</label>
+                <p>@Model.DisplayProvince</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Postal Code</label>
+                <p>@Model.DisplayPostalCode</p>
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Country</label>
+                <p>@Model.DisplayCountry</p>
+            </div>
+            <div class="mb-3 profile-password">
+                <label class="fw-bold d-block">Password</label>
+                <p>********</p>
+            </div>
+        </div>
+        <form method="post">
+            <button type="submit" name="edit" value="true" class="btn btn-dark">EDIT</button>
+        </form>
         }
-    </main>
+        else
+        {
+        <form method="post" class="mt-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Email (read-only)</label>
+                <input asp-for="DisplayEmail" class="form-control" readonly />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">First Name</label>
+                <input asp-for="Input.FirstName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Last Name</label>
+                <input asp-for="Input.LastName" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Phone</label>
+                <input asp-for="Input.Phone" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Address</label>
+                <input asp-for="Input.Address" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">City</label>
+                <input asp-for="Input.City" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Province</label>
+                <input asp-for="Input.Province" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Postal Code</label>
+                <input asp-for="Input.PostalCode" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Country</label>
+                <input asp-for="Input.Country" class="form-control" />
+            </div>
+            <hr />
+            <h4>Change Password (Optional)</h4>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Current Password</label>
+                <input asp-for="Input.CurrentPassword" class="form-control" type="password" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">New Password</label>
+                <input asp-for="Input.NewPassword" class="form-control" type="password" />
+            </div>
+            <div class="mb-3">
+                <label class="fw-bold d-block">Confirm Password</label>
+                <input asp-for="Input.ConfirmPassword" class="form-control" type="password" />
+            </div>
+            <button type="submit" name="save" value="true" class="btn btn-dark">SAVE</button>
+            <button type="submit" name="cancel" value="true" class="btn btn-outline-secondary ms-3">CANCEL</button>
+        </form>
+        }
+        }
+    </div>
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+<partial name="_ValidationScriptsPartial" />
 }
+
+
+<style>
+    .profile-items-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .profile-items-container .profile-password {
+        grid-column: span 2;
+    }
+</style>
