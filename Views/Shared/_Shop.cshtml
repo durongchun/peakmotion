@@ -6,8 +6,16 @@
             <h3>Contact</h3>  
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
-                @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @placeholder = "Enter your email address", @class = "form-control" })
+                @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @type="email", @placeholder = "Enter your email address", @class = "form-control" })
+                @* @if (!User.Identity.IsAuthenticated)
+                {
+                    @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger", @id = "emailerror" })
+                } *@
+                
             </div>
+
+            @if (User.Identity.IsAuthenticated)
+            {
             <div class="pt-2">
                 <h3>Shipping Address</h3>
                 <div id="name">
@@ -50,10 +58,14 @@
                     </div>
                 </div>
             </div>
+           
            <div class="saveAddress">
-                <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress">
+                <input type="checkbox" id="IsSaveAddress" asp-for="IsSaveAddress" >
+                <input type="submit" id="hiddenSubmit" style="display: none;">
+
                 <label for="IsSaveAddress">Save the above address to user profile</label>
             </div>
+            }
         </form>
 
         <div class="mb-3 mt-3">
@@ -89,8 +101,69 @@
 </div>
 
 <script>
-    document.getElementById('IsSaveAddress').addEventListener('change', function() {
-        debugger;
-        document.querySelector('.shipping-form').submit();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var emailField = document.getElementById('email');
+        var shippingForm = document.querySelector('.shipping-form');
+        var hiddenSubmit = document.getElementById('hiddenSubmit');
+        
+
+        function autoSubmitForm() {
+            // Check form validity if using jQuery Validate
+            if (typeof $(shippingForm).valid === 'function' && !$(shippingForm).valid()) {
+                console.log("Form not valid, not submitting");
+                return;
+            }
+            // Use modern requestSubmit if available, else fallback
+            if (typeof shippingForm.requestSubmit === 'function') {
+                shippingForm.requestSubmit();
+            } else {
+                hiddenSubmit.click();
+            }
+        }
+
+        // Function to check if email is already filled
+        function checkIfEmailFilled() {
+            if (emailField.value.trim() !== '') {
+                console.log("Email field is already filled.");
+                return true; 
+            } else {
+                console.log("Email field is empty.");
+                return false; 
+            }
+        }
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <text>
+                emailField.addEventListener('blur', function() {
+                    
+                    if (checkIfEmailFilled()) {
+                        autoSubmitForm();
+                    } else {
+                        console.log("Email is empty")
+                    }
+                })
+            </text>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <text>
+            document.getElementById('IsSaveAddress').addEventListener('change', function() {
+                autoSubmitForm();
+            });
+            </text>
+        }
     });
+
+
+
 </script>
+    
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+

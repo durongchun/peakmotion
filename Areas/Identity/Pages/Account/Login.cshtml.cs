@@ -104,6 +104,11 @@ namespace peakmotion.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            if (returnUrl == "/Home/PayPalConfirmation")
+            {
+                returnUrl = "/";
+
+            }
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 

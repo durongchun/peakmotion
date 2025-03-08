@@ -6,6 +6,7 @@ using peakmotion.Models;
 using System;
 using System.Collections.Generic;
 using NuGet.Protocol;
+using System.Threading.Tasks;
 
 namespace peakmotion.Controllers
 {
@@ -23,16 +24,13 @@ namespace peakmotion.Controllers
         }
 
 
-        public IActionResult Index()
+        public IActionResult Index(ShippingVM model)
         {
-            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo();
+            IEnumerable<ShippingVM> shippings = _shopRepo.GetShippingInfo(model);
             var shippingInfo = shippings.FirstOrDefault();
 
             var totalAmount = _shopRepo.GetTotalAmount();
 
-            var productData = _cookieRepo.GetUserChosenProductInfoFromCookies();
-
-            ViewData["ProductData"] = productData;
             ViewData["TotalAmount"] = totalAmount;
 
             return View("Index", shippingInfo);
@@ -43,12 +41,19 @@ namespace peakmotion.Controllers
         {
             string returnMessage = string.Empty;
 
+            _shopRepo.SetShippingDataToCookie(model);
+
             try
             {
                 if (model.IsSaveAddress)
                 {
                     _shopRepo.SaveShippingInfo(model);
+                    _cookieRepo.AddSaveStatusToCookie(model);
                     returnMessage = "Shipping information updated successfully!";
+                }
+                else
+                {
+                    _cookieRepo.RemoveCookie("Status");
                 }
             }
             catch (Exception ex)
@@ -62,7 +67,7 @@ namespace peakmotion.Controllers
 
 
         [HttpGet("Home/PayPalConfirmation")]
-        public IActionResult PayPalConfirmation(PayPalConfirmationVM model)
+        public async Task<IActionResult> PayPalConfirmation(PayPalConfirmationVM model)
         {
             var modelVM = new PayPalConfirmationVM
             {
@@ -78,8 +83,12 @@ namespace peakmotion.Controllers
             _shopRepo.SaveOrderProduct(model);
             _shopRepo.UpdateProductStock();
 
-            _cookieRepo.RemoveCookie("ProductData");
+            var email = _shopRepo.GetEmailAddress();
+            await _shopRepo.SendEmail(email, model.TransactionId);
+
+            _cookieRepo.RemoveCookie("ShippingData");
             _cookieRepo.RemoveCookie("cart");
+            _cookieRepo.RemoveCookie("Status");
 
 
             return View(modelVM);

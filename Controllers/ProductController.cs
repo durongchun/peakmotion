@@ -142,8 +142,6 @@ public class ProductController : Controller
             // Fkcategory = null
         };
 
-        _cookieRepo.SetProductDataToCookie(productDetailViewModel);
-
         var productVM = new ProductVM
         {
             ID = product.Pkproductid,
