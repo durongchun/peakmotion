@@ -86,13 +86,13 @@
             </header>
 
             @* Content *@
-            <main class='p-0 @(pageHasHeaderImage ? "": " pb-4 pt-5 mt-5" ) @(navbarVM.OnAdminPortal ? "container-admin mx-7 my-5"
+            <main class='px-0 @(pageHasHeaderImage ? "": "content-under-header pb-4" ) @(navbarVM.OnAdminPortal ? "row"
                 : "container-fluid" )'>
                 @if (@navbarVM.OnAdminPortal)
                 {
                 <partial name="_Sidebar" model="navbarVM" />
                 }
-                <div role="main" class='pb-3 @(navbarVM.OnAdminPortal ? "container" : "" )'>
+                <div role="main" class='pb-3 @(navbarVM.OnAdminPortal ? "col pt-3 mt-4 m-4" : "" )'>
                     @RenderBody()
                 </div>
             </main>

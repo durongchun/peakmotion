@@ -62,10 +62,16 @@ header {
   margin-bottom: 5rem;
 }
 
-.container-admin {
+.col-sidebar {
+  padding-top: 1rem;
+  padding-right: 2rem;
+  padding-left: 5rem;
+}
+
+/* .container-admin {
   display: flex;
   gap: 1.5rem;
-}
+} */
 
 footer {
   background-color: #354952;
@@ -90,6 +96,10 @@ a.btn {
 .show-on-xlg,
 .show-on-md {
   display: none;
+}
+
+.content-under-header {
+  margin-top: 90px;
 }
 
 @media (min-width: 576px) {
