@@ -51,6 +51,10 @@ namespace peakmotion.Controllers
                     _cookieRepo.AddSaveStatusToCookie(model);
                     returnMessage = "Shipping information updated successfully!";
                 }
+                else
+                {
+                    _cookieRepo.RemoveCookie("Status");
+                }
             }
             catch (Exception ex)
             {
