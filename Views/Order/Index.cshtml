@@ -27,12 +27,13 @@
                             <tr>
                                 <td>@order.OrderDate.ToString("dd-MM-yyyy")</td>
                                 <td>@order.OrderId</td>
-                                <td>
-                                    <a class="btn btn-primary btn-sm" href="@Url.Action(" DetailsOrderId", "Order" , new
-                                        { id=order.OrderId })">
+                               <td>
+                                    <a asp-action="Details" asp-controller="Order" asp-route-id="@order.OrderId" 
+                                    class="btn btn-primary btn-sm">
                                         View Details
                                     </a>
                                 </td>
+
                             </tr>
                             }
                         </tbody>

@@ -1,0 +1,62 @@
+@model peakmotion.ViewModels.OrderVM
+
+
+    @{
+    ViewData["Title"] = "Order details";
+    }
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left side: side nav -->
+            <div class="col-auto bg-light ps-4 pe-3 pt-3" style="min-height:100vh;">
+                @Html.Partial("_SideNavProfile")
+            </div>
+            <div class="col pt-3 mt-1">
+                <div class="p-4">
+                    <div>
+                        <h2 class="mb-4">ORDER HISTORY</h2>
+                        <p>Your order number is @Model.OrderId <br> This order was placed on<br>@Model.OrderDate</p>
+                    </div>
+                    <div>
+                        <h3>ORDER SUMMARY</h3>
+  
+                        <div>
+                            <img src="" alt="">
+                            <div>
+                             @foreach (var item in Model.OrderProducts)  {
+                                <div>
+                                    <div>
+                                        <label for="name">Product Name</label>
+                                        <div>@item.ProductName</div> 
+                                    </div>
+                                    <div>
+                                        <p>QTY @item.Quantity</p>
+                                    </div>
+                                    <div>
+                                        <p>CAD @item.Unitprice</p>
+                                    </div>
+                                </div>
+                             }
+                             @foreach (var item in Model.orderStatuses)  {
+                                <div>
+                                    <label for="shipped"></label>
+                                    <div>@item.Status</div>
+                                </div>
+                             }
+                            
+
+                             </div>
+                           
+                        }
+                            
+                        </div>
+                    </div>
+
+                    
+
+
+                    
+                </div>
+            </div>
+        </div>
+    </div>
