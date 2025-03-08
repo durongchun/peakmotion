@@ -1,59 +1,47 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @inject UserManager<IdentityUser> userManager
-@inject peakmotion.Repositories.PmuserRepo pmUserRepo
+    @inject peakmotion.Repositories.PmuserRepo pmUserRepo
 
-@{
+    @{
     // Retrieve the logged-in user
     var user = await userManager.GetUserAsync(User);
     string firstName = "Unknown";
 
     if (user != null)
     {
-        var userId = pmUserRepo.GetUserIdByUserEmail(user.Email);
-        if (userId != null)
-        {
-            var pmUser = pmUserRepo.GetById((int)userId);
-            firstName = pmUser?.Firstname ?? "Unknown";
-        }
+    var userId = pmUserRepo.GetUserIdByUserEmail(user.Email);
+    if (userId != null)
+    {
+    var pmUser = pmUserRepo.GetById((int)userId);
+    firstName = pmUser?.Firstname ?? "Unknown";
     }
-}
+    }
+    }
 
-<div class="d-flex flex-column gap-3 p-3 border-end" style="width: 250px;">
-    <div class="text-center">
-        <img src="~/images/profile_solid.svg" alt="Profile Icon" width="64" height="64" class="mb-2" />
-        <p class="fw-bold m-0">@firstName</p>
-        <p class="text-muted m-0">Customer</p>
+    <div class="d-flex flex-column gap-3 p-3 " style="width: 250px;">
+        <div class="text-center">
+            <img src="~/images/profile_solid_black.svg" alt="Profile Icon" width="64" height="64" class="mb-2" />
+            <p class="fw-bold m-0">@firstName</p>
+            <p class="text-muted m-0">Customer</p>
+        </div>
+        <hr />
+        <!-- Updated link: now goes to the Dashboard page, no query parameters -->
+        <a class="btn btn-outline-dark text-start" asp-area="Identity" asp-page="/Account/Manage/Dashboard">
+            Dashboard
+        </a>
+        <a class="btn btn-outline-dark text-start" asp-controller="Order" asp-action="Index">
+            Purchase History
+        </a>
+        <!-- Show profile (this goes to Index) -->
+        <a class="btn btn-outline-dark text-start" asp-area="Identity" asp-page="/Account/Manage/Index">
+            Profile
+        </a>
+        <a class="btn btn-outline-dark text-start" asp-controller="Wishlist" asp-action="Index">
+            Wishlist
+        </a>
+        <form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="~/" class="m-0">
+            <button type="submit" class="btn btn-outline-dark text-start w-100">
+                Sign Out
+            </button>
+        </form>
     </div>
-    <hr />
-    <!-- Updated link: now goes to the Dashboard page, no query parameters -->
-    <a class="btn btn-outline-dark text-start"
-       asp-area="Identity"
-       asp-page="/Account/Manage/Dashboard">
-        Dashboard
-    </a>
-    <a class="btn btn-outline-dark text-start"
-       asp-controller="Order"
-       asp-action="Index">
-        Purchase History
-    </a>
-    <!-- Show profile (this goes to Index) -->
-    <a class="btn btn-outline-dark text-start"
-       asp-area="Identity"
-       asp-page="/Account/Manage/Index">
-        Profile
-    </a>
-    <a class="btn btn-outline-dark text-start"
-       asp-controller="Wishlist"
-       asp-action="Index">
-        Wishlist
-    </a>
-    <form method="post"
-          asp-area="Identity"
-          asp-page="/Account/Logout"
-          asp-route-returnUrl="~/"
-          class="m-0">
-        <button type="submit" class="btn btn-outline-dark text-start w-100">
-            Sign Out
-        </button>
-    </form>
-</div>

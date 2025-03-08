@@ -1,68 +1,70 @@
 @model IEnumerable<peakmotion.ViewModels.WishlistVM>
 
-@{
+    @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
+    }
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Left side: side nav -->
-        <div class="col-auto bg-light p-0" style="min-height:100vh;">
-            @Html.Partial("_SideNavProfile")
-        </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left side: side nav -->
+            <div class="col-auto bg-light ps-4 pe-3 pt-3" style="min-height:100vh;">
+                @Html.Partial("_SideNavProfile")
+            </div>
 
-        <!-- Right side: wishlist content -->
-        <div class="col">
-            <div class="p-4">
-                <h2 class="mb-4">Wishlist</h2>
+            <!-- Right side: wishlist content -->
+            <div class="col pt-3 mt-1">
+                <div class="p-4">
+                    <h2 class="mb-4">Wishlist</h2>
 
-                @if (!Model.Any())
-                {
+                    @if (!Model.Any())
+                    {
                     <p>Your wishlist is empty.</p>
-                }
-                else
-                {
+                    }
+                    else
+                    {
                     <!-- Example of a responsive grid layout using Bootstrap classes -->
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                         @foreach (var item in Model)
                         {
-                            <div class="col">
-                                <div class="card h-100 shadow-sm">
-                                    @if (item.PrimaryImage != null)
-                                    {
-                                        <img src="@item.PrimaryImage.Url" class="card-img-top" alt="@item.ProductName" />
-                                    }
-                                    else
-                                    {
-                                        <img src="~/images/placeholder.png" class="card-img-top" alt="No image" />
-                                    }
+                        <div class="col">
+                            <div class="card h-100 shadow-sm">
+                                @if (item.PrimaryImage != null)
+                                {
+                                <img src="@item.PrimaryImage.Url" class="card-img-top" alt="@item.ProductName" />
+                                }
+                                else
+                                {
+                                <img src="~/images/placeholder.png" class="card-img-top" alt="No image" />
+                                }
 
-                                    <div class="card-body d-flex flex-column justify-content-between">
-                                        <div>
-                                            <h5 class="card-title">@item.ProductName</h5>
-                                            <p class="card-text text-muted">@item.Price.ToString("C")</p>
-                                        </div>
+                                <div class="card-body d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">@item.ProductName</h5>
+                                        <p class="card-text text-muted">@item.Price.ToString("C")</p>
+                                    </div>
 
-                                        <div class="mt-3">
-                                            <!-- "Add to Cart" form -->
-                                            <form asp-action="MoveToCart" asp-controller="Wishlist" method="post" class="d-inline-block me-2">
-                                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                                <button type="submit" class="btn btn-primary">Add to Cart</button>
-                                            </form>
+                                    <div class="mt-3">
+                                        <!-- "Add to Cart" form -->
+                                        <form asp-action="MoveToCart" asp-controller="Wishlist" method="post"
+                                            class="d-inline-block me-2">
+                                            <input type="hidden" name="productId" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                        </form>
 
-                                            <!-- Remove from wishlist -->
-                                            <form asp-action="Remove" asp-controller="Wishlist" method="post" class="d-inline-block">
-                                                <input type="hidden" name="productId" value="@item.ProductId" />
-                                                <button type="submit" class="btn btn-danger">Remove</button>
-                                            </form>
-                                        </div>
+                                        <!-- Remove from wishlist -->
+                                        <form asp-action="Remove" asp-controller="Wishlist" method="post"
+                                            class="d-inline-block">
+                                            <input type="hidden" name="productId" value="@item.ProductId" />
+                                            <button type="submit" class="btn btn-danger">Remove</button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
+                        </div>
                         }
                     </div>
-                }
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
