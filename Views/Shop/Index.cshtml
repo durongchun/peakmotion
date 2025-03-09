@@ -97,7 +97,15 @@
         emailField.addEventListener("blur", checkEmailAndRenderPayPal);
 
         // Force-check autofill after a delay
-        setTimeout(checkEmailAndRenderPayPal, 500);
+       setTimeout(() => {
+            var emailField = document.getElementById('email');
+            if (!emailField) {
+                console.warn("Email field not found yet. Retrying...");
+                return;
+            }
+            checkEmailAndRenderPayPal();
+        }, 500);
+
     });
 </script>
 
