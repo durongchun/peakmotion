@@ -3,6 +3,8 @@
 @{
     var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
     int qty = cartDict.ContainsKey(Model.Pkproductid) ? cartDict[Model.Pkproductid] : 0;
+
+    var isSelected = Model.Colors.FirstOrDefault();
 }
 
 <head>
@@ -114,9 +116,15 @@
                         <div class="colors">
                             @foreach (var color in Model.Colors)
                             {
-                                <button class="color-circle" style="background-color: @color;"></button>
+                                <button class="color-circle @(color == isSelected ? "selected" : "")" 
+                                    style="background-color: @color;" 
+                                    onclick="selectColor(this, '@color')"></button>
                             }
                         </div>
+
+                        <!-- Hidden input to store the selected color (pre-filled with default) -->
+                        <input type="hidden" id="selectedColor" name="selectedColor" value="@isSelected">
+
                     </div>
                 }
                 @* <div class="color-selection">
@@ -206,9 +214,6 @@
 
     </div>
 
-
-
-
 </div>
 
 <style scoped>
@@ -230,4 +235,23 @@
         opacity: 0.5;
         margin-right: 0.25rem;
     }
+
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the initially selected color
+        let defaultColor = document.getElementById("selectedColor").value;
+
+        // Find the button with this color and mark it as selected
+        let defaultButton = [...document.querySelectorAll(".color-circle")].find(
+            btn => btn.style.backgroundColor === defaultColor
+        );
+
+        if (defaultButton) {
+            defaultButton.classList.add("selected");
+        }
+    });
+
+
+</script>
