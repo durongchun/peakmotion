@@ -92,12 +92,12 @@
                 {
                 <partial name="_Sidebar" model="navbarVM" />
                 }
-                <div role="main" class='pb-3 @(navbarVM.OnAdminPortal ? "col pt-3 mt-4 m-4" : "" )'>
+                <div role="main" class='@(navbarVM.OnAdminPortal ? "col pt-3 mt-4 m-4" : "" )'>
                     @RenderBody()
                 </div>
             </main>
 
-            <footer class="border-top footer">
+            <footer class="footer">
                 <div class="container text-center">
                     &copy; 2025 - PeakMotion
                 </div>
