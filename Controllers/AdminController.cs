@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace peakmotion.Controllers;
 
-//[Authorize(Roles = "Admin, Employee")]
+[Authorize(Roles = "Admin, Employee")]
 public class AdminController : Controller
 {
     private readonly PeakmotionContext _context;

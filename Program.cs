@@ -40,6 +40,8 @@ builder.Services.AddScoped<UserRepo>();
 builder.Services.AddScoped<UserRoleRepo>();
 builder.Services.AddScoped<PmuserRepo>();
 
+// Access Denied Page
+builder.Services.ConfigureApplicationCookie(options => options.AccessDeniedPath = "/Home/AccessDenied");
 
 builder.Services.AddTransient<IEmailService, EmailService>();
 

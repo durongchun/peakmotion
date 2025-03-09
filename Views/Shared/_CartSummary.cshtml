@@ -1,0 +1,11 @@
+@inject peakmotion.Repositories.CookieRepo CookieRepo
+@model int
+
+<li class="nav-item" id="user-cart-qty-container">
+    <a class="btn-image" asp-area="" asp-controller="Cart" asp-action="Index">
+        <img src="~/images/cart.svg" alt="Checkout Button" width="32" height="32">
+    </a>
+    @if (@Model > 0){
+    <p id="user-cart-qty">@Model</p>
+    }
+</li>

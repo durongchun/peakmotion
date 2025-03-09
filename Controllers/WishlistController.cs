@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace peakmotion.Controllers
 {
-    public class WishlistController : Controller
+    public class WishlistController : BaseController
     {
         private readonly WishlistRepo _wishlistRepo;
         private readonly PmuserRepo _pmuserRepo;
@@ -20,7 +20,7 @@ namespace peakmotion.Controllers
         public WishlistController(WishlistRepo wishlistRepo,
                                   PmuserRepo pmuserRepo,
                                   UserManager<IdentityUser> userManager,
-                                  CookieRepo cookieRepo)
+                                  CookieRepo cookieRepo) : base(cookieRepo)
         {
             _wishlistRepo = wishlistRepo;
             _pmuserRepo = pmuserRepo;
