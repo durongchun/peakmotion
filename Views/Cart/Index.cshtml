@@ -21,14 +21,14 @@
         @if (!User.Identity.IsAuthenticated)
         {
             <p class="cart-save-later">
-                Do you want to save it for later?<br />
+                Do you want to save it for Wishlist?<br />
                 Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!
             </p>
         }
         else
         {
             <p class="cart-save-later">
-                You can save items to <a asp-controller="Wishlist" asp-action="Index">your wishlist</a>.
+                You can save items to <a asp-controller="Wishlist" asp-action="Index">your Wishlist</a>.
             </p>
         }
     </div>

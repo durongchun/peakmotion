@@ -78,7 +78,7 @@ namespace peakmotion.Controllers
             // Also remove from cart if you want to do that automatically here?
             // Or do nothing: up to you
 
-            TempData["Message"] = "Product saved for later.";
+            TempData["Message"] = "Product saved for Wishlist.";
             return RedirectToAction("Index", "Wishlist");
         }
 
