@@ -6,6 +6,6 @@
         <img src="~/images/cart.svg" alt="Checkout Button" width="32" height="32">
     </a>
     @if (@Model > 0){
-    <p id="user-cart-qty">@Model</p>
+    <a class="" asp-area="" asp-controller="Cart" asp-action="Index" id="user-cart-qty">@Model</a>
     }
 </li>
