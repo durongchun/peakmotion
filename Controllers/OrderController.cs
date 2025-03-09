@@ -44,16 +44,48 @@ namespace peakmotion.Controllers
             var orders = await _orderRepo.GetOrdersByPmUserId(pmUserId.Value);
 
             // Map orders to OrderVM
-            var orderVMs = orders.Select(o => new OrderVM
+            var orderVMs = new List<OrderVM>();
+            foreach (var order in orders)
             {
-                OrderId = o.Pkorderid,
-                OrderDate = o.Orderdate,
-                ShippedDate = o.Shippeddate,
-                DeliveryDate = o.Deliverydate,
-                Pptransactionid = o.Pptransactionid,
-                Total = o.OrderProducts.Sum(op => op.Unitprice * op.Qty),
-                ShippingStatus = o.OrderStatuses.OrderByDescending(s => s.Pkorderstatusid).FirstOrDefault()?.Orderstate ?? "Pending"
-            }).ToList();
+                // Calculate net total (like Admin does)
+                decimal subtotal = 0;
+                foreach (var op in order.OrderProducts)
+                {
+                    var product = op.Fkproduct;
+                    if (product == null) continue;
+
+                    decimal finalPrice = product.Regularprice;
+                    if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
+                    {
+                        decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
+                        if (discounted < 0) discounted = 0;
+                        finalPrice = discounted;
+                    }
+                    subtotal += finalPrice * op.Qty;
+                }
+
+                decimal gstRate = 0.05m;
+                decimal pstRate = 0.07m;
+                decimal gstAmount = subtotal * gstRate;
+                decimal pstAmount = subtotal * pstRate;
+                decimal totalTax = gstAmount + pstAmount;
+                decimal grandTotal = subtotal + totalTax;
+
+                var vm = new OrderVM
+                {
+                    OrderId = order.Pkorderid,
+                    OrderDate = order.Orderdate,
+                    ShippedDate = order.Shippeddate,
+                    DeliveryDate = order.Deliverydate,
+                    Pptransactionid = order.Pptransactionid,
+                    ShippingStatus = order.OrderStatuses
+                        .OrderByDescending(s => s.Pkorderstatusid)
+                        .FirstOrDefault()?.Orderstate ?? "Pending",
+                    Total = grandTotal
+                };
+
+                orderVMs.Add(vm);
+            }
 
             return View(orderVMs);
         }
@@ -80,21 +112,59 @@ namespace peakmotion.Controllers
                 return NotFound();
             }
 
+            // Calculate net total (like Admin does)
+            decimal subtotalDetail = 0;
+            foreach (var op in order.OrderProducts)
+            {
+                var product = op.Fkproduct;
+                if (product == null) continue;
+
+                decimal finalPrice = product.Regularprice;
+                if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
+                {
+                    decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
+                    if (discounted < 0) discounted = 0;
+                    finalPrice = discounted;
+                }
+                subtotalDetail += finalPrice * op.Qty;
+            }
+
+            decimal gstRateDetail = 0.05m;
+            decimal pstRateDetail = 0.07m;
+            decimal gstAmountDetail = subtotalDetail * gstRateDetail;
+            decimal pstAmountDetail = subtotalDetail * pstRateDetail;
+            decimal totalTaxDetail = gstAmountDetail + pstAmountDetail;
+            decimal grandTotalDetail = subtotalDetail + totalTaxDetail;
+
             var orderVM = new OrderVM
             {
                 OrderId = order.Pkorderid,
                 OrderDate = order.Orderdate,
                 ShippedDate = order.Shippeddate,
                 DeliveryDate = order.Deliverydate,
-                Total = order.OrderProducts.Sum(op => op.Unitprice * op.Qty),
-                ShippingStatus = order.OrderStatuses.OrderByDescending(s => s.Pkorderstatusid).FirstOrDefault()?.Orderstate ?? "Pending",
+                Total = grandTotalDetail,
+                ShippingStatus = order.OrderStatuses
+                    .OrderByDescending(s => s.Pkorderstatusid)
+                    .FirstOrDefault()?.Orderstate ?? "Pending",
                 Pptransactionid = order.Pptransactionid,
-                Items = order.OrderProducts.Select(op => new OrderItemVM
+                Items = order.OrderProducts.Select(op =>
                 {
-                    ProductName = op.Fkproduct?.Name ?? "Unknown",
-                    Quantity = op.Qty,
-                    Unitprice = op.Unitprice,
-                    LineTotal = op.Unitprice * op.Qty
+                    var p = op.Fkproduct;
+                    decimal itemFinalPrice = p?.Regularprice ?? 0;
+                    if (p?.Fkdiscount != null && p.Fkdiscount.Description == "discount")
+                    {
+                        decimal discounted2 = itemFinalPrice - p.Fkdiscount.Amount;
+                        if (discounted2 < 0) discounted2 = 0;
+                        itemFinalPrice = discounted2;
+                    }
+
+                    return new OrderItemVM
+                    {
+                        ProductName = p?.Name ?? "Unknown",
+                        Quantity = op.Qty,
+                        Unitprice = itemFinalPrice,
+                        LineTotal = itemFinalPrice * op.Qty
+                    };
                 }).ToList()
             };
 
