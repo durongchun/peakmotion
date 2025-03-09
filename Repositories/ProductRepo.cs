@@ -484,7 +484,7 @@ namespace peakmotion.Repositories
                     {
                         if (p.Discount != null && p.Discount.Description == "discount")
                         {
-                            var discount = p.Discount.Amount * p.Price;
+                            var discount = p.Discount.Amount / 100 * p.Price;
                             decimal salePrice = p.Price - discount;
                             return salePrice;
                         }
@@ -499,7 +499,7 @@ namespace peakmotion.Repositories
                     {
                         if (p.Discount != null && p.Discount.Description == "discount")
                         {
-                            var discount = p.Discount.Amount * p.Price;
+                            var discount = p.Discount.Amount / 100 * p.Price;
                             decimal salePrice = p.Price - discount;
                             return salePrice;
                         }
