@@ -21,28 +21,31 @@
         @if (!User.Identity.IsAuthenticated)
         {
             <p class="cart-save-later">
-                Do you want to save it for later?<br />
+                Do you want to save it for Wishlist?<br />
                 Let's <a asp-controller="Home" asp-action="Index">signup</a> and create a wish list!
             </p>
         }
         else
         {
             <p class="cart-save-later">
-                You can save items to <a asp-controller="Wishlist" asp-action="Index">your wishlist</a>.
+                You can save items to <a asp-controller="Wishlist" asp-action="Index">your Wishlist</a>.
             </p>
         }
     </div>
 
-    <div class="order-summary">
-        <h3>ORDER SUMMARY</h3>
+    @if (quantities != null && quantities.Count() > 0)
+    {
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
 
-        <!-- Show the order summary partial (list of products) -->
-        @Html.Partial("_OrderSummaryPartial")
+            <!-- Show the order summary partial (list of products) -->
+            @Html.Partial("_OrderSummaryPartial")
 
-        <!-- Show the payment partial (subtotal, taxes, total) -->
-        @Html.Partial("_PaymentPartial")
+            <!-- Show the payment partial (subtotal, taxes, total) -->
+            @Html.Partial("_PaymentPartial")
 
-        <!-- Proceed to Payment Button: links to Shop/Index -->
-        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
-    </div>
+            <!-- Proceed to Payment Button: links to Shop/Index -->
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
+        </div>
+    }
 </div>

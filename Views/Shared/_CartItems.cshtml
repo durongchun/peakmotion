@@ -53,13 +53,13 @@
                     </select>
                     <button type="submit">Update Quantity</button>
                 </form>
-                <p>Total: @(finalPrice * qty)</p>
+                <p>Total: @((finalPrice * qty).ToString("C"))</p>
                 <div class="cart-item-actions">
                     @if (User.Identity.IsAuthenticated)
                     {
                         <form method="post" asp-controller="Wishlist" asp-action="Add" style="display:inline;">
                             <input type="hidden" name="productId" value="@product.ID" />
-                            <button type="submit">Save for Later</button>
+                            <button type="submit">Save for Wishlist</button>
                         </form>
                     }
                     <form asp-action="Remove" asp-controller="Cart" method="post" style="display:inline;">
