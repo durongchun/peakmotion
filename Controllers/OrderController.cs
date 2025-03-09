@@ -1,72 +1,104 @@
-
-using System.Collections;
-using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using peakmotion.Models;
 using peakmotion.Repositories;
 using peakmotion.ViewModels;
-using System.Linq;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 
-namespace peakmotion.Controllers;
-
-public class OrderController : BaseController
+namespace peakmotion.Controllers
 {
-    private readonly PeakmotionContext _context;
-    private readonly CookieRepo _cookieRepo;
-    private readonly OrderRepo _orderRepo;
-    private readonly UserManager<IdentityUser> _userManager;
-
-    public OrderController(PeakmotionContext context, CookieRepo cookieRepo, OrderRepo orderRepo, UserManager<IdentityUser> userManager): base(cookieRepo)
+    [Authorize] // Only logged-in users can access
+    public class OrderController : Controller
     {
-        _context = context;
-        _orderRepo = orderRepo;
-        _userManager = userManager;
-    }
+        private readonly OrderRepo _orderRepo;
+        private readonly PmuserRepo _pmuserRepo;
+        private readonly UserManager<IdentityUser> _userManager;
 
-    // Get all orders for the logged-in user
-    public async Task<IActionResult> Index()
-    {
-        // Get the current user's ID
-        var userId = _userManager.GetUserId(User);  // Corrected line
-
-        // Fetch the user's orders from the repository
-        var orders = await _orderRepo.GetOrdersByUserId(userId);
-
-        // Map Order models to OrderVM for the view
-        var orderVM = orders.Select(order => new OrderVM
+        public OrderController(OrderRepo orderRepo, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager)
         {
-            OrderDate = order.Orderdate,
-            OrderId = order.Pkorderid,
-        }).ToList();
-
-        // Return the view with the list of orders
-        return View(orderVM);  // Pass the OrderVM list to the view
-    }
-
-    // Get details of a specific order by its ID
-    public async Task<IActionResult> DetailsOrderId(int id)
-    {
-        var userId = _userManager.GetUserId(User);  // Get the current user's ID
-        var order = await _orderRepo.GetOrderByIdForUser(id, userId);
-
-        if (order == null)
-        {
-            return NotFound();  // Return NotFound if the order doesn't exist
+            _orderRepo = orderRepo;
+            _pmuserRepo = pmuserRepo;
+            _userManager = userManager;
         }
 
-        // Create an OrderVM to pass to the view
-        var orderVM = new OrderVM
+        // GET: /Order/Index
+        public async Task<IActionResult> Index()
         {
-            OrderId = order.Pkorderid,
-            OrderDate = order.Orderdate,
-            // Add other properties as needed
-        };
+            // Get the logged-in IdentityUser
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+            {
+                return View(Enumerable.Empty<OrderVM>());
+            }
 
-        // Return the details view with the OrderVM
-        return View(orderVM);
+            // Get pmUserId from Pmuser table using the user's email
+            int? pmUserId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
+            if (pmUserId == null || pmUserId == 0)
+            {
+                return View(Enumerable.Empty<OrderVM>());
+            }
+
+            // Retrieve orders belonging to this user (only the user's orders)
+            var orders = await _orderRepo.GetOrdersByPmUserId(pmUserId.Value);
+
+            // Map orders to OrderVM
+            var orderVMs = orders.Select(o => new OrderVM
+            {
+                OrderId = o.Pkorderid,
+                OrderDate = o.Orderdate,
+                ShippedDate = o.Shippeddate,
+                DeliveryDate = o.Deliverydate,
+                Pptransactionid = o.Pptransactionid,
+                Total = o.OrderProducts.Sum(op => op.Unitprice * op.Qty),
+                ShippingStatus = o.OrderStatuses.OrderByDescending(s => s.Pkorderstatusid).FirstOrDefault()?.Orderstate ?? "Pending"
+            }).ToList();
+
+            return View(orderVMs);
+        }
+
+        // GET: /Order/Details/5
+        public async Task<IActionResult> Details(int id)
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+            {
+                return NotFound();
+            }
+
+            int? pmUserId = _pmuserRepo.GetUserIdByUserEmail(identityUser.Email);
+            if (pmUserId == null || pmUserId == 0)
+            {
+                return NotFound();
+            }
+
+            // Retrieve the order only if it belongs to the logged-in user
+            var order = await _orderRepo.GetOrderByIdForUser(id, pmUserId.Value);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var orderVM = new OrderVM
+            {
+                OrderId = order.Pkorderid,
+                OrderDate = order.Orderdate,
+                ShippedDate = order.Shippeddate,
+                DeliveryDate = order.Deliverydate,
+                Total = order.OrderProducts.Sum(op => op.Unitprice * op.Qty),
+                ShippingStatus = order.OrderStatuses.OrderByDescending(s => s.Pkorderstatusid).FirstOrDefault()?.Orderstate ?? "Pending",
+                Pptransactionid = order.Pptransactionid,
+                Items = order.OrderProducts.Select(op => new OrderItemVM
+                {
+                    ProductName = op.Fkproduct?.Name ?? "Unknown",
+                    Quantity = op.Qty,
+                    Unitprice = op.Unitprice,
+                    LineTotal = op.Unitprice * op.Qty
+                }).ToList()
+            };
+
+            return View(orderVM);
+        }
     }
 }
