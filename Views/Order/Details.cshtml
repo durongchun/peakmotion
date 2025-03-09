@@ -1,0 +1,51 @@
+@model peakmotion.ViewModels.OrderVM
+
+@{
+    ViewData["Title"] = "Order Detail";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left side: side nav -->
+        <div class="col-auto bg-light col-sidebar" style="min-height:100vh;">
+            @Html.Partial("_SideNavProfile")
+        </div>
+
+        <!-- Right side: order detail content -->
+        <div class="col pt-3 mt-1">
+            <h2>Order Detail</h2>
+            <div class="card p-3 mb-3">
+                <p><strong>OrderDate:</strong> @Model.OrderDate.ToString("yyyy-MM-dd")</p>
+                <p><strong>ShippedDate:</strong> @(Model.ShippedDate.HasValue ? Model.ShippedDate.Value.ToString("yyyy-MM-dd") : "-")</p>
+                <p><strong>DeliveryDate:</strong> @(Model.DeliveryDate.HasValue ? Model.DeliveryDate.Value.ToString("yyyy-MM-dd") : "-")</p>
+                <p><strong>Shipping Status:</strong> @Model.ShippingStatus</p>
+                <p><strong>Total:</strong> @Model.Total.ToString("C")</p>
+                <p><strong>Transaction ID:</strong> @Model.Pptransactionid</p>
+            </div>
+
+            <h4>Order Items</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Qty</th>
+                        <th>Unit Price</th>
+                        <th>Line Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Unitprice.ToString("C")</td>
+                            <td>@item.LineTotal.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
