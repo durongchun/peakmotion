@@ -97,6 +97,24 @@ header {
   gap: 1.5rem;
 } */
 
+.half-page-wrapper {
+  padding: 7rem 7rem 0rem 7rem;
+  form {
+    max-width: 500px;
+  }
+}
+
+.half-page-image {
+  object-fit: cover;
+  height: 100%;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 footer {
   background-color: #354952;
   color: white;

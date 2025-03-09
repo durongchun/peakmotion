@@ -8,15 +8,14 @@ ViewData["Title"] = "Register";
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="d-flex mx-7 py-5">
-    <div class="col-md-6 pe-5 d-none d-md-block">
-        <img src="~/images/products/all.jpg" alt="Placeholder Image" class="img-fluid h-100"
-            style="object-fit: cover; width: 100%; height: 100vh;" />
+<div class="d-flex">
+    <div class="col-md-6 d-none d-md-block">
+        <img src="~/images/home/register.jpg" alt="Placeholder Image" class="img-fluid half-page-image" />
     </div>
-    <div class="col-md-6 col-sm-12 mt-4">
-        <form id="registerForm" class="mb-2" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h3>CREATE A MEMBER ACCOUNT</h3>
-            <hr />
+    <div class="col-md-6 col-sm-12 half-page-wrapper">
+        <form id="registerForm" class="mb-4 account-form" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <h1 class="display-3">CREATE ACCOUNT</h1>
+
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true"
