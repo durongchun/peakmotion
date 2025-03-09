@@ -4,7 +4,7 @@
     var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
     int qty = cartDict.ContainsKey(Model.Pkproductid) ? cartDict[Model.Pkproductid] : 0;
 
-    var isSelected = Model.Colors.FirstOrDefault();
+    
 }
 
 <head>
@@ -112,78 +112,68 @@
                 @if (Model.Colors?.Any() == true)
                 {
                     <div class="color-selection pb-5">
-                        <p>Select Color:</p>
+                        <p>Select Color: <span id="selectedColorText">@Model.IsSelectedColor</span></p>
                         <div class="colors">
                             @foreach (var color in Model.Colors)
                             {
-                                <button class="color-circle @(color == isSelected ? "selected" : "")" 
-                                    style="background-color: @color;" 
-                                    onclick="selectColor(this, '@color')"></button>
+                                <button type="button" class="color-circle @(color == Model.IsSelectedColor ? "selected" : "")"
+                                        style="background-color: @color;"
+                                        data-color="@color"
+                                        onclick="selectColor(this, '@color')"></button>
                             }
                         </div>
 
-                        <!-- Hidden input to store the selected color (pre-filled with default) -->
-                        <input type="hidden" id="selectedColor" name="selectedColor" value="@isSelected">
+                        <!-- Hidden input for form submission -->
+                        <input type="hidden" id="selectedColor" name="selectedColor" value="@Model.IsSelectedColor" />
 
                     </div>
                 }
-                @* <div class="color-selection">
-                    <p>Select Color:</p>
-                    <div class="colors">
-                        <button class="color-circle" style="background-color: red;"></button>
-                        <button class="color-circle" style="background-color: blue;"></button>
-                        <button class="color-circle" style="background-color: green;"></button>
-                    </div>
-                </div> *@
 
-                <!-- Size Selection -->
-                @if (Model.Sizes?.Any() == true)
-                {
-                    <div class="size-selection pb-5">
-                        <p>Select Size:</p>
-                        <select id="sizeDropdown">
-                            @foreach (var size in Model.Sizes)
-                            {
-                                <option value="@size">@size</option>
-                            }
-                        </select>
-                    </div>
-                }
-                @* <div class="size-selection">
-                    <p>Select Size:</p>
-                    <select id="sizeDropdown">
-                        <option value="S">Small</option>
-                        <option value="M">Medium</option>
-                        <option value="L">Large</option>
-                    </select>
-                </div> *@
-
-
-                <form method="post" asp-controller="Cart" asp-action="Add">
+                <form method="post" asp-controller="Cart" asp-action="Add" class="d-flex flex-column gap-3">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
-                    <!-- Quantity Selection
-                    <div class="quantity-selection pb-3">
-                        <label for="Quantity">Select Quantity:</label>
-                        <input type="number" id="Quantity" name="Quantity" min="1" value="1" />
-                    </div> -->
-                    <!-- new qty selection -->
-                    <label for="qty">Quantity:</label>
-                    <select id="qty" name="qty">
-                        @for (int i = 1; i <= (Model.Qty < 10 ? Model.Qty : 10); i++)
-                        {
-                            if (i == qty)
-                            {
-                                <option value="@i" selected>@i</option>
-                            }
-                            else
-                            {
-                                <option value="@i">@i</option>
-                            }
-                        }
-                    </select>
+                    <input type="hidden" name="selectedColor" value="@Model.IsSelectedColor" />
+                    <input type="hidden" id="selectedSizeHidden" name="selectedSize" value="@Model.IsSelectedSize" /> <!-- FIXED -->
 
+                    <div>
+                         <!-- Size Dropdown -->
+                        <label for="sizeDropdown">Select Size:</label>
+                        <select id="sizeDropdown" name="selectedSize" onchange="updateSizeValue()">
+                            @foreach (var size in Model.Sizes)
+                            {
+                                
+                            if (size == Model.IsSelectedSize)
+                                            {
+                                                <option value="@size" selected>@size</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@size">@size</option>
+                                            }     
+                            }
+                        </select>
+                    </div>
+                   
+
+                    <div class="pb-5">
+                         <!-- new qty selection -->
+                        <label for="qty">Quantity:</label>
+                        <select id="qty" name="qty">
+                            @for (int i = 1; i <= (Model.Qty < 10 ? Model.Qty : 10); i++)
+                            {
+                                if (i == qty)
+                                {
+                                    <option value="@i" selected>@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+
+                    </div>
 
                     <!-- Add to Cart Button -->
                     <button type="submit" class="add-to-cart">Add to Cart</button>
@@ -239,18 +229,48 @@
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Get the initially selected color
-        let defaultColor = document.getElementById("selectedColor").value;
+        function selectColor(element, color) {
+            console.log("Color selected:", color);
 
-        // Find the button with this color and mark it as selected
-        let defaultButton = [...document.querySelectorAll(".color-circle")].find(
-            btn => btn.style.backgroundColor === defaultColor
-        );
+            // Remove 'selected' class from all buttons
+            document.querySelectorAll(".color-circle").forEach(btn => btn.classList.remove("selected"));
 
-        if (defaultButton) {
-            defaultButton.classList.add("selected");
+            // Add 'selected' class to clicked button
+            element.classList.add("selected");
+
+            // Update the hidden input value
+            document.getElementById("selectedColor").value = color;
+
+            // Update the text display
+            document.getElementById("selectedColorText").textContent = color;
         }
+
+        function updateSizeValue() {
+            debugger;
+            var selectedSize = document.getElementById("sizeDropdown").value;
+            
+            // Update the correct hidden input (inside the form)
+            document.getElementById("selectedSizeHidden").value = selectedSize;
+
+            console.log("Updated selectedSize:", selectedSize);
+        }
+
+
+
+
+
+
+    // Ensure the default color is visually marked on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        var selectedColor = document.getElementById("selectedColor").value;
+        document.getElementById("selectedColorText").textContent = selectedColor;
+
+        // Apply 'selected' class to the correct button
+        document.querySelectorAll(".color-circle").forEach(btn => {
+            if (btn.getAttribute("data-color") === selectedColor) {
+                btn.classList.add("selected");
+            }
+        });
     });
 
 

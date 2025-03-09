@@ -18,6 +18,9 @@ public partial class ProductDetailVM
 
     public int Fkcategoryid { get; set; }
 
+    public string IsSelectedColor { get; set; } = null!;
+    public string IsSelectedSize { get; set; } = null!;
+
     public IEnumerable<String> Colors { get; set; } = new List<String>();
 
     public IEnumerable<OrderProduct> OrderProducts { get; set; } = new List<OrderProduct>();

@@ -143,6 +143,8 @@ public class ProductController : BaseController
             Fkcategoryid = 0,
             Colors = colors,
             Sizes = sizes,
+            IsSelectedColor = colors.FirstOrDefault(),
+            IsSelectedSize = sizes.FirstOrDefault(),
         };
 
         var productVM = new ProductVM
@@ -165,4 +167,8 @@ public class ProductController : BaseController
         // Return the view with the view model
         return View(productDetailViewModel);
     }
+
+
+
+
 }

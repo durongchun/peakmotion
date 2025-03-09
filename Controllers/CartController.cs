@@ -56,8 +56,12 @@ namespace peakmotion.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(int productId, int qty = 1)
+        public IActionResult Add(int productId, int qty = 1, string selectedColor = "", string selectedSize = "")
         {
+            // Process the values as needed
+            Console.WriteLine($"Selected Color: {selectedColor}");
+            Console.WriteLine($"Selected Size: {selectedSize}");
+
             var product = _productRepo.GetProduct(productId);
             if (product == null)
             {
