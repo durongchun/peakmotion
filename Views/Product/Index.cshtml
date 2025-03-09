@@ -38,7 +38,7 @@
 
         @if (!string.IsNullOrEmpty(ViewBag.SearchString))
         {
-        <div class="">Search: @ViewBag.SearchString
+        <div class="tag-search">Search: @ViewBag.SearchString
             <a asp-controller="Product" asp-action="Index">X</a>
         </div>
         }
@@ -205,6 +205,14 @@
     .pIcon:hover {
         opacity: 0.8;
     }
+
+    /*
+    ==================================================================
+    TAGS
+    ==================================================================
+    */
+
+    .tag-search {}
 
     /*
     ==================================================================
