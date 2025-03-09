@@ -53,7 +53,7 @@
                     </select>
                     <button type="submit">Update Quantity</button>
                 </form>
-                <p>Total: @(finalPrice * qty)</p>
+                <p>Total: @((finalPrice * qty).ToString("C"))</p>
                 <div class="cart-item-actions">
                     @if (User.Identity.IsAuthenticated)
                     {
