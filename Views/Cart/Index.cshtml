@@ -33,16 +33,19 @@
         }
     </div>
 
-    <div class="order-summary">
-        <h3>ORDER SUMMARY</h3>
+    @if (quantities != null && quantities.Count() > 0)
+    {
+        <div class="order-summary">
+            <h3>ORDER SUMMARY</h3>
 
-        <!-- Show the order summary partial (list of products) -->
-        @Html.Partial("_OrderSummaryPartial")
+            <!-- Show the order summary partial (list of products) -->
+            @Html.Partial("_OrderSummaryPartial")
 
-        <!-- Show the payment partial (subtotal, taxes, total) -->
-        @Html.Partial("_PaymentPartial")
+            <!-- Show the payment partial (subtotal, taxes, total) -->
+            @Html.Partial("_PaymentPartial")
 
-        <!-- Proceed to Payment Button: links to Shop/Index -->
-        <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
-    </div>
+            <!-- Proceed to Payment Button: links to Shop/Index -->
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
+        </div>
+    }
 </div>
