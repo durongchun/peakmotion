@@ -1,23 +1,26 @@
 @model peakmotion.ViewModels.PayPalConfirmationVM
 @{
-    ViewData["Title"] = "Payment Confirmation";
+ViewData["Title"] = "Payment Confirmation";
 }
 
 <link rel="stylesheet" href="~/css/orderConfirmation.css">
-<section id="orderConfirmation" class="mx-7 my-5">
-    <h5>ORDER CONFIRMATION</h5>
-    <div class="orderInfo">
-        <div>
-            <img src="https://picsum.photos/500/700?random=1" alt="PeakMotion">
+
+
+<section id="orderConfirmation" class="mx-7 py-5">
+    <h1>ORDER CONFIRMATION</h1>
+    <div class="d-flex">
+        <div class="col-md-6 pe-5 d-none d-md-block">
+            <img src="~/images/products/thanks.jpg" alt="Image of Women smiling widely at someone" class="w-100" />
         </div>
-        <div>
+        <div class="col-md-6 col-sm-12 mt-4">
             <h3>THANK YOU FOR SHOPPING!</h3><br>
             <p>Your ORDER number is: @Model.TransactionId</p><br>
-            <p>Thank you for choosing PeakMotion! We truly appreciate your business and are excited to have you as a valued customer. Your support means the world to us.</p><br>
+            <p>Thank you for choosing PeakMotion! We truly appreciate your business and are excited to have you as a
+                valued customer. Your support means the world to us.</p><br>
 
             @if (User.Identity.IsAuthenticated)
             {
-                <a class="btn btn-primary" asp-controller="Order" asp-action="Index">TRACK YOUR ORDER</a>
+            <a class="btn btn-primary" asp-controller="Order" asp-action="Index">TRACK YOUR ORDER</a>
             }
         </div>
     </div>

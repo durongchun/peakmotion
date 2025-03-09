@@ -174,6 +174,7 @@ namespace peakmotion.Repositories
 
             // update the identity role
             var deleted = await _userManager.RemoveFromRoleAsync(updatingUser, currentRole);
+            if (!deleted.Succeeded) return (false, "error, Error removing the role from the user");
             return (deleted.Succeeded, $"success, Successfully deleted the role '{roleName}' for {userEmail}");
         }
 
