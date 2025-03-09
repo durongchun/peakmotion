@@ -129,12 +129,19 @@ namespace peakmotion.Repositories
         /// <returns></returns>
         public async Task<(bool, string)> DeleteUser(string roleName, string userEmail)
         {
+            // Check that the user has no foreign key constraits..
+            var wishlist = await _db.Wishlists
+                .Include(w => w.Fkpmuser)
+                .Where(w => w.Fkpmuser.Email == userEmail)
+                .ToListAsync();
+            if (wishlist.Count() > 0) return (false, $"warning, Unable to delete users with wishlists. They have {wishlist.Count()} item(s) on their wishlist");
+
             // Delete the role
             (bool result, string returnMessage) = await DeleteUserRole(roleName, userEmail);
             if (!result) return (false, returnMessage);
 
             // Delete PmUser
-            var pmuser = await _db.Pmusers.FindAsync(userEmail);
+            var pmuser = await _db.Pmusers.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
             if (pmuser == null) return (false, "error, Error deleting from PMUser");
             _db.Pmusers.Remove(pmuser);
             await _db.SaveChangesAsync();
