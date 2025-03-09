@@ -122,40 +122,6 @@ namespace peakmotion.Repositories
         }
 
         /// <summary>
-        ///     Delete a user
-        /// </summary>
-        /// <param name="roleName"></param>
-        /// <param name="userEmail"></param>
-        /// <returns></returns>
-        public async Task<(bool, string)> DeleteUser(string roleName, string userEmail)
-        {
-            // Check that the user has no foreign key constraits..
-            var wishlist = await _db.Wishlists
-                .Include(w => w.Fkpmuser)
-                .Where(w => w.Fkpmuser.Email == userEmail)
-                .ToListAsync();
-            if (wishlist.Count() > 0) return (false, $"warning, Unable to delete users with wishlists. They have {wishlist.Count()} item(s) on their wishlist");
-
-            // Delete the role
-            (bool result, string returnMessage) = await DeleteUserRole(roleName, userEmail);
-            if (!result) return (false, returnMessage);
-
-            // Delete PmUser
-            var pmuser = await _db.Pmusers.Where(u => u.Email == userEmail).FirstOrDefaultAsync();
-            if (pmuser == null) return (false, "error, Error deleting from PMUser");
-            _db.Pmusers.Remove(pmuser);
-            await _db.SaveChangesAsync();
-
-            // Delete IdentityUser
-            var identityUser = _httpContextAccessor.HttpContext?.User;
-            IdentityUser? currentUser = await _userManager.GetUserAsync(identityUser);
-            if (currentUser == null) return (false, "error, Error retrieving IdentityUser");
-            var result2 = await _userManager.DeleteAsync(currentUser);
-            if (result2 == null) return (false, "error, Error deleting from IdentityUser");
-            return (true, $"success, Successfully deleted the role '{roleName}' and user '{userEmail}'");
-        }
-
-        /// <summary>
         ///     Delete a user's role
         /// </summary>
         /// <param name="roleName"></param>

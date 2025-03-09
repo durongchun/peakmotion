@@ -30,7 +30,7 @@
                 <th>@Html.DisplayNameFor(model => model.First().FullName)</th>
                 <th>@Html.DisplayNameFor(model => model.First().Email)</th>
                 <th>@Html.DisplayNameFor(model => model.First().RoleName)</th>
-                <th>Actions</th>
+
             </tr>
         </thead>
         <tbody>
@@ -48,13 +48,6 @@
                         <option value="">-- Select Role --</option>
                     </select>
                     }
-                </td>
-                <td>
-                    <form asp-controller="Admin" asp-action="DeleteUser" method="post">
-                        <input type="hidden" name="userEmail" value="@user.Email" />
-                        <input type="hidden" name="newRole" value="@user.RoleName" />
-                        <input type="submit" value="Delete" class="btn btn-danger" />
-                    </form>
                 </td>
 
             </tr>
