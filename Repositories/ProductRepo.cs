@@ -480,10 +480,34 @@ namespace peakmotion.Repositories
                     sortedProducts = products.OrderByDescending(p => p.ProductName).ToList();
                     break;
                 case "Price: High to Low":
-                    sortedProducts = products.OrderByDescending(p => p.Price).ToList();
+                    sortedProducts = products.OrderByDescending(p =>
+                    {
+                        if (p.Discount != null && p.Discount.Description == "discount")
+                        {
+                            var discount = p.Discount.Amount * p.Price;
+                            decimal salePrice = p.Price - discount;
+                            return salePrice;
+                        }
+                        else
+                        {
+                            return p.Price;
+                        }
+                    }).ToList();
                     break;
                 case "Price: Low to High":
-                    sortedProducts = products.OrderBy(p => p.Price).ToList();
+                    sortedProducts = products.OrderBy(p =>
+                    {
+                        if (p.Discount != null && p.Discount.Description == "discount")
+                        {
+                            var discount = p.Discount.Amount * p.Price;
+                            decimal salePrice = p.Price - discount;
+                            return salePrice;
+                        }
+                        else
+                        {
+                            return p.Price;
+                        }
+                    }).ToList();
                     break;
                 default:
                     sortedProducts = products.OrderBy(p => p.ProductName).ToList();
