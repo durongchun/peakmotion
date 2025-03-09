@@ -123,6 +123,7 @@ namespace peakmotion.Controllers
         public async Task<IActionResult> Orders()
         {
             var orders = await _orderRepo.GetAllOrders();
+            orders = orders.OrderByDescending(o => o.Pkorderid).ToList();
             var orderVMs = new List<OrderVM>();
 
             foreach (var order in orders)
