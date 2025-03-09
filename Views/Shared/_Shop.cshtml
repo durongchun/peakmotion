@@ -39,19 +39,15 @@
                 </div>
                 <div id="addressDetail">
                     <div class="form-group d-flex flex-column mb-3">
-                        <label for="apptunit">Appt/Unit</label>
-                        @Html.TextBoxFor(m => m.ApptUnit, new { @id = "apptunit", @placeholder = "", @class = "form-control" })
-                    </div>
-                    <div class="form-group d-flex flex-column mb-3">
                         <label for="city">City</label>
                         @Html.TextBoxFor(m => m.City, new { @id = "city", @placeholder = "", @class = "form-control" })
                     </div>
-                </div>
-                <div id="provincePoscode">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="province">Province</label>
                         @Html.TextBoxFor(m => m.Province, new { @id = "province", @placeholder = "", @class = "form-control" })
                     </div>
+                </div>
+                <div id="provincePoscode">
                     <div class="form-group d-flex flex-column mb-3">
                         <label for="postalcode">Postal Code</label>
                         @Html.TextBoxFor(m => m.PostalCode, new { @id = "postalcode", @placeholder = "", @class = "form-control" })
@@ -155,6 +151,8 @@
             });
             </text>
         }
+
+
     });
 
 
