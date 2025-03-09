@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using peakmotion.ViewModels;
 @inject SignInManager<IdentityUser> SignInManager
+@inject peakmotion.Repositories.CookieRepo CookieRepo
 
     @* Right Side *@
     <ul class="navbar-nav d-flex align-items-center navbar-right">
@@ -13,5 +14,5 @@
             </a>
         </li>
 
-        <partial name="_CartSummary" model=@ViewBag.CartItemCount />
+        <partial name="_CartSummary" model=@CookieRepo.GetCartqtyFromCookie() />
         }

@@ -81,6 +81,27 @@ namespace peakmotion.Repositories
 
         }
 
+        public int GetCartqtyFromCookie()
+        {
+            var encodedCartString = GetCookie("cart");
+            var qty = 0;
+
+            if (!string.IsNullOrEmpty(encodedCartString))
+            {
+                var decoded = WebUtility.UrlDecode(encodedCartString);
+                foreach (var segment in decoded.Split(","))
+                {
+                    var parts = segment.Split(":");
+                    if (parts.Length == 2)
+                    {
+                        qty += int.Parse(parts[1]);
+                    }
+                }
+            }
+
+            return qty;
+        }
+
         public void AddShippingVMToCookie(ShippingVM shippingInfoList, int expireDays = 7)
         {
             var serializedShippingInfo = JsonConvert.SerializeObject(shippingInfoList);
