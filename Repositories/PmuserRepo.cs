@@ -122,6 +122,33 @@ namespace peakmotion.Repositories
         }
 
         /// <summary>
+        ///     Delete a user
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
+        public async Task<(bool, string)> DeleteUser(string roleName, string userEmail)
+        {
+            // Delete the role
+            (bool result, string returnMessage) = await DeleteUserRole(roleName, userEmail);
+            if (!result) return (false, returnMessage);
+
+            // Delete PmUser
+            var pmuser = await _db.Pmusers.FindAsync(userEmail);
+            if (pmuser == null) return (false, "error, Error deleting from PMUser");
+            _db.Pmusers.Remove(pmuser);
+            await _db.SaveChangesAsync();
+
+            // Delete IdentityUser
+            var identityUser = _httpContextAccessor.HttpContext?.User;
+            IdentityUser? currentUser = await _userManager.GetUserAsync(identityUser);
+            if (currentUser == null) return (false, "error, Error retrieving IdentityUser");
+            var result2 = await _userManager.DeleteAsync(currentUser);
+            if (result2 == null) return (false, "error, Error deleting from IdentityUser");
+            return (true, $"success, Successfully deleted the role '{roleName}' and user '{userEmail}'");
+        }
+
+        /// <summary>
         ///     Delete a user's role
         /// </summary>
         /// <param name="roleName"></param>
@@ -174,6 +201,7 @@ namespace peakmotion.Repositories
 
             // update the identity role
             var deleted = await _userManager.RemoveFromRoleAsync(updatingUser, currentRole);
+            if (!deleted.Succeeded) return (false, "error, Error removing the role from the user");
             return (deleted.Succeeded, $"success, Successfully deleted the role '{roleName}' for {userEmail}");
         }
 

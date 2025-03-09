@@ -112,11 +112,11 @@ namespace peakmotion.Controllers
             return BadRequest(returnMessage);
         }
 
-        [HttpPost, ActionName("DeleteUserRole")]
-        public async Task<IActionResult> DeleteUserRole(string newRole, string userEmail)
+        [HttpPost, ActionName("DeleteUser")]
+        public async Task<IActionResult> DeleteUser(string newRole, string userEmail)
         {
             Console.WriteLine($"DELETING - role: {newRole}, user: {userEmail}");
-            (bool result, string returnMessage) = await _pmuserRepo.DeleteUserRole(newRole, userEmail);
+            (bool result, string returnMessage) = await _pmuserRepo.DeleteUser(newRole, userEmail);
             return RedirectToAction("Employees", new { message = returnMessage });
         }
 
