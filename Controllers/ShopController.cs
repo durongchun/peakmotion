@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace peakmotion.Controllers
 {
-    public class ShopController : Controller
+    public class ShopController : BaseController
     {
         private readonly ShopRepo _shopRepo;
         private readonly PeakmotionContext _context;
         private readonly CookieRepo _cookieRepo;
 
-        public ShopController(PeakmotionContext context, ShopRepo shopRepo, CookieRepo cookieRepo)
+        public ShopController(PeakmotionContext context, ShopRepo shopRepo, CookieRepo cookieRepo) : base(cookieRepo)
         {
             _shopRepo = shopRepo;
             _cookieRepo = cookieRepo;

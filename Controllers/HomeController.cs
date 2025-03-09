@@ -6,11 +6,12 @@ using peakmotion.ViewModels;
 
 namespace peakmotion.Controllers;
 
-public class HomeController : Controller
+public class HomeController : BaseController
 {
     private readonly ProductRepo _productRepo;
+    private readonly CookieRepo _cookieRepo;
     private readonly ILogger<HomeController> _logger;
-    public HomeController(ProductRepo productRepo, ILogger<HomeController> logger)
+    public HomeController(CookieRepo cookieRepo, ProductRepo productRepo, ILogger<HomeController> logger) : base(cookieRepo)
     {
         _productRepo = productRepo;
         _logger = logger;
@@ -32,5 +33,10 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }
