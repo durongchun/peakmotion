@@ -1,7 +1,14 @@
 @model IEnumerable<peakmotion.ViewModels.ProductVM>
+@inject peakmotion.Repositories.CookieRepo cookieRepo
+@inject peakmotion.Repositories.ProductRepo productRepo;
 
 @{
     var cartDict = ViewBag.CartQuantities as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var properties = cookieRepo.GetPropertyFromCookie();
+
+    // Variables to store the extracted values for the current product
+    string propertyColor = null;
+    string propertySize = null;
 }
 
 @if (Model != null && Model.Any())
@@ -19,6 +26,26 @@
                 finalPrice = 0;
             }
         }
+
+        // Reset color and size for each product
+        propertyColor = null;
+        propertySize = null;
+
+        // Find the property for the current product
+        foreach (var property in properties)
+        {
+            if (!string.IsNullOrEmpty(property))
+            {
+                var parts = property.Split(':');
+                if (parts.Length == 3 && int.TryParse(parts[0], out int productId) && productId == product.ID)
+                {
+                    propertyColor = parts[1];
+                    propertySize = parts[2];
+                    break; // Exit the loop once the property is found
+                }
+            }
+        }
+
         <div class="cart-item">
             <div class="cart-item-image">
                 @if (product.ImageUrl != null)
@@ -32,8 +59,16 @@
             </div>
             <div class="cart-item-info">
                 <h4>@product.ProductName</h4>
-                <p>Blue Linen/White</p>
-                <p>Size: M</p>
+                @if (propertyColor != null && propertySize != null)
+                {
+                    <p>Color: @propertyColor</p>
+                    <p>Size: @propertySize</p>
+                }
+                else
+                {
+                    <p>Color: @productRepo.GetProductAttributes(product.ID, "color").FirstOrDefault()</p>
+                    <p>Size: @productRepo.GetProductAttributes(product.ID, "size").FirstOrDefault()</p>
+                }
                 <p>Item Price: @finalPrice.ToString("C")</p>
                 <form asp-action="Update" asp-controller="Cart" method="post">
                     <input type="hidden" name="productId" value="@product.ID" />

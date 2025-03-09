@@ -108,26 +108,7 @@
                     <p class="product-price">@ViewBag.ProductVM.Price.ToString("C")</p>
                 }
 
-                <!-- Color Selection -->
-                @if (Model.Colors?.Any() == true)
-                {
-                    <div class="color-selection pb-5">
-                        <p>Select Color: <span id="selectedColorText">@Model.IsSelectedColor</span></p>
-                        <div class="colors">
-                            @foreach (var color in Model.Colors)
-                            {
-                                <button type="button" class="color-circle @(color == Model.IsSelectedColor ? "selected" : "")"
-                                        style="background-color: @color;"
-                                        data-color="@color"
-                                        onclick="selectColor(this, '@color')"></button>
-                            }
-                        </div>
-
-                        <!-- Hidden input for form submission -->
-                        <input type="hidden" id="selectedColor" name="selectedColor" value="@Model.IsSelectedColor" />
-
-                    </div>
-                }
+              
 
                 <form method="post" asp-controller="Cart" asp-action="Add" class="d-flex flex-column gap-3">
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
@@ -135,6 +116,25 @@
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
                     <input type="hidden" name="selectedColor" value="@Model.IsSelectedColor" />
                     <input type="hidden" id="selectedSizeHidden" name="selectedSize" value="@Model.IsSelectedSize" /> <!-- FIXED -->
+
+                      <!-- Color Selection -->
+                    @if (Model.Colors?.Any() == true)
+                    {
+                        <div class="color-selection pb-5">
+                            <p>Select Color: <span id="selectedColorText">@Model.IsSelectedColor</span></p>
+                            <div class="colors">
+                                @foreach (var color in Model.Colors)
+                                {
+                                    <button type="button" class="color-circle @(color == Model.IsSelectedColor ? "selected" : "")"
+                                            style="background-color: @color;"
+                                            data-color="@color"
+                                            onclick="selectColor(this, '@color')"></button>
+                                }
+                            </div>
+
+
+                        </div>
+                    }
 
                     <div>
                          <!-- Size Dropdown -->

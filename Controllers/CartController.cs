@@ -58,9 +58,6 @@ namespace peakmotion.Controllers
         [HttpPost]
         public IActionResult Add(int productId, int qty = 1, string selectedColor = "", string selectedSize = "")
         {
-            // Process the values as needed
-            Console.WriteLine($"Selected Color: {selectedColor}");
-            Console.WriteLine($"Selected Size: {selectedSize}");
 
             var product = _productRepo.GetProduct(productId);
             if (product == null)
@@ -118,6 +115,14 @@ namespace peakmotion.Controllers
             // Encode back to cookie
             var updated = string.Join(",", cartDict.Select(x => $"{x.Key}:{x.Value}"));
             _cookieRepo.AddCookie("cart", WebUtility.UrlEncode(updated));
+
+            if (selectedColor == "" || selectedSize == "")
+            {
+                selectedColor = _productRepo.GetProductAttributes(product.ID, "color").FirstOrDefault();
+                selectedSize = _productRepo.GetProductAttributes(product.ID, "size").FirstOrDefault();
+            }
+
+            _cookieRepo.AddPropertyToCookie(selectedColor, selectedSize, productId);
             return RedirectToAction("Index");
         }
 
