@@ -21,9 +21,9 @@
         }
         <div class="cart-item">
             <div class="cart-item-image">
-                @if (product.PrimaryImage != null)
+                @if (product.ImageUrl != null)
                 {
-                    <img src="~/images/@product.PrimaryImage.Url" alt="Product" />
+                    <img src="@product.ImageUrl" alt="Product" />
                 }
                 else
                 {
