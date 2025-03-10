@@ -310,7 +310,6 @@ namespace peakmotion.Controllers
 
                 decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(product);
                 decimal finalPrice = discountPrice ?? product.Regularprice;
-                subtotal += finalPrice * op.Qty;
 
                 decimal lineTotal = finalPrice * op.Qty;
                 subtotal += lineTotal;
