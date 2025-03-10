@@ -59,12 +59,12 @@
             </div>
             <div class="cart-item-info">
                 <h4>@product.ProductName</h4>
-                @if (propertyColor != null && propertySize != null)
+                @if (!string.IsNullOrEmpty(propertyColor)  && !string.IsNullOrEmpty(propertySize))  
                 {
                     <p>Color: @propertyColor</p>
                     <p>Size: @propertySize</p>
                 }
-                else
+                @if(propertyColor == null && propertySize == null)  
                 {
                     <p>Color: @productRepo.GetProductAttributes(product.ID, "color").FirstOrDefault()</p>
                     <p>Size: @productRepo.GetProductAttributes(product.ID, "size").FirstOrDefault()</p>
