@@ -55,11 +55,11 @@
                                 }
                             }
                         </select>
-                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                        <button type="submit" class="btn btn-sm bg-dark" style="color: white; border-radius: 4px;">Update</button>
                     </form>
                 </td>
                 <td>
-                    <a class="btn btn-primary" href="@Url.Action("OrdersDetail", "Admin", new { id = order.OrderId })">Detail</a>
+                    <a class="btn bg-dark" style="color: white; border-radius: 4px;" href="@Url.Action("OrdersDetail", "Admin", new { id = order.OrderId })">Detail</a>
                 </td>
             </tr>
         }

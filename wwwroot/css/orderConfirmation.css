@@ -1,6 +1,6 @@
 #orderConfirmation {
   display: grid;
-  grid-template-rows: 1fr 6fr;
+  grid-template-rows: 1fr 17fr;
   justify-content: center;
   align-items: start;
 }

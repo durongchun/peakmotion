@@ -21,12 +21,28 @@
   margin-top: 0%;
 }
 
-.color-circle {
+/* .color-circle {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   border: 2px solid #ddd;
   cursor: pointer;
+} */
+
+.color-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: none;
+  outline: 2px solid transparent;
+}
+
+.color-circle.selected {
+  border: 2px solid white;
+  outline: 2px solid black;
+  transform: scale(1.1);
 }
 
 .size-selection select,

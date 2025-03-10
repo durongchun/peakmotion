@@ -102,6 +102,62 @@ namespace peakmotion.Repositories
             return qty;
         }
 
+        public void AddPropertyToCookie(string selectedColor, string selectedSize, int productid)
+        {
+            int expireDays = 7;
+            var properties = new List<string>();
+
+            // Retrieve the existing cookie
+            var existingCookie = GetCookie("Property");
+            if (existingCookie != null)
+            {
+                if (existingCookie.Contains(productid.ToString()))
+                {
+                    existingCookie = existingCookie.Replace(productid.ToString(), "");
+                }
+                // Deserialize the existing cookie value into a list
+                properties = JsonConvert.DeserializeObject<List<string>>(existingCookie);
+            }
+
+            // Create the new property
+            var property = productid + ":" + selectedColor + ":" + selectedSize;
+
+            // Add the new property to the list (if it doesn't already exist)
+            if (!properties.Contains(property))
+            {
+                properties.Add(property);
+            }
+
+            // Serialize the updated list
+            var serializedProperties = JsonConvert.SerializeObject(properties);
+
+            // Add or update the cookie with the new serialized list
+            AddCookie("Property", serializedProperties, expireDays);
+        }
+
+
+
+        public List<string> GetPropertyFromCookie()
+        {
+            var context = _httpContextAccessor.HttpContext;
+            if (context == null) return new List<string>();
+
+            var cookieValue = context.Request.Cookies["Property"];
+            if (string.IsNullOrEmpty(cookieValue)) return new List<string>();
+
+            try
+            {
+                // Deserialize as List<string>
+                var properties = JsonConvert.DeserializeObject<List<string>>(cookieValue);
+                return properties ?? new List<string>();
+            }
+            catch (Exception)
+            {
+                // If deserialization fails, return an empty list
+                return new List<string>();
+            }
+        }
+
         public void AddShippingVMToCookie(ShippingVM shippingInfoList, int expireDays = 7)
         {
             var serializedShippingInfo = JsonConvert.SerializeObject(shippingInfoList);
