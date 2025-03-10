@@ -66,6 +66,13 @@ input[type="email"]:invalid {
 .order-summary .mt-3 {
   margin: 0 5rem 0 5rem;
 }
+.row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-left: 4rem;
+  margin-right: 4rem;
+}
 
 @media (min-width: 1024px) {
   .shippingOrderSummary {
