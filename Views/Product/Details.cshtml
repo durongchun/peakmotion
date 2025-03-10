@@ -114,7 +114,7 @@
                     <input type="hidden" name="ProductId" value="@Model.Pkproductid" />
                     <input type="hidden" name="ProductName" value="@Model.Productname" />
                     <input type="hidden" name="ProductPrice" value="$@Model.Unitprice.ToString("F2")" />
-                    <input type="hidden" name="selectedColor" value="@Model.IsSelectedColor" />
+                    <input type="hidden" id="selectedColor" name="selectedColor" value="@Model.IsSelectedColor" />
                     <input type="hidden" id="selectedSizeHidden" name="selectedSize" value="@Model.IsSelectedSize" /> <!-- FIXED -->
 
                       <!-- Color Selection -->
