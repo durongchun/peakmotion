@@ -184,6 +184,14 @@ namespace peakmotion.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+
+                var existingUser = await _userManager.FindByEmailAsync(Input.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError(string.Empty, "This email address is already registered.");
+                    return Page();
+                }
+
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);

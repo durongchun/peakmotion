@@ -104,7 +104,7 @@ namespace peakmotion.Areas.Identity.Pages.Account
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            if (returnUrl == "/Home/PayPalConfirmation")
+            if (returnUrl == "/Home/PayPalConfirmation" || returnUrl == "/Identity/Account/Register")
             {
                 returnUrl = "/";
 

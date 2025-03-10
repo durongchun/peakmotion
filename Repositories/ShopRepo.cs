@@ -32,6 +32,7 @@ namespace peakmotion.Repositories
         UserManager<IdentityUser> userManager,
         PmuserRepo pmuserRepo,
         CookieRepo cookieRepo,
+         ProductRepo productRepo,
         IHttpContextAccessor httpContextAccessor,
         IEmailService emailService
         )
@@ -42,6 +43,7 @@ namespace peakmotion.Repositories
             _cookieRepo = cookieRepo;
             _httpContextAccessor = httpContextAccessor;
             _emailService = emailService;
+            _productRepo = productRepo;
         }
 
         public IEnumerable<ShippingVM> GetShippingInfo(ShippingVM model)
@@ -209,21 +211,17 @@ namespace peakmotion.Repositories
                     Price = product.Regularprice,
                     Quantity = product.Qtyinstock,
                     Discount = product.Fkdiscount,
+                    PriceWithDiscount = _productRepo.calculateProductPriceIfDiscount(product)
                 };
 
                 if (product == null)
                 {
                     continue;
                 }
-                bool hasDiscount = productVM.Discount != null && productVM.Discount.Description == "discount";
                 decimal finalPrice = productVM.Price;
-                if (hasDiscount)
+                if (productVM.PriceWithDiscount.HasValue)
                 {
-                    finalPrice = productVM.Price - productVM.Discount.Amount;
-                    if (finalPrice < 0)
-                    {
-                        finalPrice = 0;
-                    }
+                    finalPrice = productVM.PriceWithDiscount.Value;
                 }
                 subtotal += finalPrice * item.cartQty;
             }

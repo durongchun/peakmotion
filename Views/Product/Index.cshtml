@@ -38,8 +38,10 @@
 
         @if (!string.IsNullOrEmpty(ViewBag.SearchString))
         {
-        <div class="">Search: @ViewBag.SearchString
-            <a asp-controller="Product" asp-action="Index">X</a>
+        <div class="d-flex align-items-center">Search:
+            <span class="tag-search">@ViewBag.SearchString
+                <a asp-controller="Product" asp-action="Index">X</a>
+            </span>
         </div>
         }
     </div>
@@ -103,11 +105,11 @@
                 break;
             case "Equipment":
                 headerImage.style.backgroundImage = 'url("/images/products/equipment.jpg")';
-                headerImage.style.backgroundPosition = "center 25%"
+                headerImage.style.backgroundPosition = "center 100%"
                 break;
             default:
-                headerImage.style.backgroundImage = 'url("/images/products/all.jpg")';
-                headerImage.style.backgroundPosition = "center 75%"
+                headerImage.style.backgroundImage = 'url("/images/home/sale-equipment.jpg")';
+                headerImage.style.backgroundPosition = "center 40%"
                 break;
         }
     }
@@ -147,7 +149,13 @@
         // filter
         const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
         const allSelectedIds = [];
-        allSelected.forEach(selected => allSelectedIds.push(Number(selected.value)))
+        allSelected.forEach(selected => {
+            allSelectedIds.push(Number(selected.value))
+        })
+
+        // also update the quick list of tags
+        listenForTagIndicators()
+
         // sort
         const sortedBy = document.querySelector('#product-list-sortby')?.value;
         $.ajax({
@@ -164,6 +172,50 @@
                 console.log(xhr, status, error);
             }
         });
+    }
+
+    // Update the tag list
+    function listenForTagIndicators() {
+        const allSelected = document.querySelectorAll('#product-filters-form input[type="checkbox"]:checked');
+
+        const allSelectedNames = [];
+        allSelected.forEach(selected => {
+            allSelectedNames.push({
+                id: Number(selected.value),
+                name: selected.name?.split(':')[1]
+            })
+        })
+        // console.log(allSelectedNames)
+
+        const tagContainer = document.querySelector(".product-filter-active");
+        tagContainer.replaceChildren();
+        if (allSelected.length < 1) { return }
+        // label
+        const text = document.createElement('p')
+        text.textContent = "Filters:"
+        tagContainer.appendChild(text);
+        // values
+        allSelectedNames.forEach(category => {
+            const tag = document.createElement('p')
+            tag.className = "tag-item";
+            tag.textContent = category.name;
+            tag.setAttribute('data-id', category.id);
+            tagContainer.appendChild(tag);
+        })
+
+        // const message = response.toString();
+        // const messageParts = message.split(',');
+        // const messageType = messageParts[0];
+        // const messageText = messageParts.length > 1 ? messageParts[1] : "";
+        // var alertClass = "";
+        // switch (messageType) {
+        //     case "success": alertClass = ["alert", "alert-success"]; break;
+        //     case "warning": alertClass = ["alert", "alert-warning"]; break;
+        //     case "error": alertClass = ["alert", "alert-danger"]; break;
+        // }
+        // messageContainer.className = "user-role-response";
+        // messageContainer.classList.add(...alertClass);
+        // messageContainer.textContent = messageText;
     }
 
     function listenForFilter() {
@@ -184,7 +236,10 @@
         });
     }
 
+    // on change
     listenForFilter()
+    // on load
+    listenForTagIndicators()
 
 </script>
 
@@ -204,6 +259,31 @@
 
     .pIcon:hover {
         opacity: 0.8;
+    }
+
+    /*
+    ==================================================================
+    TAGS
+    ==================================================================
+    */
+
+    .tag-search,
+    .tag-item {
+        border: 1px solid #222222;
+        padding: 0.25rem 1rem;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        margin-left: 1rem;
+    }
+
+    .tag-item {
+        margin-left: 0rem;
+        cursor: none;
+    }
+
+    .tag-search:hover {
+        background-color: #C8D1DA;
+        opacity: 0.5;
     }
 
     /*
@@ -299,6 +379,8 @@
     .product-filter-active {
         display: flex;
         gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
     }
 
     /* 
@@ -310,7 +392,7 @@
     .product-list-header {
         width: 100%;
         height: 550px;
-        background-image: url("/images/products/mens.jpg");
+        background-image: url("/images/products/all.jpg");
         background-size: 100% auto;
         background-position: center 40%;
         overflow: hidden;
@@ -333,8 +415,8 @@
     .product-list-summary {
         display: flex;
         flex-direction: column;
-        gap: 1.5rem;
-        padding: 1rem 0rem;
+        gap: 1rem;
+        padding-top: 1rem;
 
         &>div:first-child {
             display: flex;
@@ -348,7 +430,7 @@
         padding: 1rem 0rem;
         display: flex;
         gap: 1rem;
-        margin-bottom: 4rem;
+        margin-bottom: 8rem;
     }
 
     .product-grid {

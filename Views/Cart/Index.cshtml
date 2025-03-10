@@ -9,16 +9,13 @@
     foreach (var product in Model)
     {
         int qty = quantities.ContainsKey(product.ID) ? quantities[product.ID] : 0;
-        bool hasDiscount = product.Discount != null && product.Discount.Description == "discount";
+        
         decimal finalPrice = product.Price;
-        if (hasDiscount)
+        if (product.PriceWithDiscount.HasValue)
         {
-            finalPrice = product.Price - product.Discount.Amount;
-            if (finalPrice < 0)
-            {
-                finalPrice = 0;
-            }
+            finalPrice = product.PriceWithDiscount.Value;
         }
+
         overallTotal += finalPrice * qty;
     }
 }
@@ -63,7 +60,7 @@
             @Html.Partial("_PaymentPartial")
 
             <!-- Proceed to Payment Button: links to Shop/Index -->
-            <a asp-controller="Shop" asp-action="Index" class="btn btn-primary mt-3">Proceed to Payment</a>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-dark mt-3" style="border-radius: 4px;">Proceed to Payment</a>
         </div>
     }
 </div>
