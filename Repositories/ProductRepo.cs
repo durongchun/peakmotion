@@ -481,6 +481,9 @@ namespace peakmotion.Repositories
             IEnumerable<ProductVM> sortedProducts = products;
             switch (sortBy)
             {
+                case "ID":
+                    sortedProducts = products.OrderBy(p => p.Pkdiscountid).ToList();
+                    break;
                 case "Featured":
                     sortedProducts = products.OrderBy(p => p.IsFeatured).ToList();
                     break;

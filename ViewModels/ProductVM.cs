@@ -15,7 +15,7 @@ namespace peakmotion.ViewModels
                 [Display(Name = "Description")]
                 public string Description { get; set; } = String.Empty;
 
-                [Display(Name = "Price")]
+                [Display(Name = "Regular Price")]
                 [DisplayFormat(DataFormatString = "{0:C} CAD")]
                 [Range(0, double.MaxValue)]
                 public decimal Price { get; set; } = 0;

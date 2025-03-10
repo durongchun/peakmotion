@@ -121,13 +121,8 @@ namespace peakmotion.Controllers
                 var product = op.Fkproduct;
                 if (product == null) continue;
 
-                decimal finalPrice = product.Regularprice;
-                if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
-                {
-                    decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
-                    if (discounted < 0) discounted = 0;
-                    finalPrice = discounted;
-                }
+                decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(product);
+                decimal finalPrice = discountPrice ?? product.Regularprice;
                 subtotalDetail += finalPrice * op.Qty;
             }
 
@@ -152,13 +147,8 @@ namespace peakmotion.Controllers
                 Items = order.OrderProducts.Select(op =>
                 {
                     var p = op.Fkproduct;
-                    decimal itemFinalPrice = p?.Regularprice ?? 0;
-                    if (p?.Fkdiscount != null && p.Fkdiscount.Description == "discount")
-                    {
-                        decimal discounted2 = itemFinalPrice - p.Fkdiscount.Amount;
-                        if (discounted2 < 0) discounted2 = 0;
-                        itemFinalPrice = discounted2;
-                    }
+                    decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(p);
+                    decimal itemFinalPrice = discountPrice ?? p.Regularprice;
 
                     return new OrderItemVM
                     {

@@ -43,7 +43,7 @@ namespace peakmotion.Controllers
 
         public IActionResult Products()
         {
-            IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+            IEnumerable<ProductVM> products = _productRepo.GetAllProducts("ID");
             return View(products);
         }
 
@@ -126,13 +126,9 @@ namespace peakmotion.Controllers
                     var product = op.Fkproduct;
                     if (product == null) continue;
 
-                    decimal finalPrice = product.Regularprice;
-                    if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
-                    {
-                        decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
-                        if (discounted < 0) discounted = 0;
-                        finalPrice = discounted;
-                    }
+                    //decimal finalPrice = product.Regularprice;
+                    decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(product);
+                    decimal finalPrice = discountPrice ?? product.Regularprice;
                     subtotal += finalPrice * op.Qty;
                 }
 
@@ -312,13 +308,9 @@ namespace peakmotion.Controllers
                 var product = op.Fkproduct;
                 if (product == null) continue;
 
-                decimal finalPrice = product.Regularprice;
-                if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
-                {
-                    decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
-                    if (discounted < 0) discounted = 0;
-                    finalPrice = discounted;
-                }
+                decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(product);
+                decimal finalPrice = discountPrice ?? product.Regularprice;
+                subtotal += finalPrice * op.Qty;
 
                 decimal lineTotal = finalPrice * op.Qty;
                 subtotal += lineTotal;
