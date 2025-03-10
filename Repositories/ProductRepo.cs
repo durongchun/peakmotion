@@ -493,7 +493,7 @@ namespace peakmotion.Repositories
                 case "Price: High to Low":
                     sortedProducts = products.OrderByDescending(p =>
                     {
-                        if (p.Discount != null && p.Discount.Description == "discount")
+                        if (p.Discount != null && p.Discount.Description != "free shipping")
                         {
                             var discount = p.Discount.Amount / 100 * p.Price;
                             decimal salePrice = p.Price - discount;
@@ -508,7 +508,7 @@ namespace peakmotion.Repositories
                 case "Price: Low to High":
                     sortedProducts = products.OrderBy(p =>
                     {
-                        if (p.Discount != null && p.Discount.Description == "discount")
+                        if (p.Discount != null && p.Discount.Description != "free shipping")
                         {
                             var discount = p.Discount.Amount / 100 * p.Price;
                             decimal salePrice = p.Price - discount;

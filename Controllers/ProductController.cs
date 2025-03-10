@@ -38,7 +38,7 @@ public class ProductController : BaseController
     public IActionResult Index(string? searchString = null, string sortedByString = "A-Z", string category = "")
     {
         Console.WriteLine($"DEBUG: PRODUCT LIST (search: {searchString})");
-        Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {searchString})");
+        Console.WriteLine($"DEBUG: PRODUCT LIST (sortby: {sortedByString})");
         Console.WriteLine($"DEBUG: PRODUCT LIST (category: {category})");
 
         // Filter by topbar selection + sort (assuming sortby is valid)
