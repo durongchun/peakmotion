@@ -43,7 +43,7 @@ namespace peakmotion.Controllers
 
         public IActionResult Products()
         {
-            IEnumerable<ProductVM> products = _productRepo.GetAllProducts();
+            IEnumerable<ProductVM> products = _productRepo.GetAllProducts("ID");
             return View(products);
         }
 
