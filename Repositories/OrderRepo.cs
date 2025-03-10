@@ -41,6 +41,7 @@ namespace peakmotion.Repositories
                 .Include(o => o.Fkpmuser)
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Fkproduct)
+                      .ThenInclude(p => p.Fkdiscount)
                 .Include(o => o.OrderStatuses)
                 .FirstOrDefaultAsync(o => o.Pkorderid == orderId);
         }
@@ -86,6 +87,7 @@ namespace peakmotion.Repositories
                 .Include(o => o.Fkpmuser)
                 .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.Fkproduct)
+                      .ThenInclude(p => p.Fkdiscount)
                 .Include(o => o.OrderStatuses)
                 .FirstOrDefaultAsync();
         }
