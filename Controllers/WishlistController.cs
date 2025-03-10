@@ -68,7 +68,7 @@ namespace peakmotion.Controllers
                                        .Any(x => x.ProductId == productId);
             if (exists)
             {
-                TempData["Message"] = "This product is already in your wishlist.";
+                //TempData["Message"] = "This product is already in your wishlist.";
                 return RedirectToAction("Index", "Wishlist");
             }
 
@@ -78,7 +78,7 @@ namespace peakmotion.Controllers
             // Also remove from cart if you want to do that automatically here?
             // Or do nothing: up to you
 
-            TempData["Message"] = "Product saved for Wishlist.";
+           // TempData["Message"] = "Product saved for Wishlist.";
             return RedirectToAction("Index", "Wishlist");
         }
 

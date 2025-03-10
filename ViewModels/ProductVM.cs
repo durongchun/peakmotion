@@ -20,6 +20,11 @@ namespace peakmotion.ViewModels
                 [Range(0, double.MaxValue)]
                 public decimal Price { get; set; } = 0;
 
+                [Display(Name = "Current Price")]
+                [DisplayFormat(DataFormatString = "{0:C} CAD")]
+                [Range(0, double.MaxValue)]
+                public decimal? PriceWithDiscount { get; set; }
+
                 [Display(Name = "Currency")]
                 public string Currency { get; set; } = "CAD";
 
@@ -36,7 +41,7 @@ namespace peakmotion.ViewModels
 
                 [Display(Name = "Discount")]
                 public string? DiscountLabel =>
-                 Discount != null && Discount.Description == "discount"
+                 Discount != null && Discount.Description != "free shipping"
                      ? $"${Discount.Amount} OFF"
                      : Discount != null && Discount.Description == "free shipping"
                      ? "Free shipping"

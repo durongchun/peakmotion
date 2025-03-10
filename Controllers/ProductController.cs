@@ -160,7 +160,8 @@ public class ProductController : BaseController
             Categories = product.ProductCategories.Select(pc => pc.Fkcategory).ToList(),
             Images = product.ProductImages,
             PrimaryImage = product.ProductImages.FirstOrDefault(),
-            Pkdiscountid = product.Fkdiscountid
+            Pkdiscountid = product.Fkdiscountid,
+            PriceWithDiscount = _productRepo.calculateProductPriceIfDiscount(product)
         };
 
         ViewBag.ProductVM = productVM;

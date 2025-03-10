@@ -13,14 +13,16 @@ namespace peakmotion.Controllers
     public class OrderController : Controller
     {
         private readonly OrderRepo _orderRepo;
+        private readonly ProductRepo _productRepo;
         private readonly PmuserRepo _pmuserRepo;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public OrderController(OrderRepo orderRepo, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager)
+        public OrderController(OrderRepo orderRepo, ProductRepo productRepo, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager)
         {
             _orderRepo = orderRepo;
             _pmuserRepo = pmuserRepo;
             _userManager = userManager;
+            _productRepo = productRepo;
         }
 
         // GET: /Order/Index
@@ -55,11 +57,11 @@ namespace peakmotion.Controllers
                     if (product == null) continue;
 
                     decimal finalPrice = product.Regularprice;
-                    if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
+                    decimal? discountPrice = _productRepo.calculateProductPriceIfDiscount(product);
+
+                    if (discountPrice.HasValue)
                     {
-                        decimal discounted = product.Regularprice - product.Fkdiscount.Amount;
-                        if (discounted < 0) discounted = 0;
-                        finalPrice = discounted;
+                        finalPrice = discountPrice.Value;
                     }
                     subtotal += finalPrice * op.Qty;
                 }

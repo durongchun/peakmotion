@@ -43,12 +43,24 @@ namespace peakmotion.Repositories
                 Quantity = product.Qtyinstock,
                 cartQty = qty,
                 Images = productImages,
-                PrimaryImage = primaryImage
+                PrimaryImage = primaryImage,
+                PriceWithDiscount = calculateProductPriceIfDiscount(product)
             };
 
             return productVM;
         }
 
+        // Helper function to calculate product price
+        public decimal? calculateProductPriceIfDiscount(Product product)
+        {
+            if (product.Fkdiscount != null && product.Fkdiscount.Description != "free shipping")
+            {
+                var discount = product.Fkdiscount.Amount / 100 * product.Regularprice;
+                decimal salePrice = product.Regularprice - discount;
+                return salePrice;
+            }
+            return null;
+        }
 
         // Get specific product in the database.
         public ProductVM? GetProduct(int id)
@@ -103,8 +115,7 @@ namespace peakmotion.Repositories
                 DiscountDropdown = discountDropdown,
                 SelectedDiscountDescription = selectedDiscountDescription,
                 ImageUrl = PrimaryImageUrl,
-
-
+                PriceWithDiscount = calculateProductPriceIfDiscount(product)
             };
 
             return productVM;
@@ -480,10 +491,34 @@ namespace peakmotion.Repositories
                     sortedProducts = products.OrderByDescending(p => p.ProductName).ToList();
                     break;
                 case "Price: High to Low":
-                    sortedProducts = products.OrderByDescending(p => p.Price).ToList();
+                    sortedProducts = products.OrderByDescending(p =>
+                    {
+                        if (p.Discount != null && p.Discount.Description == "discount")
+                        {
+                            var discount = p.Discount.Amount / 100 * p.Price;
+                            decimal salePrice = p.Price - discount;
+                            return salePrice;
+                        }
+                        else
+                        {
+                            return p.Price;
+                        }
+                    }).ToList();
                     break;
                 case "Price: Low to High":
-                    sortedProducts = products.OrderBy(p => p.Price).ToList();
+                    sortedProducts = products.OrderBy(p =>
+                    {
+                        if (p.Discount != null && p.Discount.Description == "discount")
+                        {
+                            var discount = p.Discount.Amount / 100 * p.Price;
+                            decimal salePrice = p.Price - discount;
+                            return salePrice;
+                        }
+                        else
+                        {
+                            return p.Price;
+                        }
+                    }).ToList();
                     break;
                 default:
                     sortedProducts = products.OrderBy(p => p.ProductName).ToList();
@@ -560,7 +595,8 @@ namespace peakmotion.Repositories
                                     Categoryname = x.Fkcategory.Categoryname,
                                 }).ToList(),
                 Images = p.ProductImages,
-                PrimaryImage = p.ProductImages.FirstOrDefault(pi => pi.Isprimary)
+                PrimaryImage = p.ProductImages.FirstOrDefault(pi => pi.Isprimary),
+                PriceWithDiscount = calculateProductPriceIfDiscount(p)
             });
 
             // for debugging

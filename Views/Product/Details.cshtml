@@ -84,24 +84,12 @@
             <div class="product-details w-100">
                 <h1 class="product-name pb-5">@Model.Productname</h1>
                 
-                @{
-                    bool hasDiscount = ViewBag.ProductVM.Discount != null && ViewBag.ProductVM.Discount.Description == "discount";
-                    decimal finalPrice = ViewBag.ProductVM.Price;
-                    if (hasDiscount)
-                    {
-                        finalPrice = ViewBag.ProductVM.Price - ViewBag.ProductVM.Discount.Amount;
-                        if (finalPrice < 0)
-                        {
-                            finalPrice = 0;
-                        }
-                    }
-                }
-                @if (hasDiscount)
+			@if (ViewBag.ProductVM.PriceWithDiscount != null)
                 {
-                    <p class="product-price">
-                        <span class="product-discounted">@ViewBag.ProductVM.Price.ToString("C")</span>
-                        @finalPrice.ToString("C")
-                    </p>
+                        <p class="product-price">
+                            <span class="product-discounted">@ViewBag.ProductVM.Price.ToString("C")</span>
+                            @ViewBag.ProductVM.PriceWithDiscount.ToString("C")
+                        </p>
                 }
                 else
                 {
