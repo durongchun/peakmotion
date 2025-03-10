@@ -49,6 +49,10 @@ namespace peakmotion.Repositories
             {
                 // Delete the cookie with the specified key
                 _httpContext.Response.Cookies.Delete(key);
+                if (key.Equals("cart", StringComparison.OrdinalIgnoreCase))
+                {
+                    _httpContext.Items["CartCleared"] = true;
+                }
             }
         }
 
@@ -83,6 +87,11 @@ namespace peakmotion.Repositories
 
         public int GetCartqtyFromCookie()
         {
+            if (_httpContext.Items.ContainsKey("CartCleared"))
+            {
+                return 0;
+            }
+
             var encodedCartString = GetCookie("cart");
             var qty = 0;
 
@@ -134,8 +143,6 @@ namespace peakmotion.Repositories
             // Add or update the cookie with the new serialized list
             AddCookie("Property", serializedProperties, expireDays);
         }
-
-
 
         public List<string> GetPropertyFromCookie()
         {
@@ -193,8 +200,6 @@ namespace peakmotion.Repositories
 
             var status = JsonConvert.DeserializeObject<bool>(cookieValue);
             return status;
-
-
 
 
         }
