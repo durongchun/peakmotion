@@ -111,6 +111,10 @@ namespace peakmotion.Repositories
             var existingCookie = GetCookie("Property");
             if (existingCookie != null)
             {
+                if (existingCookie.Contains(productid.ToString()))
+                {
+                    existingCookie = existingCookie.Replace(productid.ToString(), "");
+                }
                 // Deserialize the existing cookie value into a list
                 properties = JsonConvert.DeserializeObject<List<string>>(existingCookie);
             }
