@@ -39,7 +39,8 @@
             <a class="btn-image" id="searchToggle">
                 <img src="~/images/search.svg" alt="Search Button" width="32" height="32">
             </a>
-            <form asp-controller="Product" asp-action="Index" method="get" class="search-form" id="searchForm">
+            <form asp-controller="Product" asp-action="Index" method="get" class="search-form" id="searchForm"
+            asp-route-sortedByString="A-Z" asp-route-category="">
                 <input type="text" name="searchString" placeholder="Search Here" class="form-control"
                     value="@ViewBag.SearchFilter" />
                 <button type="button" class="search-close" id="searchClose">×</button>
