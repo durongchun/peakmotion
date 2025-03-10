@@ -22,6 +22,7 @@ namespace peakmotion.Controllers
             _orderRepo = orderRepo;
             _pmuserRepo = pmuserRepo;
             _userManager = userManager;
+            _productRepo = productRepo;
         }
 
         // GET: /Order/Index
