@@ -70,8 +70,6 @@ input[type="email"]:invalid {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
-  margin-left: 4rem;
-  margin-right: 4rem;
 }
 
 @media (min-width: 1024px) {

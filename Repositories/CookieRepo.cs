@@ -120,22 +120,18 @@ namespace peakmotion.Repositories
             var existingCookie = GetCookie("Property");
             if (existingCookie != null)
             {
-                if (existingCookie.Contains(productid.ToString()))
-                {
-                    existingCookie = existingCookie.Replace(productid.ToString(), "");
-                }
                 // Deserialize the existing cookie value into a list
                 properties = JsonConvert.DeserializeObject<List<string>>(existingCookie);
+
+                // Remove all properties with the same productid
+                properties.RemoveAll(p => p.StartsWith(productid.ToString() + ":"));
             }
 
             // Create the new property
             var property = productid + ":" + selectedColor + ":" + selectedSize;
 
-            // Add the new property to the list (if it doesn't already exist)
-            if (!properties.Contains(property))
-            {
-                properties.Add(property);
-            }
+            // Add the new property to the list
+            properties.Add(property);
 
             // Serialize the updated list
             var serializedProperties = JsonConvert.SerializeObject(properties);
