@@ -8,8 +8,8 @@
 #addressDetail,
 #provincePoscode,
 #giftApply {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
 }
 
@@ -73,5 +73,14 @@ input[type="email"]:invalid {
     grid-template-columns: repeat(2, 1fr);
     gap: 5rem;
     margin-left: 1rem;
+  }
+
+  #name,
+  #addressDetail,
+  #provincePoscode,
+  #giftApply {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 }
