@@ -8,18 +8,10 @@
             alt="Product image">
         <p class="product-name">@Model.ProductName</p>
         <p class="product-desc">@Model.Description</p>
-        @{
-        bool hasDiscount = Model.Discount != null && Model.Discount.Description == "discount";
-        decimal finalPrice = Model.Price;
-        if (hasDiscount)
-        {
-        decimal discount = Model.Discount.Amount / 100 * Model.Price;
-        finalPrice = Model.Price - discount;
-        } <!-- -->
-        } <!-- -->
-        @if (hasDiscount) { <p class="product-price">
+        @if (Model.PriceWithDiscount.HasValue)
+        { <p class="product-price">
             <span class="product-discounted">@Model.Price.ToString("C")</span>
-            @finalPrice.ToString("C")
+            @Model.PriceWithDiscount.Value.ToString("C")
         </p>
         }
         else

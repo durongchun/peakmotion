@@ -20,6 +20,11 @@ namespace peakmotion.ViewModels
                 [Range(0, double.MaxValue)]
                 public decimal Price { get; set; } = 0;
 
+                [Display(Name = "Current Price")]
+                [DisplayFormat(DataFormatString = "{0:C} CAD")]
+                [Range(0, double.MaxValue)]
+                public decimal? PriceWithDiscount { get; set; }
+
                 [Display(Name = "Currency")]
                 public string Currency { get; set; } = "CAD";
 

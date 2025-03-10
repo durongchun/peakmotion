@@ -43,12 +43,24 @@ namespace peakmotion.Repositories
                 Quantity = product.Qtyinstock,
                 cartQty = qty,
                 Images = productImages,
-                PrimaryImage = primaryImage
+                PrimaryImage = primaryImage,
+                PriceWithDiscount = calculateProductPriceIfDiscount(product)
             };
 
             return productVM;
         }
 
+        // Helper function to calculate product price
+        public decimal? calculateProductPriceIfDiscount(Product product)
+        {
+            if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
+            {
+                var discount = product.Fkdiscount.Amount / 100 * product.Regularprice;
+                decimal salePrice = product.Regularprice - discount;
+                return salePrice;
+            }
+            return null;
+        }
 
         // Get specific product in the database.
         public ProductVM? GetProduct(int id)
@@ -103,8 +115,7 @@ namespace peakmotion.Repositories
                 DiscountDropdown = discountDropdown,
                 SelectedDiscountDescription = selectedDiscountDescription,
                 ImageUrl = PrimaryImageUrl,
-
-
+                PriceWithDiscount = calculateProductPriceIfDiscount(product)
             };
 
             return productVM;
@@ -584,7 +595,8 @@ namespace peakmotion.Repositories
                                     Categoryname = x.Fkcategory.Categoryname,
                                 }).ToList(),
                 Images = p.ProductImages,
-                PrimaryImage = p.ProductImages.FirstOrDefault(pi => pi.Isprimary)
+                PrimaryImage = p.ProductImages.FirstOrDefault(pi => pi.Isprimary),
+                PriceWithDiscount = calculateProductPriceIfDiscount(p)
             });
 
             // for debugging
