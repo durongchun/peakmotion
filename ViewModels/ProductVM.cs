@@ -41,7 +41,7 @@ namespace peakmotion.ViewModels
 
                 [Display(Name = "Discount")]
                 public string? DiscountLabel =>
-                 Discount != null && Discount.Description == "discount"
+                 Discount != null && Discount.Description != "free shipping"
                      ? $"${Discount.Amount} OFF"
                      : Discount != null && Discount.Description == "free shipping"
                      ? "Free shipping"

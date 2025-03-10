@@ -53,7 +53,7 @@ namespace peakmotion.Repositories
         // Helper function to calculate product price
         public decimal? calculateProductPriceIfDiscount(Product product)
         {
-            if (product.Fkdiscount != null && product.Fkdiscount.Description == "discount")
+            if (product.Fkdiscount != null && product.Fkdiscount.Description != "free shipping")
             {
                 var discount = product.Fkdiscount.Amount / 100 * product.Regularprice;
                 decimal salePrice = product.Regularprice - discount;
