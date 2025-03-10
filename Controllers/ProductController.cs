@@ -129,6 +129,8 @@ public class ProductController : BaseController
         {
             return NotFound();
         }
+        var colors = _productRepo.GetProductAttributes(id, "color");
+        var sizes = _productRepo.GetProductAttributes(id, "size");
 
         // Map the database model to the view model
         var productDetailViewModel = new ProductDetailVM
@@ -139,7 +141,10 @@ public class ProductController : BaseController
             Unitprice = product.Regularprice,
             Qty = product.Qtyinstock,
             Fkcategoryid = 0,
-            // Fkcategory = null
+            Colors = colors,
+            Sizes = sizes,
+            IsSelectedColor = colors.FirstOrDefault(),
+            IsSelectedSize = sizes.FirstOrDefault(),
         };
 
         var productVM = new ProductVM
@@ -163,4 +168,8 @@ public class ProductController : BaseController
         // Return the view with the view model
         return View(productDetailViewModel);
     }
+
+
+
+
 }

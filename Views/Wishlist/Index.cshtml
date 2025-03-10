@@ -48,14 +48,14 @@
                                         <form asp-action="MoveToCart" asp-controller="Wishlist" method="post"
                                             class="d-inline-block me-2">
                                             <input type="hidden" name="productId" value="@item.ProductId" />
-                                            <button type="submit" class="btn btn-primary">Add to Cart</button>
+                                            <button type="submit" class="btn bg-dark" style="border-radius: 4px; color: white;">Add to Cart</button>
                                         </form>
 
                                         <!-- Remove from wishlist -->
                                         <form asp-action="Remove" asp-controller="Wishlist" method="post"
                                             class="d-inline-block">
                                             <input type="hidden" name="productId" value="@item.ProductId" />
-                                            <button type="submit" class="btn btn-danger">Remove</button>
+                                            <button type="submit" class="btn btn-danger" style="border-radius: 4px;">Remove</button>
                                         </form>
                                     </div>
                                 </div>

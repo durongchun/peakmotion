@@ -89,6 +89,7 @@ namespace peakmotion.Controllers
             _cookieRepo.RemoveCookie("ShippingData");
             _cookieRepo.RemoveCookie("cart");
             _cookieRepo.RemoveCookie("Status");
+            _cookieRepo.RemoveCookie("Property");
 
 
             return View(modelVM);

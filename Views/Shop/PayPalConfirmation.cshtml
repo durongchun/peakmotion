@@ -7,20 +7,20 @@ ViewData["Title"] = "Payment Confirmation";
 
 
 <section id="orderConfirmation" class="mx-7 py-5">
-    <h1>ORDER CONFIRMATION</h1>
+    <h4>ORDER CONFIRMATION</h4>
     <div class="d-flex">
         <div class="col-md-6 pe-5 d-none d-md-block">
             <img src="~/images/products/thanks.jpg" alt="Image of Women smiling widely at someone" class="w-100" />
         </div>
         <div class="col-md-6 col-sm-12 mt-4">
-            <h3>THANK YOU FOR SHOPPING!</h3><br>
+            <h4>THANK YOU FOR SHOPPING!</h4><br>
             <p>Your ORDER number is: @Model.TransactionId</p><br>
             <p>Thank you for choosing PeakMotion! We truly appreciate your business and are excited to have you as a
                 valued customer. Your support means the world to us.</p><br>
 
             @if (User.Identity.IsAuthenticated)
             {
-            <a class="btn btn-primary" asp-controller="Order" asp-action="Index">TRACK YOUR ORDER</a>
+            <a class="btn bg-dark" asp-controller="Order" asp-action="Index" style="color: white; border-radius: 4px;" >TRACK YOUR ORDER</a>
             }
         </div>
     </div>

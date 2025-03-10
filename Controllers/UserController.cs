@@ -14,7 +14,7 @@ namespace peakmotion.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly CookieRepo _cookieRepo;
 
-        public UserController(SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager, ILogger<HomeController> logger, CookieRepo cookieRepo): base(cookieRepo)
+        public UserController(SignInManager<IdentityUser> signInManager, PmuserRepo pmuserRepo, UserManager<IdentityUser> userManager, ILogger<HomeController> logger, CookieRepo cookieRepo) : base(cookieRepo)
         {
             _pmuserRepo = pmuserRepo;
             _userManager = userManager;
@@ -27,6 +27,7 @@ namespace peakmotion.Controllers
         {
             _cookieRepo.RemoveCookie("cart");
             _cookieRepo.RemoveCookie("Status");
+            _cookieRepo.RemoveCookie("Propeties");
 
             var identityUser = await _userManager.GetUserAsync(User);
             if (identityUser != null && identityUser.Email != null)
