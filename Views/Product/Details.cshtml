@@ -136,7 +136,8 @@
                         </div>
                     }
 
-                    <div>
+                    @if (Model.Sizes?.Any() == true){
+                        <div>
                          <!-- Size Dropdown -->
                         <label for="sizeDropdown">Select Size:</label>
                         <select id="sizeDropdown" name="selectedSize" onchange="updateSizeValue()">
@@ -155,6 +156,8 @@
                         </select>
                     </div>
                    
+                    }
+                    
 
                     <div class="pb-5">
                          <!-- new qty selection -->
