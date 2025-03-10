@@ -109,6 +109,14 @@ header {
   height: 100%;
 }
 
+.header-account {
+  font-family: 'Bebas Neue', serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 5rem;
+
+}
+
 .account-form {
   display: flex;
   flex-direction: column;
