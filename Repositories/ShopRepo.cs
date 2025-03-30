@@ -264,6 +264,8 @@ namespace peakmotion.Repositories
         <p>Dear Valued Customer,</p>
         <p>Thank you for your order! Your order ID is <strong>{orderId}</strong>.</p>
         <p>We appreciate your business and look forward to serving you again.</p>
+        <p>Notes: If you are unregistered user, Please collect your order at the PeakMotion Office Center </p>
+
 
         <br>
         <p>Best regards,</p>
