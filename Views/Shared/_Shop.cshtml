@@ -7,6 +7,9 @@
             <div class="form-group d-flex flex-column mb-3">
                 <label for="email">Email Address</label>
                 @Html.TextBoxFor(m => m.EmailAddress, new { @id = "email", @type="email", @placeholder = "Enter your email address", @class = "form-control" })
+                <p class="font-italic text-muted"><br>* Pickup Available for Unregistered Users<br>* Please collect your order at the PeakMotion Office Center.</p>
+
+
                 @* @if (!User.Identity.IsAuthenticated)
                 {
                     @Html.ValidationMessageFor(m => m.EmailAddress, "", new { @class = "text-danger", @id = "emailerror" })
